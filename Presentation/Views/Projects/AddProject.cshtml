@@ -1,0 +1,109 @@
+﻿@model AddProjectViewModel
+@{
+	Layout = "_AuthLayout";
+
+	ViewData["Title"] = Model.Title;
+}
+
+<div class="surface">
+
+    <form asp-controller="Projects" asp-action="AddProject" method="post" enctype="multipart/form-data" class="project-form-container" novalidate>
+        <h3>Add Project</h3>
+
+        <div class="image-preview-container pt-1">
+            <label asp-for="AddProjectModel.ProjectImage" id="circle-container" class="rectangle">
+                <i class="fa-duotone fa-solid fa-circle-camera fa-2xl" style="--fa-primary-color: #93a0b4; --fa-primary-opacity: 0.4; --fa-secondary-color: #6a707c; --fa-secondary-opacity: 1;"></i>
+            </label>
+
+            <img id="image-preview" src="#" alt="Project image" class="d-none" />
+        </div>
+
+        <input asp-for="AddProjectModel.ProjectImage" accept="image/*" class="d-none" />
+
+        <div class="grid mt-4">
+            <label asp-for="AddProjectModel.ProjectName"></label>
+            <input asp-for="AddProjectModel.ProjectName" value="@Model.AddProjectModel?.ProjectName" class="form-input" />
+            <span asp-validation-for="AddProjectModel.ProjectName"></span>
+        </div>
+
+        <div class="grid mt-4">
+            <label asp-for="AddProjectModel.ClientName"></label>
+            <input asp-for="AddProjectModel.ClientName" value="@Model.AddProjectModel?.ClientName" class="form-input" />
+            <span asp-validation-for="AddProjectModel.ClientName"></span>
+        </div>
+
+
+        <div class="grid mt-4">
+            <label asp-for="AddProjectModel.Description"></label>
+            <input asp-for="AddProjectModel.Description" value="@Model.AddProjectModel?.Description" class="form-input" />
+            <span asp-validation-for="AddProjectModel.Description"></span>
+        </div>
+
+        <div class="flex mt-4">
+            <div>
+                <label asp-for="AddProjectModel.StartDate"></label>
+                <input asp-for="AddProjectModel.StartDate" value="@Model.AddProjectModel?.StartDate" class="form-input" />
+                <span asp-validation-for="AddProjectModel.StartDate"></span>
+            </div>
+
+            <div>
+                <label asp-for="AddProjectModel.EndDate"></label>
+                <input asp-for="AddProjectModel.EndDate" value="@Model.AddProjectModel?.EndDate" class="form-input" />
+                <span asp-validation-for="AddProjectModel.EndDate"></span>
+            </div>
+        </div>
+
+
+        <div class="grid mt-4">
+            <label asp-for="AddProjectModel.Member"></label>
+            <input asp-for="AddProjectModel.Member" value="@Model.AddProjectModel?.Member" class="form-input" />
+            <span asp-validation-for="AddProjectModel.Member"></span>
+        </div>
+
+        @* <div class="grid mt-4"> *@
+        @*     <select asp-for="AddProjectModel.Member" asp-items="@Model?.Members" class="form-input"> *@
+        @*         <option value="" disabled></option> *@
+        @*     </select> *@
+        @*     <span asp-validation-for="AddProjectModel.Member"></span> *@
+        @* </div> *@
+
+        <div class="grid mt-4">
+            <label asp-for="AddProjectModel.Budget"></label>
+            <input asp-for="AddProjectModel.Budget" value="@Model.AddProjectModel?.Budget" class="form-input" />
+            <span asp-validation-for="AddProjectModel.Budget"></span>
+        </div>
+
+        <button type="submit" class="button btn-blue mt-4">Create</button>
+    </form>
+</div>
+
+
+@await Html.PartialAsync("_ValidationScripts")
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const fileInput = document.querySelector("#AddProjectModel_ProjectImage")
+        if (!fileInput) return
+
+        fileInput.addEventListener("change", (e) => {
+            const file = e.target.files[0]
+            const rectangle = document.querySelector("#circle-container")
+            const img = document.querySelector("#image-preview")
+
+            if (file) {
+                const reader = new FileReader()
+
+                reader.onload = (e) => {
+                    img.src = e.target.result
+                    img.classList.remove("d-none")
+                    rectangle.classList.add("d-none")
+                }
+
+                reader.readAsDataURL(file)
+            } else {
+                img.classList.add("d-none")
+                rectangle.classList.remove("d-none")
+            }
+        })
+    })
+</script>

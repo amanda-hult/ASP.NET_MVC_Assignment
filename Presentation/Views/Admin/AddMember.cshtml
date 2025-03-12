@@ -1,0 +1,122 @@
+﻿@model AddMemberViewModel
+@{
+	Layout = "_AuthLayout";
+
+	ViewData["Title"] = Model.Title;
+}
+
+<div class="surface">
+
+    <form asp-controller="Admin" asp-action="AddMember" method="post" enctype="multipart/form-data" class="member-form" novalidate>
+        <h3>New Member</h3>
+
+        <div class="image-preview-container">
+            <label asp-for="AddMemberModel.ProfileImage" id="circle-container" class="circle">
+                <i class="fa-duotone fa-solid fa-circle-camera fa-2xl" style="--fa-primary-color: #93a0b4; --fa-primary-opacity: 0.4; --fa-secondary-color: #6a707c; --fa-secondary-opacity: 1;"></i>
+            </label>
+
+            <img id="image-preview" src="#" alt="Profile picture" class="d-none" />
+        </div>
+
+        <input asp-for="AddMemberModel.ProfileImage" accept="image/*" class="d-none" />
+
+        <div class="name-container mt-4">
+            <div>
+                <label asp-for="AddMemberModel.FirstName"></label>
+                <input asp-for="AddMemberModel.FirstName" value="@Model?.AddMemberModel?.FirstName" class="form-input" />
+                <span asp-validation-for="AddMemberModel.FirstName"></span>
+            </div>
+
+            <div>
+                <label asp-for="AddMemberModel.LastName"></label>
+                <input asp-for="AddMemberModel.LastName" value="@Model?.AddMemberModel?.LastName" class="form-input" />
+                <span asp-validation-for="AddMemberModel.LastName"></span>
+            </div>
+        </div>
+
+        <div class="grid mt-4">
+            <label asp-for="AddMemberModel.Email"></label>
+            <input asp-for="AddMemberModel.Email" value="@Model?.AddMemberModel?.Email" class="form-input" />
+            <span asp-validation-for="AddMemberModel.Email"></span>
+        </div>
+
+        <div class="grid mt-4">
+            <label asp-for="AddMemberModel.Phone"></label>
+            <input asp-for="AddMemberModel.Phone" value="@Model?.AddMemberModel?.Phone" class="form-input" />
+            <span asp-validation-for="AddMemberModel.Phone"></span>
+        </div>
+
+        <div class="grid mt-4">
+            <label asp-for="AddMemberModel.JobTitle"></label>
+            <input asp-for="AddMemberModel.JobTitle" value="@Model?.AddMemberModel?.JobTitle" class="form-input" />
+            <span asp-validation-for="AddMemberModel.JobTitle"></span>
+        </div>
+
+        <div class="grid mt-4">
+            <label asp-for="AddMemberModel.Address"></label>
+            <input asp-for="AddMemberModel.Address" value="@Model?.AddMemberModel?.Address" class="form-input" />
+            <span asp-validation-for="AddMemberModel.Address"></span>
+        </div>
+
+        <div class="grid mt-4">
+
+            <label asp-for="AddMemberModel.DateOfBirth"></label>
+
+            <div class="date-container">
+                <div>
+                    <select class="form-input" asp-for="AddMemberModel.DateOfBirth.SelectedDay" asp-items="@(new SelectList(Model?.Days))">
+                        <option value="" disabled selected>Day</option>
+                    </select>
+                    <span asp-validation-for="AddMemberModel.DateOfBirth.SelectedDay"></span>
+                </div>
+
+                <div>
+                    <select class="form-input" asp-for="AddMemberModel.DateOfBirth.SelectedMonth" asp-items="@(new SelectList(Model?.Months))">
+                        <option value="" disabled selected>Month</option>
+                    </select>
+                    <span asp-validation-for="AddMemberModel.DateOfBirth.SelectedMonth"></span>
+                </div>
+
+                <div>
+                    <select class="form-input" asp-for="AddMemberModel.DateOfBirth.SelectedYear" asp-items="@(new SelectList(Model?.Years))">
+                        <option value="" class="form-input" disabled selected>Year</option>
+                    </select>
+                    <span asp-validation-for="AddMemberModel.DateOfBirth.SelectedYear"></span>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="button btn-blue mt-4">Add Contact</button>
+    </form>
+</div>
+
+
+@await Html.PartialAsync("_ValidationScripts")
+
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		const fileInput = document.querySelector("#AddMemberModel_ProfileImage")
+		if (!fileInput) return
+
+		fileInput.addEventListener("change", (e) => {
+			const file = e.target.files[0]
+			const circle = document.querySelector("#circle-container")
+			const img = document.querySelector("#image-preview")
+
+			if (file) {
+				const reader = new FileReader()
+
+				reader.onload = (e) => {
+					img.src = e.target.result
+					img.classList.remove("d-none")
+					circle.classList.add("d-none")
+				}
+
+				reader.readAsDataURL(file)
+			} else {
+				img.classList.add("d-none")
+				circle.classList.remove("d-none")
+			}
+		})
+	})
+</script>
