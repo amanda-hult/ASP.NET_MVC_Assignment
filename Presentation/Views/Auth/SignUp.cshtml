@@ -4,7 +4,7 @@
     ViewData["Title"] = Model.Title;
 }
 
-<div class="surface">
+<div class="surface-35">
 	<form method="post" asp-controller="Auth" asp-action="SignUp" class="form-container" novalidate>
         <h1 class="text-center">Create Account</h1>
 
@@ -58,4 +58,4 @@
 	</form>
 </div>
 
-@await Html.PartialAsync("/_ValidationScripts")
+@await Html.PartialAsync("_ValidationScripts")

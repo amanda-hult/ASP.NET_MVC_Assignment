@@ -1,16 +1,16 @@
 ﻿using Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Contexts;
 
-public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
+public class DataContext(DbContextOptions<DataContext> options) : IdentityDbContext<UserEntity>(options)
 {
+    public DbSet<AddressEntity> Addresses { get; set; } = null!;
     public DbSet<ClientEntity> Clients { get; set; } = null!;
     public DbSet<ProjectEntity> Projects { get; set; } = null!;
     public DbSet<StatusEntity> Statuses { get; set; } = null!;
 
-    // Use Identity
-    //public DbSet<UserEntity> Users { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

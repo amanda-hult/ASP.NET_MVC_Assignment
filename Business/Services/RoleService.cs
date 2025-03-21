@@ -1,27 +1,27 @@
-﻿using Business.Interfaces;
-using Data.Entities;
-using Data.Interfaces;
+﻿//using Business.Interfaces;
+//using Data.Entities;
+//using Data.Interfaces;
 
-namespace Business.Services;
+//namespace Business.Services;
 
-public class RoleService(IRoleRepository roleRepository) : IRoleService
-{
-    private readonly IRoleRepository _roleRepository = roleRepository;
+//public class RoleService(IRoleRepository roleRepository) : IRoleService
+//{
+//    private readonly IRoleRepository _roleRepository = roleRepository;
 
-    // CREATE
+//    // CREATE
 
-    // READ
-    public async Task<RoleEntity> GetRoleEntityByIdAsync(int id)
-    {
-        var roleEntity = await _roleRepository.GetAsync(x => x.RoleId == id);
+//    // READ
+//    public async Task<RoleEntity> GetRoleEntityByIdAsync(int id)
+//    {
+//        var roleEntity = await _roleRepository.GetAsync(x => x.RoleId == id);
 
-        if (roleEntity == null)
-            throw new ArgumentNullException(nameof(roleEntity));
+//        if (roleEntity == null)
+//            throw new ArgumentNullException(nameof(roleEntity));
 
-        return roleEntity;
-    }
+//        return roleEntity;
+//    }
 
-    // UPDATE
+//    // UPDATE
 
-    // DELETE
-}
+//    // DELETE
+//}

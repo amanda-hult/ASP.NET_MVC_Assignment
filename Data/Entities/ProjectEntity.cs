@@ -28,7 +28,7 @@ public class ProjectEntity
     [ForeignKey("ClientId")]
     public ClientEntity Client { get; set; } = null!;
 
-    public int UserId { get; set; }
+    public string UserId { get; set; } = null!;
     [ForeignKey("UserId")]
     public UserEntity User { get; set; } = null!;
 

@@ -1,5 +1,20 @@
-﻿@{
+﻿@model AddProjectViewModel
+@{
 	Layout = "_PortalLayout";
 
-	ViewData["Title"] = "Projects";
+	ViewData["Title"] = Model.Title;
 }
+
+@await Html.PartialAsync("Partials/Components/_AddProjectModal", Model.AddProjectModel)
+
+<section id="projects">
+	<header>
+		<h2>Projects</h2>
+		<button type="button" data-modal="true" data-target="#addProjectModal" class="button btn-blue btn-add">Add Project</button>
+	</header>
+
+	<div>
+		@await Html.PartialAsync("Partials/Sections/_ProjectList")
+	</div>
+
+</section>

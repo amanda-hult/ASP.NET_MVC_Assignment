@@ -2,18 +2,22 @@
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
+using Data.Entities;
 using Data.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Business.Services;
 
-public class UserService(IUserRepository userRepository, IProjectRepository projectRepository, IRoleService roleService, IAddressService addressService, IDateOfBirthService dateofbirthService) : IUserService
+public class UserService(IUserRepository userRepository, IProjectRepository projectRepository, IAddressService addressService, IDateOfBirthService dateofbirthService, UserManager<UserEntity> userManager) : IUserService
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IProjectRepository _projectRepository = projectRepository;
 
-    private readonly IRoleService _roleService = roleService;
     private readonly IAddressService _addressService = addressService;
     private readonly IDateOfBirthService _dateofbirthService = dateofbirthService;
+
+
+    private readonly UserManager<UserEntity> _userManager = userManager;
 
     //// CREATE
     //public async Task<bool> CreateUser(UserCreateModel model)
@@ -68,17 +72,17 @@ public class UserService(IUserRepository userRepository, IProjectRepository proj
     // UPDATE
 
     // DELETE
-    public async Task<bool> DeleteUserAsync(int id)
-    {
-        var user = await _userRepository.GetAsync(x => x.UserId == id);
-        if (user == null)
-            return false;
+    //public async Task<bool> DeleteUserAsync(int id)
+    //{
+    //    var user = await _userRepository.GetAsync(x => x.UserId == id);
+    //    if (user == null)
+    //        return false;
 
-        var exists = await _projectRepository.ExistsAsync(x => x.UserId == id);
-        if (exists)
-            return false;
+    //    var exists = await _projectRepository.ExistsAsync(x => x.UserId == id);
+    //    if (exists)
+    //        return false;
 
-        await _userRepository.DeleteAsync(x => x.UserId == id);
-        return true;
-    }
+    //    await _userRepository.DeleteAsync(x => x.UserId == id);
+    //    return true;
+    //}
 }

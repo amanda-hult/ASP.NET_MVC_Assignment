@@ -1,39 +1,29 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Entities;
 
-[Index(nameof(Email), IsUnique = true)]
-public class UserEntity
+//[Index(nameof(Email), IsUnique = true)]
+public class UserEntity : IdentityUser
 {
-    [Key]
-    public int UserId { get; set; }
-
     [Required]
+    [ProtectedPersonalData]
     [Column(TypeName = "nvarchar(50)")]
     public string FirstName { get; set; } = null!;
 
     [Required]
+    [ProtectedPersonalData]
     [Column(TypeName = "nvarchar(50)")]
     public string LastName { get; set; } = null!;
 
-    [Required]
-    [Column(TypeName = "nvarchar(150)")]
-    public string Email { get; set; } = null!;
-
-    [Required]
-    [Column(TypeName = "varchar(20)")]
-    public string Phone { get; set; } = null!;
+    [ProtectedPersonalData]
+    [Column(TypeName = "nvarchar(50)")]
+    public string? JobTitle { get; set; }
 
 
-    public int RoleId { get; set; }
-    [ForeignKey("RoleId")]
-    public RoleEntity Role { get; set; } = null!;
-
-    public int AddressId { get; set; }
-    [ForeignKey("AddressId")]
-    public AddressEntity Address { get; set; } = null!;
+    public AddressEntity? Address { get; set; } = null!;
 
     public int DateOfBirthId { get; set; }
     [ForeignKey("DateOfBirthId")]

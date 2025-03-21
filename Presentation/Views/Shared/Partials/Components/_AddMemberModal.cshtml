@@ -1,0 +1,116 @@
+﻿@model AddMemberModel
+
+<div id="addMemberModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>New Member</h3>
+            <button type="button" class="button-close" data-close="true"></button>
+        </div>
+
+        <form asp-controller="Member" asp-action="AddMember" method="post" enctype="multipart/form-data" novalidate>
+
+            <div class="image-preview-container circle">
+                <img id="image-preview" src="#" class="d-none" />
+                <input asp-for="ProfileImage" accept="image/*" class="d-none" />
+
+            </div>
+
+            <div class="name-container mt-4">
+                <div class="form-group">
+                    <label asp-for="FirstName"></label>
+                    <div class="field-group">
+                        <input asp-for="FirstName" />
+                        <span asp-validation-for="FirstName"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LastName"></label>
+                    <div class="field-group">
+                        <input asp-for="LastName" />
+                        <span asp-validation-for="LastName"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <div class="field-group">
+                    <input asp-for="Email"/>
+                    <span asp-validation-for="Email"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Phone"></label>
+                <div class="field-group">
+                    <input asp-for="Phone" />
+                    <span asp-validation-for="Phone"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="JobTitle"></label>
+                <div class="field-group">
+                    <input asp-for="JobTitle" />
+                    <span asp-validation-for="JobTitle"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Address"></label>
+                <div class="field-group">
+                    <input asp-for="Address"/>
+                    <span asp-validation-for="Address"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="DateOfBirth"></label>
+
+                <div class="date-container">
+                    <div class="form-group">
+                        <select asp-for="DateOfBirth.SelectedDay" asp-items="@(new SelectList(Model?.DateOfBirth.Days))" required>
+                            <option value="" disabled selected>Day</option>
+                        </select>
+                        <span asp-validation-for="DateOfBirth.SelectedDay"></span>
+                    </div>
+
+                    @* <div class="form-group"> *@
+                    @*     <select asp-for="DateOfBirth.SelectedMonth" asp-items="@(new SelectList(Model?.DateOfBirth.Months))"> *@
+                    @*         <option value="" disabled selected>Month</option> *@
+                    @*     </select> *@
+                    @*     <span asp-validation-for="DateOfBirth.SelectedMonth"></span> *@
+                    @* </div> *@
+
+                    <div class="form-group">
+                        <select asp-for="DateOfBirth.SelectedMonth" required>
+                            <option value="" disabled selected>Month</option>
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i">@System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(i)</option>
+                            }
+                        </select>
+                        <span asp-validation-for="DateOfBirth.SelectedMonth"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <select asp-for="DateOfBirth.SelectedYear" asp-items="@(new SelectList(Model?.DateOfBirth.Years))" required>
+                            <option value="" class="form-input" disabled selected>Year</option>
+                        </select>
+                        <span asp-validation-for="DateOfBirth.SelectedYear"></span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="button btn-blue mt-4">Add Contact</button>
+        </form>
+    </div>
+</div>
+
+
+@await Html.PartialAsync("_ValidationScripts")
+
+
+                        

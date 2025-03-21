@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using Data.Contexts;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Data.Repositories;
 
@@ -12,24 +13,48 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
     protected readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
 
     // TRANSACTION MANAGEMENT
+    private IDbContextTransaction _transaction = null!;
 
+    public virtual async Task BeginTransactionAsync()
+    {
+        if (_transaction == null)
+        {
+            _transaction = await _context.Database.BeginTransactionAsync();
+        }
+    }
+
+    public virtual async Task CommitTransactionAsync()
+    {
+        if (_transaction != null)
+        {
+            await _transaction.CommitAsync();
+            await _transaction.DisposeAsync();
+            _transaction = null!;
+        }
+    }
+
+    public virtual async Task RollbackTransactionAsync()
+    {
+        await _transaction.RollbackAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null!;
+    }
 
     // CREATE
     public virtual async Task<TEntity> CreateAsync(TEntity entity)
     {
         if (entity == null)
-            return null;
+            return null!;
 
         try
         {
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
             return entity;
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Error creating entity: {ex.Message}");
-            throw;
+            return null!;
         }
     }
     // READ
@@ -78,7 +103,7 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         catch (Exception ex)
         {
             Debug.WriteLine($"Error updating entity: {ex.Message}");
-            throw;
+            return null!;
         }
     }
 
@@ -89,11 +114,10 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         {
             var entityToDelete = await _dbSet.FirstOrDefaultAsync(predicate);
             if (entityToDelete == null)
-            {
                 return false;
-            }
+
             _dbSet.Remove(entityToDelete);
-            await _context.SaveChangesAsync(); ;
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception ex)

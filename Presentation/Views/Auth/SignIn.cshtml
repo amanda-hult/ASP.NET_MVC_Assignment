@@ -6,7 +6,7 @@
 	ViewData["Title"] = Model.Title;
 }
 
-<div class="surface">
+<div class="surface-35">
     <form method="post" asp-controller="Auth" asp-action="SignIn" class="form-container" novalidate>
         <h1 class="text-center">Login</h1>
 
@@ -34,10 +34,13 @@
             <p>Remember me</p>
         </div>
 
+        <div class="field-validation-error">
+            @ViewData["ErrorMessage"]
+        </div>
         <button class="button btn-blue mt-4">Log In</button>
 
         <p class="mt-5 text-center">Don't have an account?<a asp-asp-controller="Auth" asp-action="SignUp">Sign Up</a></p>
     </form>
 </div>
 
-@await Html.PartialAsync("/_ValidationScripts")
+@await Html.PartialAsync("_ValidationScripts")

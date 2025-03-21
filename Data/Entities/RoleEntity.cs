@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Data.Entities;
 
 [Index(nameof(Title), IsUnique = true)]
-public class RoleEntity
+public class JobTitle
 {
     [Key]
-    public int RoleId { get; set; }
+    public int JobTitleId { get; set; }
 
     [Required]
     [Column(TypeName = "nvarchar(50)")]

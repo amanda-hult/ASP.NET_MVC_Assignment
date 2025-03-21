@@ -4,28 +4,30 @@ namespace Presentation.Models;
 
 public class AddProjectModel
 {
-    public IFormFile ProjectImage { get; set; } = null!;
+    [DataType(DataType.Upload)]
+    public IFormFile? ProjectImage { get; set; }
 
     [Display(Name = "Project Name", Prompt = "Project Name")]
-    [Required(ErrorMessage = "Please enter a project name")]
+    [Required(ErrorMessage = "Required")]
     public string ProjectName { get; set; } = null!;
 
+
     [Display(Name = "Client Name", Prompt = "Client Name")]
-    [Required(ErrorMessage = "Please enter a client name")]
+    [Required(ErrorMessage = "Required")]
     public string ClientName { get; set; } = null!;
 
 
     [Display(Name = "Description", Prompt = "Type something")]
-    [Required(ErrorMessage = "Please enter a description")]
+    [Required(ErrorMessage = "Required")]
     public string Description { get; set; } = null!;
 
 
     [Display(Name = "Start Date")]
-    [Required(ErrorMessage = "Please enter a start date")]
+    [Required(ErrorMessage = "Required")]
     public DateTime StartDate { get; set; }
 
     [Display(Name = "End Date")]
-    [Required(ErrorMessage = "Please enter a end date")]
+    [Required(ErrorMessage = "Required")]
     public DateTime EndDate { get; set; }
 
 
@@ -38,7 +40,7 @@ public class AddProjectModel
 
 
     [Display(Name = "Budget")]
-    [Required(ErrorMessage = "Please enter a budget")]
+    [Required(ErrorMessage = "Required")]
     public string Budget { get; set; } = null!;
 
 }

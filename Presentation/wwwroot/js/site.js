@@ -1,4 +1,123 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿document.addEventListener('DOMContentLoaded', () => {
+    const previewSize = 144
 
-// Write your JavaScript code.
+
+    // open modal
+    const modalButtons = document.querySelectorAll('[data-modal="true"]')
+    modalButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const modalTarget = button.getAttribute('data-target')
+            const modal = document.querySelector(modalTarget)
+
+            if (modal)
+                modal.style.display = 'flex';
+        })
+    })
+
+    //close modal
+    const closeButtons = document.querySelectorAll('[data-close="true"]')
+    closeButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const modal = button.closest('.modal')
+            if (modal) {
+                modal.style.display = 'none'
+
+                modal.querySelectorAll('form').forEach(form => {
+                    form.reset()
+                    clearErrorMessages(form)
+
+                    const imagePreview = form.querySelector('#image-preview')
+                    if (imagePreview)
+                        imagePreview.src = ''
+
+                    const imageContainer = form.querySelector('.image-preview-container')
+                    if (imageContainer) {
+                        imageContainer.classList.remove('selected')
+                        imageContainer.classList.remove('borderless')
+                    }
+
+                })
+
+            }
+        })
+    })
+
+
+    // handle image preview
+    document.querySelectorAll('.image-preview-container').forEach(container => {
+        const fileInput = document.querySelector('input[type="file"]')
+        if (!fileInput) return
+
+        container.addEventListener('click', () => fileInput.click())
+
+        fileInput.addEventListener("change", (e) => {
+            const file = e.target.files[0]
+            const imagePreview = document.querySelector("#image-preview")
+
+            const isRound = container.classList.contains('.circle')
+
+            if (file) {
+                processImage(file, imagePreview, container, previewSize, isRound)
+            }
+        })
+    })
+
+})
+
+
+
+
+async function loadImage(file) {
+    return new Promise(function (resolve, reject) {
+
+        const reader = new FileReader()
+
+        reader.onerror = () => reject(new Error("Failed to load file"))
+        reader.onload = (e) => {
+            const img = new Image()
+            img.onerror = () => reject(new Error("Failed to load image"))
+            img.onload = () => resolve(img)
+            img.src = e.target.result
+        }
+
+        reader.readAsDataURL(file)
+    })
+}
+
+
+
+async function processImage(file, imagePreview, container, previewSize = 144, isRound = false) {
+    try {
+        const img = await loadImage(file)
+        const canvas = document.createElement('canvas')
+        canvas.height = previewSize
+        canvas.width = previewSize
+        const context = canvas.getContext('2d')
+
+        const scale = Math.min(previewSize / img.width, previewSize / img.height)
+        const newWidth = img.width * scale
+        const newHeight = img.height * scale
+
+        context.fillStyle = "white"
+        context.fillRect(0, 0, previewSize, previewSize);
+
+
+        if (isRound) {
+            context.beginPath()
+            context.arc(previewSize / 2, previewSize / 2, previewSize / 2, 0, 2 * Math.PI)
+            context.closePath()
+            context.clip()
+        }
+
+        context.drawImage(img, (previewSize - newWidth) / 2, (previewSize - newHeight) / 2, newWidth, newHeight)
+
+        imagePreview.src = canvas.toDataURL('image/jpeg')
+        container.classList.add('selected')
+        imagePreview.classList.remove("d-none")
+        container.classList.add("borderless")
+
+    }
+    catch (error) {
+        console.error('Failed to process image:', error)
+    }
+}

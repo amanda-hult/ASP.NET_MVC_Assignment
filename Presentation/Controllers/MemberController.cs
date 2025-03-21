@@ -4,29 +4,18 @@ using Presentation.ViewModels;
 
 namespace Presentation.Controllers;
 
-
-//[Authorize]
-[Route("/projects")]
-public class ProjectsController : Controller
+public class MemberController : Controller
 {
     private readonly IWebHostEnvironment _env;
 
-    public ProjectsController(IWebHostEnvironment env)
+    public MemberController(IWebHostEnvironment env)
     {
         _env = env;
     }
 
-    [HttpGet]
-    [Route("/projects")]
-    public IActionResult Projects()
-    {
-        var viewModel = new AddProjectViewModel();
-        return View(viewModel);
-    }
-
 
     [HttpPost]
-    public IActionResult AddProject(AddProjectModel model)
+    public async Task<IActionResult> AddMember(AddMemberModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -42,27 +31,24 @@ public class ProjectsController : Controller
 
         //string filePath;
 
-        //if (model.ProjectImage == null || model.ProjectImage.Length == 0)
+        //if (model.ProfileImage == null || model.ProfileImage.Length == 0)
         //{
-        //    filePath = "/images/projectimage-standard.svg";
+        //    filePath = "/images/avatar-standard.svg";
         //}
         //else
         //{
         //    var uploadFolder = Path.Combine(_env.WebRootPath, "uploads");
         //    Directory.CreateDirectory(uploadFolder);
 
-        //    filePath = Path.Combine(uploadFolder, $"{Guid.NewGuid()}_{Path.GetFileName(model.ProjectImage.FileName)}");
+        //    filePath = Path.Combine(uploadFolder, $"{Guid.NewGuid()}_{Path.GetFileName(model.ProfileImage.FileName)}");
 
         //    using (var stream = new FileStream(filePath, FileMode.Create))
         //    {
-        //        await model.ProjectImage.CopyToAsync(stream);
+        //        await model.ProfileImage.CopyToAsync(stream);
         //    }
         //}
 
-        // send to projectService
-        return RedirectToAction("Projects", "Projects");
+        // send to service
+        return RedirectToAction("Members", "Admin");
     }
 }
-
-
-

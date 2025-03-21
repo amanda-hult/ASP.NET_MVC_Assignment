@@ -1,9 +1,9 @@
-﻿using Business.Models;
+﻿using Presentation.Models;
 
 namespace Presentation.ViewModels;
 
 public class MembersViewModel
 {
     public string Title { get; set; } = "Team Members";
-    public UserModel User { get; set; }
+    public AddMemberModel Member { get; set; } = new AddMemberModel();
 }

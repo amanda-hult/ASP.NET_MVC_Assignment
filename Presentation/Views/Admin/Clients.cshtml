@@ -1,0 +1,21 @@
+﻿
+@{
+	Layout = "_PortalLayout";
+	// ViewData["Title"] = Model.Title;
+}
+
+@* <partial name="Partials/Components/_AddClientModal" /> *@
+@await Html.PartialAsync("Partials/Components/_AddClientModal")
+@await Html.PartialAsync("Partials/Components/_EditClientModal")
+
+<section id="clients">
+	<header>
+		<h2>Clients</h2>
+		<button type="button" data-modal="true" data-target="#addClientModal" class="button btn-blue btn-add">Add Client</button>
+	</header>
+
+	<div class="surface">
+		@await Html.PartialAsync("Partials/Sections/_ClientList")
+	</div>
+
+</section>

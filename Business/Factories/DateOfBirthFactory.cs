@@ -9,9 +9,9 @@ public static class DateOfBirthFactory
     {
         return new DateOfBirthEntity
         {
-            Date = model.Date,
-            Month = model.Month,
-            Year = model.Year,
+            Date = model.SelectedDay,
+            Month = model.SelectedMonth,
+            Year = model.SelectedYear,
         };
     }
 }

@@ -1,20 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Presentation.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Presentation.ViewModels;
 
 namespace Presentation.Controllers;
 
+//[Authorize]
 [Route("/admin")]
 public class AdminController : Controller
 {
-    private readonly IWebHostEnvironment _env;
 
-    public AdminController(IWebHostEnvironment env)
+    //[AllowAnonymous]
+    [HttpGet]
+    public IActionResult AdminLogIn()
     {
-        _env = env;
+        return View();
     }
 
 
+    //[Authorize(Roles = "admin")]
     [HttpGet]
     [Route("/members")]
     public IActionResult Members()
@@ -24,50 +27,11 @@ public class AdminController : Controller
     }
 
 
-
-
-
+    //[Authorize(Roles = "admin")]
     [HttpGet]
-    [Route("/addmember")]
-    public IActionResult AddMember()
+    [Route("/clients")]
+    public IActionResult Clients()
     {
-        var viewModel = new AddMemberViewModel();
-        return View(viewModel);
-    }
-
-
-    [HttpPost]
-    [Route("/addmember")]
-    public async Task<IActionResult> AddMember([Bind(Prefix = "AddMemberModel")] AddMemberModel model)
-    {
-        if (!ModelState.IsValid)
-        {
-            AddMemberViewModel viewModel = new()
-            {
-                AddMemberModel = model
-            };
-            return View(viewModel);
-        }
-
-        string filePath;
-
-        if (model.ProfileImage == null || model.ProfileImage.Length == 0)
-        {
-            filePath = "/images/avatar-standard.svg";
-        }
-        else
-        {
-            var uploadFolder = Path.Combine(_env.WebRootPath, "uploads");
-            Directory.CreateDirectory(uploadFolder);
-
-            filePath = Path.Combine(uploadFolder, $"{Guid.NewGuid()}_{Path.GetFileName(model.ProfileImage.FileName)}");
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await model.ProfileImage.CopyToAsync(stream);
-            }
-        }
-
         return View();
     }
 }
