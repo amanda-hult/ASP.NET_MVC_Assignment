@@ -1,13 +1,13 @@
-﻿@model AddProjectModel
+﻿@model EditProjectModel
 
-<div id="addProjectModal" class="modal">
+<div id="editProjectModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Add Project</h3>
+            <h3>Edit Project</h3>
             <button type="button" class="button-close" data-close="true"></button>
         </div>
 
-        <form class="project-form-container" method="post" asp-controller="Projects" asp-action="AddProject" enctype="multipart/form-data" novalidate>
+        <form class="project-form-container" method="post" asp-controller="Projects" asp-action="EditProject" enctype="multipart/form-data" novalidate>
 
             @* <div class="image-preview-container pt-1"> *@
             @*     <label asp-for="ProjectImage" id="circle-container" class="square"> *@
@@ -94,10 +94,10 @@
 
             <div class="form-group">
                 <label asp-for="Status"></label>
-                <div class="field-group">
-                    <input asp-for="Status" />
-                    <span asp-validation-for="Status"></span>
-                </div>
+                <select asp-for="Status" asp-items="@(new SelectList(Model.Status))" required>
+                    <option value="" class="form-input" disabled selected></option>
+                </select>
+                <span asp-validation-for="Status"></span>
             </div>
 
             <button type="submit" class="button btn-blue mt-4">Create</button>

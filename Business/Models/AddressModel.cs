@@ -7,4 +7,5 @@ public class AddressModel
     public string StreetNumber { get; set; } = null!;
     public string PostalCode { get; set; } = null!;
     public string City { get; set; } = null!;
+    public List<UserModel> Users { get; set; } = new List<UserModel>();
 }

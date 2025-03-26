@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Presentation.Models;
+namespace Business.Models;
 
 public class SignUpModel
 {
@@ -15,7 +15,7 @@ public class SignUpModel
     public string LastName { get; set; } = null!;
 
 
-    [Display(Name = "Email address", Prompt = "Your email address")]
+    [Display(Name = "Email", Prompt = "Your email address")]
     [Required(ErrorMessage = "Email address is required")]
     [DataType(DataType.EmailAddress)]
     [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Please enter a valid email address")]

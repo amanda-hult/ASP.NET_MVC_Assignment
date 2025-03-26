@@ -5,69 +5,63 @@ using Business.Models;
 using Data.Entities;
 using Data.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
-public class UserService(IUserRepository userRepository, IProjectRepository projectRepository, IAddressService addressService, IDateOfBirthService dateofbirthService, UserManager<UserEntity> userManager) : IUserService
+public class UserService(UserManager<UserEntity> userManager, IUserRepository userRepository, IAddressService addressService) : IUserService
 {
     private readonly IUserRepository _userRepository = userRepository;
-    private readonly IProjectRepository _projectRepository = projectRepository;
+    //private readonly IProjectRepository _projectRepository = projectRepository;
 
     private readonly IAddressService _addressService = addressService;
-    private readonly IDateOfBirthService _dateofbirthService = dateofbirthService;
+    //private readonly IDateOfBirthService _dateofbirthService = dateofbirthService;
 
 
     private readonly UserManager<UserEntity> _userManager = userManager;
 
-    //// CREATE
-    //public async Task<bool> CreateUser(UserCreateModel model)
-    //{
-    //    // check if user already exists
-    //    bool exists = await _userRepository.ExistsAsync(x => x.Email == model.Email);
-    //    if (exists)
-    //        return false;
+    // CREATE
+    public async Task<bool> CreateUserAsync(UserCreateModel model)
+    {
+        // check if user already exists
+        bool exists = await _userRepository.ExistsAsync(x => x.Email == model.Email);
+        if (exists)
+            return false;
 
-    //    try
-    //    {
-    //        // get role
-    //        var roleEntity = _roleService.GetRoleEntityByIdAsync(model.RoleId);
+        try
+        {
+            var createdAddress = await _addressService.CreateAddressAsync(model.Address);
+            if (createdAddress == null)
+            {
+                return false;
+            }
 
-    //        // check existence/create address and dateofbirth
-    //        var addressEntity = _addressService.GetAddressEntityByIdAsync(model.AddressId);
-    //        if (addressEntity == null)
-    //        {
-    //            await _addressService.CreateAddressAsync(model.Address);
-    //            var createdAddress = _addressService.GetAddressEntityByIdAsync(model.AddressId);
-    //        }
+            var userEntity = UserFactory.Create(model, createdAddress);
+            var result = await _userManager.CreateAsync(userEntity, model.Password);
 
-    //        var dateEntity = _dateofbirthService.GetDateOfBirthEntityByIdAsync(model.DateOfBirthId);
-    //        if (dateEntity == null)
-    //        {
-    //            await _dateofbirthService.CreateDateOfBirthAsync(model.DateOfBirth);
-    //            var createdDate = _dateofbirthService.GetDateOfBirthEntityByIdAsync(model.DateOfBirthId);
-    //        }
+            return result.Succeeded;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error creating user: {ex.Message}");
+            return false;
+        }
 
+    }
 
+    // READ
+    public async Task<IEnumerable<UserModel>> GetAllUsersAsync()
+    {
+        var list = await _userManager.Users.ToListAsync();
+        var users = list.Select(UserFactory.CreateBasic).ToList();
+        return users;
+        //var users = (await _userRepository.GetAllAsync()).Select(UserFactory.Create).ToList();
 
-    //        var createdUser = await _userRepository.CreateAsync();
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Debug.WriteLine($"Error creating user: {ex.Message}");
-    //    }
+        //if (users.Count == 0)
+        //    throw new ArgumentNullException(nameof(users));
 
-    //}
-
-    //// READ
-    //public async Task<IEnumerable<UserModel>> GetAllUsersAsync()
-    //{
-    //    var users = (await _userRepository.GetAllAsync()).Select(UserFactory.Create).ToList();
-
-    //    if (users.Count == 0)
-    //        throw new ArgumentNullException(nameof(users));
-
-    //    return users;
-    //}
+        //return users;
+    }
 
     // UPDATE
 

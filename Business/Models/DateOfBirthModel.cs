@@ -2,12 +2,12 @@
 
 public class DateOfBirthModel
 {
-    public int DateOfBirthId { get; set; }
+    public int? DateOfBirthId { get; set; }
 
     // -> DateTime ?
-    public int Date { get; set; }
+    public int? Date { get; set; }
 
-    public string Month { get; set; } = null!;
+    public int? Month { get; set; } = null!;
 
-    public int Year { get; set; }
+    public int? Year { get; set; }
 }

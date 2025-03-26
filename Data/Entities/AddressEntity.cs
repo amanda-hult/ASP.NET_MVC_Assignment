@@ -1,30 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace Data.Entities;
 
-//[Index(nameof(AddressId), IsUnique = true)]
 public class AddressEntity
 {
-    [Key, ForeignKey("User")]
-    public string UserId { get; set; } = null!;
+    [Key]
+    public int AddressId { get; set; }
 
-    [Required]
     [Column(TypeName = "nvarchar(50)")]
-    public string StreetName { get; set; } = null!;
+    public string? StreetName { get; set; }
 
-    [Required]
     [Column(TypeName = "nvarchar(5)")]
-    public string StreetNumber { get; set; } = null!;
+    public string? StreetNumber { get; set; }
 
-    [Required]
     [Column(TypeName = "varchar(5)")]
-    public string PostalCode { get; set; } = null!;
+    public string? PostalCode { get; set; }
 
-    [Required]
     [Column(TypeName = "nvarchar(50)")]
-    public string City { get; set; } = null!;
+    public string? City { get; set; }
 
-    public UserEntity User { get; set; } = null!;
+    public ICollection<UserEntity> Users { get; set; } = new List<UserEntity>();
 }

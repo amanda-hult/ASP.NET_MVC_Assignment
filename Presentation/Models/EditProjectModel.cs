@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Business.Models;
+﻿using Business.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.Models;
 
-public class AddProjectModel
+public class EditProjectModel
 {
+    public int Id { get; set; }
+
     [DataType(DataType.Upload)]
     public IFormFile? ProjectImage { get; set; }
 
@@ -48,5 +50,4 @@ public class AddProjectModel
     [Display(Name = "Status")]
     [Required(ErrorMessage = "Please select a status")]
     public StatusModel Status { get; set; } = null!;
-
 }

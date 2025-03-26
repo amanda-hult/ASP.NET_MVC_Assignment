@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Business.Models;
+﻿using Business.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.Models;
 
-public class AddMemberModel
+public class EditMemberModel
 {
+    public int Id { get; set; }
+
     [DataType(DataType.Upload)]
     public IFormFile? ProfileImage { get; set; }
 
@@ -39,16 +41,9 @@ public class AddMemberModel
     public string? JobTitle { get; set; }
 
 
-    //[Display(Name = "Date of Birth")]
-    //[Required(ErrorMessage = "Required, please select date of birth")]
-    //public DateTime DateOfBirth { get; set; }
-
-
     [Display(Name = "Address", Prompt = "Your address")]
     public AddressCreateModel? Address { get; set; }
 
-
-    // change how to handle passwords?
 
     [Display(Name = "Password", Prompt = "Temporary password")]
     [Required(ErrorMessage = "Required")]
@@ -56,14 +51,17 @@ public class AddMemberModel
     public string Password { get; set; } = null!;
 
 
+    [Display(Name = "")]
     [Required(ErrorMessage = "Required")]
     public int? SelectedDay { get; set; }
 
 
+    [Display(Name = "")]
     [Required(ErrorMessage = "Required")]
     public int? SelectedMonth { get; set; }
 
 
+    [Display(Name = "")]
     [Required(ErrorMessage = "Required")]
     public int? SelectedYear { get; set; }
 
@@ -71,5 +69,4 @@ public class AddMemberModel
     public IEnumerable<int> Days { get; set; } = Enumerable.Range(1, 31).ToList();
     public IEnumerable<int> Months { get; set; } = Enumerable.Range(1, 12).ToList();
     public IEnumerable<int> Years { get; set; } = Enumerable.Range(DateTime.Now.Year - 100, 100 - 18 + 1).Reverse().ToList();
-
 }

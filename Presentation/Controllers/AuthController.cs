@@ -1,4 +1,5 @@
-﻿using Business.Interfaces;
+﻿using System.Diagnostics;
+using Business.Interfaces;
 using Business.Models;
 using Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -22,13 +23,14 @@ public class AuthController : Controller
     [HttpGet]
     public IActionResult SignUp()
     {
+        ViewBag.ErrorMessage = null;
         var viewModel = new SignUpViewModel();
         return View(viewModel);
     }
 
     [Route("/signup")]
     [HttpPost]
-    public IActionResult SignUp([Bind(Prefix = "AddProjectModel")] SignUpModel model)
+    public async Task<IActionResult> SignUp([Bind(Prefix = "")] SignUpModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -40,16 +42,20 @@ public class AuthController : Controller
         }
 
         //_accountService.ExistsAsync(model);
-        //_accountService.CreateAccountAsync(model);
+        var result = await _authService.SignUpAsync(model);
+        if (result)
+            return LocalRedirect("~/");
 
+        ViewBag.ErrorMessage = "";
         return View();
     }
 
 
     [Route("/signin")]
     [HttpGet]
-    public IActionResult SignIn(string returnUrl = "/")
+    public IActionResult SignIn(string returnUrl = "~/")
     {
+        ViewBag.ErrorMessage = "";
         ViewBag.ReturnUrl = returnUrl;
         var viewModel = new SignInViewModel();
         return View(viewModel);
@@ -57,43 +63,56 @@ public class AuthController : Controller
 
     [Route("/signin")]
     [HttpPost]
-    public async Task<IActionResult> SignIn(SignInModel model, string returnUrl = "/")
+    public async Task<IActionResult> SignIn(SignInViewModel viewModel, string returnUrl = "~/")
     {
-        ViewData["ErrorMessage"] = string.Empty;
+        ViewBag.ErrorMessage = "";
 
-        SignInViewModel viewModel = new()
-        {
-            Form = model
-        };
+        var model = viewModel.Form;
+
+        //SignInViewModel signInViewModel = new()
+        //{
+        //    Form = viewModel.Form
+        //};
 
         if (!ModelState.IsValid)
         {
-            ViewData["ErrorMessage"] = "Incorrect email or password.";
-            return View(viewModel);
+            foreach (var kvp in ModelState)
+            {
+                var key = kvp.Key;
+                var errors = kvp.Value?.Errors;
+                foreach (var error in errors!)
+                {
+                    Debug.WriteLine($"Field: {key}, Error: {error.ErrorMessage}");
+                }
+            }
+            Debug.WriteLine("Modellen är ogiltig.");
+        }
+        if (ModelState.IsValid)
+        {
+            var result = await _authService.SignInAsync(model);
+
+            Debug.WriteLine($"Login secceeded: {result}");
+
+            if (result)
+                return LocalRedirect(returnUrl);
+
         }
 
         //bool exists = await _authService.Exists(model.Email);
         //if (!exists)
         //{
-        //    ViewData["ErrorMessage"] = "The email is not registered. Plese create an account to sign in.";
+        //    ViewBag.ErrorMessage = "The email is not registered. Plese create an account to sign in.";
         //    return View(viewModel);
         //}
 
-        var result = await _authService.SignInAsync(model);
-        if (result)
-            return LocalRedirect(returnUrl);
-
-        ViewData["ErrorMessage"] = "Incorrect email or password.";
+        ViewBag.ErrorMessage = "Incorrect email or password.";
         return View(viewModel);
     }
 
+    public new async Task<IActionResult> SignOut()
+    {
+        await _authService.SignOutAsync();
+        return RedirectToAction("SignIn", "Auth");
+    }
 
-
-
-
-    //public new async Task<IActionResult> SignOut()
-    //{
-    //    await _signInManager.SignOutAsync();
-    //    return RedirectToAction("SignIn", "Auth");
-    //}
 }

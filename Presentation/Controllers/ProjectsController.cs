@@ -20,7 +20,7 @@ public class ProjectsController : Controller
     [Route("/projects")]
     public IActionResult Projects()
     {
-        var viewModel = new AddProjectViewModel();
+        var viewModel = new ProjectViewModel();
         return View(viewModel);
     }
 

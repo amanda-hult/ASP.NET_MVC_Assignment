@@ -5,79 +5,69 @@ namespace Business.Factories;
 
 public static class UserFactory
 {
-    //public static UserModel Create(UserEntity entity)
-    //{
-    //    return new UserModel
-    //    {
-    //        UserId = entity.UserId,
-    //        FirstName = entity.FirstName,
-    //        LastName = entity.LastName,
-    //        Email = entity.Email,
-    //        Phone = entity.Phone,
-    //        Role = new RoleModel 
-    //        {   RoleId = entity.Role.RoleId,
-    //            Title = entity.Role.Title,            
-    //        },
-    //        Address = new AddressModel
-    //        {
-    //            AddressId = entity.Address.AddressId,
-    //            StreetName = entity.Address.StreetName,
-    //            StreetNumber = entity.Address.StreetNumber,
-    //            PostalCode = entity.Address.PostalCode,
-    //            City = entity.Address.City,
-    //        },
-    //        DateOfBirth = new DateOfBirthModel
-    //        {
-    //            DateOfBirthId = entity.DateOfBirth.DateOfBirthId,
-    //            Date = entity.DateOfBirth.Date,
-    //            Month = entity.DateOfBirth.Month,
-    //            Year = entity.DateOfBirth.Year,
-    //        },
-    //    };
-    //}
+    public static UserModel CreateBasic(UserEntity entity)
+    {
+        return new UserModel
+        {
+            Id = entity.Id,
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            Email = entity.Email,
+            Phone = entity.PhoneNumber,
+            JobTitle = entity.JobTitle,
+            DateOfBirth = entity.DateOfBirth,
+            Address = null,
+        };
+    }
 
-    //public static UserModel Create(UserEntity entity)
-    //{
-    //    return new UserModel
-    //    {
-    //        UserId = entity.UserId,
-    //        FirstName = entity.FirstName,
-    //        LastName = entity.LastName,
-    //        Email = entity.Email,
-    //        Phone = entity.Phone,
-    //        Role = new RoleModel
-    //        {
-    //            RoleId = entity.Role.RoleId,
-    //            Title = entity.Role.Title,
-    //        },
-    //        Address = new AddressModel
-    //        {
-    //            AddressId = entity.Address.AddressId,
-    //            StreetName = entity.Address.StreetName,
-    //            StreetNumber = entity.Address.StreetNumber,
-    //            PostalCode = entity.Address.PostalCode,
-    //            City = entity.Address.City,
-    //        },
-    //        DateOfBirth = new DateOfBirthModel
-    //        {
-    //            DateOfBirthId = entity.DateOfBirth.DateOfBirthId,
-    //            Date = entity.DateOfBirth.Date,
-    //            Month = entity.DateOfBirth.Month,
-    //            Year = entity.DateOfBirth.Year,
-    //        },
-    //    };
-    //}
-    //public static UserEntity Create(UserCreateModel model)
-    //{
-    //    return new UserEntity
-    //    {
-    //        FirstName = model.FirstName,
-    //        LastName = model.LastName,
-    //        Email = model.Email,
-    //        Phone = model.Phone,
-    //        RoleId = 
-    //        Address = 
-    //        DateOfBirth = 
-    //    };
-    //}
+    public static UserModel CreateWithAddress(UserEntity entity)
+    {
+        return new UserModel
+        {
+            Id = entity.Id,
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            Email = entity.Email,
+            Phone = entity.PhoneNumber,
+            JobTitle = entity.JobTitle,
+            DateOfBirth = entity.DateOfBirth,
+
+            Address = entity.Address != null
+            ? new AddressModel
+            {
+                AddressId = entity.Address.AddressId,
+                StreetName = entity.Address.StreetName,
+                StreetNumber = entity.Address.StreetNumber,
+                PostalCode = entity.Address.PostalCode,
+                City = entity.Address.City,
+            }
+            : null
+        };
+    }
+
+    public static UserEntity Create(SignUpModel model)
+    {
+        return new UserEntity
+        {
+            UserName = model.Email,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Email = model.Email,
+        };
+    }
+
+    public static UserEntity Create(UserCreateModel user, AddressEntity address)
+    {
+        return new UserEntity
+        {
+            UserName = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            PhoneNumber = user.Phone,
+            JobTitle = user.JobTitle,
+            DateOfBirth = user.DateOfBirth,
+            Address = address
+        };
+    }
 }

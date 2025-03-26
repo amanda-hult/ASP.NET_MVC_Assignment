@@ -5,9 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Entities;
 
-//[Index(nameof(Email), IsUnique = true)]
 public class UserEntity : IdentityUser
 {
+    //[DataType(DataType.Upload)]
+    //public IFormFile? UserImage { get; set; }
+
     [Required]
     [ProtectedPersonalData]
     [Column(TypeName = "nvarchar(50)")]
@@ -22,11 +24,13 @@ public class UserEntity : IdentityUser
     [Column(TypeName = "nvarchar(50)")]
     public string? JobTitle { get; set; }
 
+    [ProtectedPersonalData]
+    [Column(TypeName = "date")]
+    public DateTime? DateOfBirth { get; set; }
 
-    public AddressEntity? Address { get; set; } = null!;
+    public int? AddressId { get; set; }
+    [ForeignKey(nameof(AddressId))]
+    public AddressEntity? Address { get; set; }
 
-    public int DateOfBirthId { get; set; }
-    [ForeignKey("DateOfBirthId")]
-    public DateOfBirthEntity DateOfBirth { get; set; } = null!;
-
+    public ICollection<ProjectUserEntity> ProjectUsers { get; set; } = new List<ProjectUserEntity>();
 }

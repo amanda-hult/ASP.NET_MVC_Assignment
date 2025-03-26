@@ -2,6 +2,8 @@ using Business.Interfaces;
 using Business.Services;
 using Data.Contexts;
 using Data.Entities;
+using Data.Interfaces;
+using Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presentation.ViewModels;
@@ -11,7 +13,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("LocalDB")));
-//builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+
+
 //builder.Services.AddScoped<AddProjectViewModel>();
 
 
@@ -31,6 +41,7 @@ builder.Services.ConfigureApplicationCookie(x =>
         x.AccessDeniedPath = "/auth/denied";
         x.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         x.SlidingExpiration = true;
+        x.Cookie.HttpOnly = true;
     });
 
 var app = builder.Build();
@@ -45,6 +56,33 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
+    var user = new UserEntity { UserName = "admin@domain.com", Email = "admin@domain.com", FirstName = "System", LastName = "Administrator", EmailConfirmed = true };
+
+    var roleNames = new[] { "Admin", "User" };
+    foreach (var roleName in roleNames)
+    {
+        var roleExists = await roleManager.RoleExistsAsync(roleName);
+        if (!roleExists)
+        {
+            await roleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+
+    var userExists = await userManager.Users.AnyAsync(x => x.Email == user.Email);
+    if (!userExists)
+    {
+        var result = await userManager.CreateAsync(user, "Admin@123");
+        if (result.Succeeded)
+            await userManager.AddToRoleAsync(user, "Admin");
+    }
+}
+
 app.MapStaticAssets();
 app.MapControllerRoute(
     name: "default",

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ViewModels;
 
@@ -8,6 +9,12 @@ namespace Presentation.Controllers;
 [Route("/admin")]
 public class AdminController : Controller
 {
+    private readonly IUserService _userService;
+
+    public AdminController(IUserService userService)
+    {
+        _userService = userService;
+    }
 
     //[AllowAnonymous]
     [HttpGet]
@@ -16,13 +23,26 @@ public class AdminController : Controller
         return View();
     }
 
+    //[AllowAnonymous]
+    [Route("denied")]
+    public IActionResult Denied()
+    {
+        return View();
+    }
+
 
     //[Authorize(Roles = "admin")]
     [HttpGet]
     [Route("/members")]
-    public IActionResult Members()
+    public async Task<IActionResult> Members()
     {
-        var viewModel = new MembersViewModel();
+        var members = await _userService.GetAllUsersAsync();
+
+        var viewModel = new MembersViewModel
+        {
+            Members = members
+        };
+
         return View(viewModel);
     }
 
@@ -34,4 +54,6 @@ public class AdminController : Controller
     {
         return View();
     }
+
+
 }

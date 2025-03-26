@@ -1,4 +1,4 @@
-﻿@model AddProjectViewModel
+﻿@model ProjectViewModel
 @{
 	Layout = "_PortalLayout";
 
@@ -6,6 +6,7 @@
 }
 
 @await Html.PartialAsync("Partials/Components/_AddProjectModal", Model.AddProjectModel)
+@await Html.PartialAsync("Partials/Components/_EditProjectModal", Model.EditProjectModel)
 
 <section id="projects">
 	<header>
@@ -14,7 +15,7 @@
 	</header>
 
 	<div>
-		@await Html.PartialAsync("Partials/Sections/_ProjectList")
+		@await Html.PartialAsync("Partials/Components/_ProjectCard")
 	</div>
 
 </section>

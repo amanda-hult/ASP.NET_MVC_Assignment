@@ -1,19 +1,23 @@
-﻿<div class="surface-20">
+﻿@model UserModel
+
+
+
+<div class="surface-20">
 
     <div class="align-right">
-        <img src="/images/options.svg" />
+        <i class="fa-regular fa-ellipsis cursor" data-modal="true" data-target="#editMemberModal"></i>
     </div>
 
-    <form class="project-form-container text-center">
+    <div class="project-form-container text-center">
 
         <div class="image-container circle">
-            <img id="image-preview" src="/images/avatar_1.svg" />
+            <img id="image-preview" src="~/images/avatar-standard.svg" />
         </div>
 
-        <h4>Firstname Lastname</h4>
-        <p class="job-title-container">Chief Executive Officer</p>
-        <p class="mt-4">name@domain.se</p>
-        <p class="mt-4">+46 070 123 45 67</p>
+        <h4>@Model.FirstName @Model.LastName</h4>
+        <p class="job-title-container">@Model.JobTitle</p>
+        <p class="mt-4">@Model.Email</p>
+        <p class="mt-4">@Model.Phone</p>
         <button class="button btn-gray mt-4">Message</button>
-    </form>
+    </div>
 </div>

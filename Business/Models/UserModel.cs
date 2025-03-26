@@ -2,12 +2,12 @@
 
 public class UserModel
 {
-    public int UserId { get; set; }
+    public string Id { get; set; } = null!;
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public string Email { get; set; } = null!;
-    public string Phone { get; set; } = null!;
-    public string JobTitle { get; set; } = null!;
-    public AddressModel Address { get; set; } = null!;
-    public DateOfBirthModel DateOfBirth { get; set; } = null!;
+    public string? Phone { get; set; }
+    public string? JobTitle { get; set; }
+    public DateTime? DateOfBirth { get; set; }
+    public AddressModel? Address { get; set; }
 }

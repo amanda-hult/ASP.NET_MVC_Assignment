@@ -1,90 +1,92 @@
-﻿@model AddMemberModel
+﻿@model EditMemberModel
 
-<div id="addMemberModal" class="modal">
+<div id="editMemberModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>New Member</h3>
+            <h3>Edit Member</h3>
             <button type="button" class="button-close" data-close="true"></button>
         </div>
 
-        <form asp-controller="Member" asp-action="AddMember" method="post" enctype="multipart/form-data" novalidate>
+        <form method="post" asp-controller="Member" asp-action="EditMember" novalidate>
+
+            <input asp-for="Id" readonly type="hidden" />
 
             <div class="image-preview-container circle">
                 <img id="image-preview" src="#" class="d-none" />
-                <input asp-for="ProfileImage" accept="image/*" class="d-none" />
+                <input asp-for="ProfileImage" id="ProfileImage_@Model.Id" accept="image/*" class="d-none" />
             </div>
 
             <div class="name-container mt-4">
                 <div class="form-group">
-                    <label asp-for="FirstName"></label>
+                    <label asp-for="FirstName" for="FirstName_@Model.Id"></label>
                     <div class="field-group">
-                        <input asp-for="FirstName" />
+                        <input asp-for="FirstName" id="FirstName_@Model.Id" />
                         <span asp-validation-for="FirstName"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="LastName"></label>
+                    <label asp-for="LastName" for="LastName_@Model.Id"></label>
                     <div class="field-group">
-                        <input asp-for="LastName" />
+                        <input asp-for="LastName" id="LastName_@Model.Id" />
                         <span asp-validation-for="LastName"></span>
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label asp-for="Email"></label>
+                <label asp-for="Email" for="Email_@Model.Id"></label>
                 <div class="field-group">
-                    <input asp-for="Email"/>
+                    <input asp-for="Email" id="Email_@Model.Id" />
                     <span asp-validation-for="Email"></span>
                 </div>
             </div>
 
             <div class="form-group">
-                <label asp-for="Phone"></label>
+                <label asp-for="Phone" for="Phone_@Model.Id"></label>
                 <div class="field-group">
-                    <input asp-for="Phone" />
+                    <input asp-for="Phone" id="Phone_@Model.Id" />
                     <span asp-validation-for="Phone"></span>
                 </div>
             </div>
 
             <div class="form-group">
-                <label asp-for="JobTitle"></label>
+                <label asp-for="JobTitle" for="JobTitle_@Model.Id"></label>
                 <div class="field-group">
-                    <input asp-for="JobTitle" />
+                    <input asp-for="JobTitle" id="JobTitle_@Model.Id" />
                     <span asp-validation-for="JobTitle"></span>
                 </div>
             </div>
 
             <div class="address-container">
                 <div class="form-group">
-                    <label asp-for="Address.StreetName"></label>
+                    <label asp-for="Address.StreetName" for="Address.StreetName_@Model.Id"></label>
                     <div class="field-group">
-                        <input asp-for="Address.StreetName" />
+                        <input asp-for="Address.StreetName" id="Address.StreetName_@Model.Id" />
                         <span asp-validation-for="Address.StreetName"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Address.StreetNumber"></label>
+                    <label asp-for="Address.StreetNumber" for="Address.StreetNumber_@Model.Id"></label>
                     <div class="field-group">
-                        <input asp-for="Address.StreetNumber" />
+                        <input asp-for="Address.StreetNumber" id="Address.StreetNumber_@Model.Id" />
                         <span asp-validation-for="Address.StreetNumber"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Address.PostalCode"></label>
+                    <label asp-for="Address.PostalCode" for="Address.PostalCode_@Model.Id"></label>
                     <div class="field-group">
-                        <input asp-for="Address.PostalCode" />
+                        <input asp-for="Address.PostalCode" id="Address.PostalCode_@Model.Id" />
                         <span asp-validation-for="Address.PostalCode"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Address.City"></label>
+                    <label asp-for="Address.City" for="Address.City_@Model.Id"></label>
                     <div class="field-group">
-                        <input asp-for="Address.City" />
+                        <input asp-for="Address.City" id="Address.City_@Model.Id" />
                         <span asp-validation-for="Address.City"></span>
                     </div>
                 </div>
@@ -97,7 +99,8 @@
 
                 <div class="date-container">
                     <div class="form-group">
-                        <select asp-for="SelectedDay" asp-items="@(new SelectList(Model?.Days))" required>
+                        <label asp-for="SelectedDay" for="SelectedDay_@Model.Id"></label>
+                        <select asp-for="SelectedDay" id="SelectedDay_@Model.Id" asp-items="@(new SelectList(Model?.Days))" required>
                             <option value="" disabled selected>Day</option>
                         </select>
                         <span asp-validation-for="SelectedDay"></span>
@@ -111,7 +114,8 @@
                     @* </div> *@
 
                     <div class="form-group">
-                        <select asp-for="SelectedMonth" required>
+                        <label asp-for="SelectedMonth" for="SelectedMonth_@Model.Id"></label>
+                        <select asp-for="SelectedMonth" id="SelectedMonth_@Model.Id" required>
                             <option value="" disabled selected>Month</option>
                             @for (int i = 1; i <= 12; i++)
                             {
@@ -122,7 +126,8 @@
                     </div>
 
                     <div class="form-group">
-                        <select asp-for="SelectedYear" asp-items="@(new SelectList(Model?.Years))" required>
+                        <label asp-for="SelectedYear" for="SelectedYear_@Model.Id"></label>
+                        <select asp-for="SelectedYear" id="SelectedYear_@Model.Id" asp-items="@(new SelectList(Model?.Years))" required>
                             <option value="" class="form-input" disabled selected>Year</option>
                         </select>
                         <span asp-validation-for="SelectedYear"></span>
@@ -131,20 +136,16 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Password"></label>
+                <label asp-for="Password" for="Password_@Model.Id"></label>
                 <div class="field-group">
-                    <input asp-for="Password" />
+                    <input asp-for="Password" id="Password_@Model.Id" />
                     <span asp-validation-for="Password"></span>
                 </div>
             </div>
 
-            <button type="submit" class="button btn-blue mt-4">Add Contact</button>
+            <button type="submit" class="button btn-blue mt-4">Save</button>
         </form>
     </div>
 </div>
 
-
 @await Html.PartialAsync("_ValidationScripts")
-
-
-                        

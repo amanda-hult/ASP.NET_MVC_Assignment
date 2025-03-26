@@ -5,4 +5,6 @@ namespace Business.Interfaces;
 public interface IAuthService
 {
     Task<bool> SignInAsync(SignInModel model);
+    Task<bool> SignUpAsync(SignUpModel model);
+    Task SignOutAsync();
 }

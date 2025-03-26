@@ -1,0 +1,26 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div id="profileModal" class="profile-modal">
+    <div class="modal-content">
+
+        <div>
+            <img class="profile-avatar" src="~/images/avatar-standard.svg" alt="Profile picture" />
+            <p>Firstname Lastname</p>
+        </div>
+
+        <div>
+            <a><i class="fa-duotone fa-solid fa-gear" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></i></a>
+            <p>Dark mode</p>
+        </div>
+
+        <div>
+            <i class="fa-duotone fa-solid fa-arrow-right-from-bracket"></i>
+            <a asp-controller="Auth" asp-action="SignOut">Logout</a>
+        </div>
+
+    </div>
+</div>

@@ -2,19 +2,23 @@
 
 @{
 	Layout = "_PortalLayout";
-	ViewData["Title"] = Model.Title;
+	ViewData["Title"] = "Team Members";
 }
 
-@await Html.PartialAsync("Partials/Components/_AddMemberModal", Model.Member)
+@await Html.PartialAsync("Partials/Components/_AddMemberModal", Model.AddMemberModal)
+@await Html.PartialAsync("Partials/Components/_EditMemberModal", Model.EditMemberModal)
 
 <section id="members">
-	<header>
+	<header class="portal-header">
 		<h2>Members</h2>
 		<button type="button" data-modal="true" data-target="#addMemberModal" class="button btn-blue btn-add">Add Member</button>
 	</header>
 
-	<div>
-		@await Html.PartialAsync("Partials/Components/_MemberCard")
+	<div class="member-wrapper">
+		@foreach (var member in Model.Members)
+		{
+			@await Html.PartialAsync("Partials/Components/_MemberCard", member)
+		}
 	</div>
 
 </section>

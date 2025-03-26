@@ -51,6 +51,12 @@
             <p>I accept Terms and Conditions</p>
         </div>
 
+        @if (!string.IsNullOrEmpty(ViewBag?.ErrorMessage))
+        {
+            <div>
+                @ViewBag?.ErrorMessage
+            </div>
+        }
 
         <button type="submit" class="button btn-blue mt-4">Create Account</button>
 
@@ -58,4 +64,4 @@
 	</form>
 </div>
 
-@await Html.PartialAsync("_ValidationScripts")
+@* @await Html.PartialAsync("_ValidationScripts") *@

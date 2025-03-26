@@ -21,7 +21,9 @@
         <div class="sidebar">
             @await Html.PartialAsync("Partials/Components/_Navlinks")
         </div>
-        <div class="navbar"></div>
+        <div class="navbar">
+            @await Html.PartialAsync("Partials/Components/_Navbar")
+        </div>
         <section class="main-section">
             @RenderBody()
         </section>
