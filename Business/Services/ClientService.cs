@@ -2,6 +2,7 @@
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
+using Data.Entities;
 using Data.Interfaces;
 
 namespace Business.Services;
@@ -12,7 +13,7 @@ public class ClientService(IClientRepository clientRepository, IProjectRepositor
     private readonly IProjectRepository _projectRepository = projectRepository;
 
     // CREATE
-    public async Task<int> CreateClient(ClientCreateModel model)
+    public async Task<int> CreateClientAsync(ClientCreateModel model)
     {
 
         try
@@ -24,9 +25,6 @@ public class ClientService(IClientRepository clientRepository, IProjectRepositor
 
             // begin transaction
             await _clientRepository.BeginTransactionAsync();
-
-            // get client status by checking if it exists in any project
-
 
             // create client
             var clientEntity = ClientFactory.Create(model);
@@ -50,12 +48,21 @@ public class ClientService(IClientRepository clientRepository, IProjectRepositor
     }
 
     // READ
-    //public async Task<IEnumerable<ClientModel> GetAllClientsAsync()
-    //{
-        // get client statuses (updateclientstatusesasync();)
-    //}
+    public async Task<IEnumerable<ClientModel>> GetAllClientsAsync()
+    {
 
-    public async Task<ClientModel?> GetClientAsync(int id)
+
+        //get client statuses(updateclientstatusesasync();)
+
+        var list = await _clientRepository.GetAllAsync();
+        if (list == null)
+            return null;
+
+        var clients = list.Select(ClientFactory.Create).ToList();
+        return clients;
+    }
+
+    public async Task<ClientModel> GetClientAsync(int? id)
     {
         var clientEntity = await _clientRepository.GetAsync(x => x.ClientId == id);
         if (clientEntity == null)
@@ -63,6 +70,15 @@ public class ClientService(IClientRepository clientRepository, IProjectRepositor
 
         var clientModel = ClientFactory.Create(clientEntity);
         return clientModel;
+    }
+
+    public async Task<ClientEntity?> GetClientEntityAsync(int id)
+    {
+        var clientEntity = await _clientRepository.GetAsync(x => x.ClientId == id);
+        if (clientEntity == null)
+            return null;
+
+        return clientEntity;
     }
 
     // UPDATE

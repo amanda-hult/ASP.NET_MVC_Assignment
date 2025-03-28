@@ -1,4 +1,5 @@
 ﻿using Business.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.Models;
@@ -39,15 +40,23 @@ public class EditProjectModel
 
     [Display(Name = "Client Name", Prompt = "Client Name")]
     [Required(ErrorMessage = "Required")]
-    public ClientModel ClientName { get; set; } = null!;
+    public int? SelectedClientId { get; set; } = null!;
+
+    public IEnumerable<SelectListItem> Clients { get; set; } = new List<SelectListItem>();
+
 
 
     [Display(Name = "Members")]
     [Required(ErrorMessage = "Please choose at least one member")]
-    public UserModel Member { get; set; } = null!;
+    public string? SelectedMemberId { get; set; } = null!;
+
+    public IEnumerable<SelectListItem> Members { get; set; } = new List<SelectListItem>();
+
 
 
     [Display(Name = "Status")]
     [Required(ErrorMessage = "Please select a status")]
-    public StatusModel Status { get; set; } = null!;
+    public int? SelectedStatusId { get; set; }
+
+    public IEnumerable<SelectListItem> Statuses { get; set; } = new List<SelectListItem>();
 }

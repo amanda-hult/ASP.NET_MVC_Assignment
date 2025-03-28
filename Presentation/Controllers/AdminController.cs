@@ -10,10 +10,12 @@ namespace Presentation.Controllers;
 public class AdminController : Controller
 {
     private readonly IUserService _userService;
+    private readonly IClientService _clientService;
 
-    public AdminController(IUserService userService)
+    public AdminController(IUserService userService, IClientService clientService)
     {
         _userService = userService;
+        _clientService = clientService;
     }
 
     //[AllowAnonymous]
@@ -50,9 +52,16 @@ public class AdminController : Controller
     //[Authorize(Roles = "admin")]
     [HttpGet]
     [Route("/clients")]
-    public IActionResult Clients()
+    public async Task<IActionResult> Clients()
     {
-        return View();
+        var clients = await _clientService.GetAllClientsAsync();
+
+        var viewModel = new ClientViewModel
+        {
+            Clients = clients
+        };
+
+        return View(viewModel);
     }
 
 

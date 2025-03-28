@@ -13,7 +13,7 @@ public static class ClientFactory
             Email = model.Email,
             Location = model.Location,
             Phone = model.Phone,
-            Status = "active"
+            //Status = "inactive"
         };
     }
 
@@ -27,7 +27,7 @@ public static class ClientFactory
             Location = entity.Location,
             Phone = entity.Phone,
             Created = entity.Created,
-            Status = entity.Status,
+            //Status = entity.Status,
         };
     }
 
@@ -37,7 +37,7 @@ public static class ClientFactory
         {
             ClientId = existingEntity.ClientId,
             Created = existingEntity.Created,
-            Status = existingEntity.Status,
+            //Status = existingEntity.Status,
             Projects = existingEntity.Projects,
 
             ClientName = model.ClientName,

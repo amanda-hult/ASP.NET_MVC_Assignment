@@ -28,6 +28,8 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
         if (exists)
             return false;
 
+        // begin transaction
+
         try
         {
             var createdAddress = await _addressService.CreateAddressAsync(model.Address);
@@ -61,6 +63,26 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
         //    throw new ArgumentNullException(nameof(users));
 
         //return users;
+    }
+
+    public async Task<IEnumerable<UserModel>> GetUsersByIdAsync(List<string> ids)
+    {
+        var list = await _userRepository.GetUsersByIdAsync(ids);
+        if (list == null)
+            return null;
+
+        var users = list.Select(UserFactory.CreateBasic).ToList();
+
+        return users;
+    }
+
+    public async Task<List<UserEntity>> GetUserEntitiesByIdAsync(List<string> ids)
+    {
+        var users = await _userRepository.GetUsersByIdAsync(ids);
+        if (users == null)
+            return null;
+
+        return users.ToList();
     }
 
     // UPDATE

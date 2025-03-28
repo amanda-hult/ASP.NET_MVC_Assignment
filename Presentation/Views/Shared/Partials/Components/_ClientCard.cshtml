@@ -1,0 +1,21 @@
+﻿@model ClientModel
+
+<tr>
+    <td class="client-check"><input type="checkbox" /></td>
+    <td class="client-info">
+        <img class="client-image" src="~/images/avatar-standard.svg" alt="" />
+        <div class="client-name">@Model.ClientName</div>
+        <div class="client-email">@Model.Email</div>
+    </td>
+    <td class="client-location">@Model.Location</td>
+    <td class="client-phone">@Model.Phone</td>
+    <td class="client-date">@Model.Created</td>
+    <td class="client-status">
+        <div class="badge success">
+            @Model.Status
+        </div>
+    </td>
+    <td class="client-actions">
+        <i class="fa-regular fa-ellipsis" data-modal="true" data-target="#editClientModal"></i>
+    </td>
+</tr>

@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Data.Entities;
 
 public class UserEntity : IdentityUser
 {
-    //[DataType(DataType.Upload)]
-    //public IFormFile? UserImage { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string? UserImageUrl { get; set; }
 
     [Required]
     [ProtectedPersonalData]

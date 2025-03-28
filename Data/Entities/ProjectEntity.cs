@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Entities;
 
-[Index(nameof(Description), nameof(ClientId), IsUnique = true)]
+[Index(nameof(ProjectName), nameof(ClientId), IsUnique = true)]
 public class ProjectEntity
 {
     [Key]
     public int ProjectId { get; set; }
 
-    //[DataType(DataType.Upload)]
-    //public IFormFile? ProjectImage { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string? ProjectImageUrl { get; set; }
 
     [Required]
     [Column(TypeName = "nvarchar(50)")]
@@ -29,15 +29,11 @@ public class ProjectEntity
     public DateTime? EndDate { get; set; }
 
     [Column(TypeName ="decimal(18,2)")]
-    public string? Budget { get; set; }
+    public decimal? Budget { get; set; }
 
     public int ClientId { get; set; }
     [ForeignKey("ClientId")]
     public ClientEntity Client { get; set; } = null!;
-
-    public string UserId { get; set; } = null!;
-    [ForeignKey("UserId")]
-    public UserEntity User { get; set; } = null!;
 
     public int StatusId { get; set; }
     [ForeignKey("StatusId")]
