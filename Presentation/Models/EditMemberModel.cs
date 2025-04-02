@@ -1,4 +1,4 @@
-﻿using Business.Models;
+﻿using Business.Models.Users;
 using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.Models;

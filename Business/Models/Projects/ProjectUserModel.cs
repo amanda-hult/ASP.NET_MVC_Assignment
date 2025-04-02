@@ -1,6 +1,7 @@
-﻿using Data.Entities;
+﻿using Business.Models.Users;
+using Data.Entities;
 
-namespace Business.Models;
+namespace Business.Models.Projects;
 
 public class ProjectUserModel
 {

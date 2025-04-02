@@ -1,0 +1,29 @@
+﻿@model NotificationViewModel
+
+<button id="notification-dropdown-button" data-type="dropdown" data-target="#notification-dropdown" class="fa-duotone fa-solid fa-bell" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;">
+    @if (Model.Notifications.Any())
+    {
+        <div class="dot dot-red"></div>
+    }
+</button>
+
+<div id="notification-dropdown" class="notification-dropdown">
+    <div class="notification-header">
+        <h4>Notifications</h4>
+        <span class="notification-number">@Model.Notifications.Count()</span>
+    </div>
+
+    <div class="dropdown-divider"></div>
+
+    <div class="notifications">
+        @foreach (var notification in Model.Notifications)
+        {
+            <div class="notification-item" data-id="">
+                <img class="image" src="@notification.Image" />
+                <div class="message">@notification.Message</div>
+                <div class="time" data-created="@notification.Created.ToString("s")">@notification.Created</div>
+                <button class="btn-close" onclick="dismissNotification(@notification.NotificationId)"></button>
+            </div>
+        }
+    </div>
+</div>

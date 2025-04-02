@@ -1,8 +1,7 @@
 ﻿using Business.Interfaces;
-using Business.Models;
+using Business.Models.Users;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
-using Presentation.ViewModels;
 
 namespace Presentation.Controllers;
 

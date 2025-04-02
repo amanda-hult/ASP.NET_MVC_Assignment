@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Business.Models;
+namespace Business.Models.Users;
 
 public class UserCreateModel
 {

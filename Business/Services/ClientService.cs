@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Business.Factories;
 using Business.Interfaces;
-using Business.Models;
+using Business.Models.Clients;
 using Data.Entities;
 using Data.Interfaces;
 

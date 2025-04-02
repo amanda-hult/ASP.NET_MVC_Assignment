@@ -4,14 +4,15 @@ using Data.Contexts;
 using Data.Entities;
 using Data.Interfaces;
 using Data.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Presentation.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("LocalDB")));
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -27,11 +28,17 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+
+builder.Services.AddScoped<INotificationDismissedRepository, NotificationDismissedRepository>();
 
 
 
+builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("LocalDB")));
 
 builder.Services.AddIdentity<UserEntity, IdentityRole>(x =>
     {
@@ -50,6 +57,19 @@ builder.Services.ConfigureApplicationCookie(x =>
         x.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         x.SlidingExpiration = true;
         x.Cookie.HttpOnly = true;
+        x.Cookie.SameSite = SameSiteMode.None;
+        x.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    });
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+    .AddCookie()
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
     });
 
 var app = builder.Build();
@@ -63,6 +83,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 
@@ -97,5 +119,6 @@ app.MapControllerRoute(
     pattern: "{controller=Auth}/{action=SignUp}/{id?}")
     .WithStaticAssets();
 
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();

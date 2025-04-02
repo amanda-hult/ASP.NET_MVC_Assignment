@@ -1,5 +1,6 @@
 ﻿using Business.Interfaces;
 using Business.Models;
+using Business.Models.Clients;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
 

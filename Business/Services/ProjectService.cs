@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using Business.Factories;
 using Business.Interfaces;
-using Business.Models;
+using Business.Models.Projects;
 using Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
@@ -26,7 +27,7 @@ public class ProjectService : IProjectService
     {
         // check if project with same project name and client exists
         bool exists = await _projectRepository.ExistsAsync(x => x.ProjectName == model.ProjectName && x.ClientId == model.Client.Id);
-        if (!exists)
+        if (exists)
             return 409;
 
         try
@@ -60,8 +61,19 @@ public class ProjectService : IProjectService
         }
     }
 
-    //public async Task<IEnumerable<ProjectModel>> GetAllProjectsAsync()
-    //{
+    public async Task<IEnumerable<ProjectModel>> GetAllProjectsAsync()
+    {
+        var list = await _projectRepository.GetAllAsync(query =>
+                query
+                    .Include(p => p.Client)
+                    .Include(p => p.Status)
+                    .Include(p => p.ProjectUsers)
+                        .ThenInclude(pu => pu.User)
+                );
+        if (list == null)
+            return null!;
 
-    //}
+        var projects = list.Select(ProjectFactory.Create).ToList();
+        return projects;
+    }
 }

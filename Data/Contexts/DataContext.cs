@@ -11,6 +11,10 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<ProjectEntity> Projects { get; set; } = null!;
     public DbSet<StatusEntity> Statuses { get; set; } = null!;
     public DbSet<ProjectUserEntity> ProjectUsers { get; set; } = null!;
+    public DbSet<NotificationEntity> Notification { get; set; } = null!;
+    public DbSet<NotificationTargetGroupEntity> NotificationTargetGroups { get; set; } = null!;
+    public DbSet<NotificationTypeEntity> NotificationTypes { get; set; } = null!;
+    public DbSet<NotificationDisMissedEntity> DisMissedNotifications { get; set; } = null!;
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -65,5 +69,20 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
             new StatusEntity { StatusId = 2, StatusName = "Started" },
             new StatusEntity { StatusId = 3, StatusName = "Completed" }
         );
+
+        modelBuilder.Entity<NotificationTypeEntity>().HasData(
+            new NotificationTypeEntity { NotificationTypeId = 1, NotificationType = "User" },
+            new NotificationTypeEntity { NotificationTypeId = 2, NotificationType = "Project" },
+            new NotificationTypeEntity { NotificationTypeId = 3, NotificationType = "Client" }
+        );
+
+        modelBuilder.Entity<NotificationTargetGroupEntity>().HasData(
+            new NotificationTargetGroupEntity { NotificationTargetGroupId = 1, TargetGroup = "AllUsers" },
+            new NotificationTargetGroupEntity { NotificationTargetGroupId = 2, TargetGroup = "Admins" }
+        );
+
+        modelBuilder.Entity<NotificationEntity>()
+            .Property(n => n.TargetGroupId)
+            .HasDefaultValue( 1 );
     }
 }

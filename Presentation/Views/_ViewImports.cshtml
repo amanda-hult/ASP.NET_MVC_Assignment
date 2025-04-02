@@ -1,7 +1,18 @@
-﻿@using Presentation
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+@inject INotificationService notificationService
+
+@using Business.Interfaces
+@using Presentation
 @using Presentation.Models
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Business.Models.Users
+@using Business.Models.Clients
+@using Business.Models.Projects
+
 
 @using Presentation.ViewModels
 
 @using Business.Models
+
+@using System.Security.Claims

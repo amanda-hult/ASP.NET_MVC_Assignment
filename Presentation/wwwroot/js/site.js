@@ -1,4 +1,7 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
+    updateRelativeTimes()
+    setInterval(updateRelativeTimes, 6000)
+
     const previewSize = 144
 
 
@@ -61,7 +64,6 @@
             }
         })
     })
-
 })
 
 

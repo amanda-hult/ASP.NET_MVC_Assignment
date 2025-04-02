@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Business.Models;
+using Business.Models.Users;
 
 namespace Presentation.Models;
 

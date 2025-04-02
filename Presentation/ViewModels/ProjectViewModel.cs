@@ -1,4 +1,4 @@
-﻿using Business.Models;
+﻿using Business.Models.Projects;
 using Presentation.Models;
 
 namespace Presentation.ViewModels;

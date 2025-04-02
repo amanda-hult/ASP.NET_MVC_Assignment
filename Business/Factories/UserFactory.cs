@@ -1,4 +1,5 @@
 ﻿using Business.Models;
+using Business.Models.Users;
 using Data.Entities;
 
 namespace Business.Factories;

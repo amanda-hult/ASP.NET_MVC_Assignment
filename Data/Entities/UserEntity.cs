@@ -32,4 +32,6 @@ public class UserEntity : IdentityUser
     public AddressEntity? Address { get; set; }
 
     public ICollection<ProjectUserEntity> ProjectUsers { get; set; } = new List<ProjectUserEntity>();
+
+    public ICollection<NotificationDisMissedEntity> DismissedNotifications { get; set; } = new List<NotificationDisMissedEntity>();
 }

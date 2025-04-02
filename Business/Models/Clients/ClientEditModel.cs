@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Business.Models;
+namespace Business.Models.Clients;
 
 public class ClientEditModel
 {

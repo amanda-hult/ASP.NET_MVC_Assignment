@@ -1,6 +1,6 @@
 ﻿using Business.Factories;
 using Business.Interfaces;
-using Business.Models;
+using Business.Models.Users;
 using Data.Entities;
 using Data.Interfaces;
 

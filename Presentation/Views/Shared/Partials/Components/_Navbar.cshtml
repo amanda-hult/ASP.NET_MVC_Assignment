@@ -1,10 +1,12 @@
-﻿
-@await Html.PartialAsync("Partials/Components/_ProfileModal")
+﻿@await Html.PartialAsync("Partials/Components/_ProfileModal")
 
 <input class="main-entry" placeholder="&#xf002; Search anything..." style="font-family: Nunito, FontAwesome;">
 <div class="flex">
-    <a><i class="fa-duotone fa-solid fa-bell" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></i> </a>
-    <a data-modal="true" data-target="#profileModal"><i class="fa-duotone fa-solid fa-gear cursor" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></i></a>
+
+    @await Component.InvokeAsync("Notification")
+
+    <button id="profile-dropdown-button" data-type="dropdown" data-target="#profile-dropdown" class="fa-duotone fa-solid fa-gear cursor" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></button>
+
 </div>
 <div class="p-1">
     <img class="profile-avatar" src="~/images/avatar-standard.svg" alt="Profile picture" />

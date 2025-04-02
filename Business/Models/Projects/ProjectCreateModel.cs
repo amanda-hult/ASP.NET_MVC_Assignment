@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Business.Models.Clients;
+using Business.Models.Users;
 using Microsoft.AspNetCore.Http;
 
-namespace Business.Models;
+namespace Business.Models.Projects;
 
 public class ProjectCreateModel
 {
