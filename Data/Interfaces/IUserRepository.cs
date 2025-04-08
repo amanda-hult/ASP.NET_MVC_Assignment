@@ -5,4 +5,5 @@ namespace Data.Interfaces;
 public interface IUserRepository : IBaseRepository<UserEntity>
 {
     Task<IEnumerable<UserEntity>> GetUsersByIdAsync(List<string> ids);
+    Task<IEnumerable<UserEntity>> GetUsersByStringAsync(string term);
 }

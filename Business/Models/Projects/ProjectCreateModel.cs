@@ -7,7 +7,7 @@ namespace Business.Models.Projects;
 
 public class ProjectCreateModel
 {
-    public IFormFile? ProjectImage { get; set; }
+    public string? ProjectImage { get; set; }
 
     public string ProjectName { get; set; } = null!;
 

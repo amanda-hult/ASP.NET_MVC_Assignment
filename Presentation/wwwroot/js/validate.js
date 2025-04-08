@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // handle submit forms
-    const forms = document.querySelectorAll('form')
+    const forms = document.querySelectorAll('form.js-form')
     forms.forEach(form => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault()
@@ -111,6 +111,14 @@ document.addEventListener("DOMContentLoaded", () => {
                                 span.classList.add('field-validation-error')
                             }
                         })
+                    }
+                }
+                if (res.status === 404 || res.status === 409 || res.status === 500) {
+                    const data = await res.json()
+                    const errorMessageContainer = form.querySelector('#error-message')
+                    if (errorMessageContainer) {
+                        errorMessageContainer.textContent = data.message
+                        errorMessageContainer.style.display = 'block'
                     }
                 }
                 if (res.redirected) {

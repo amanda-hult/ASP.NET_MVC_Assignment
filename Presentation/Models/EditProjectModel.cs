@@ -48,7 +48,7 @@ public class EditProjectModel
 
     [Display(Name = "Members")]
     [Required(ErrorMessage = "Please choose at least one member")]
-    public string? SelectedMemberId { get; set; } = null!;
+    public string? SelectedMemberIds { get; set; } = null!;
 
     public IEnumerable<SelectListItem> Members { get; set; } = new List<SelectListItem>();
 

@@ -23,12 +23,12 @@ public class ProjectService : IProjectService
     }
 
     // CREATE
-    public async Task<int> CreateProjectAsync(ProjectCreateModel model)
+    public async Task<(bool succeded, int statuscode, int? projectId)> CreateProjectAsync(ProjectCreateModel model)
     {
         // check if project with same project name and client exists
         bool exists = await _projectRepository.ExistsAsync(x => x.ProjectName == model.ProjectName && x.ClientId == model.Client.Id);
         if (exists)
-            return 409;
+            return (false, 409, null);
 
         try
         {
@@ -46,18 +46,18 @@ public class ProjectService : IProjectService
             if (createdProject == null)
             {
                 await _projectRepository.RollbackTransactionAsync();
-                return 500;
+                return (false, 500, null);
             }
 
             await _projectRepository.SaveAsync();
             await _projectRepository.CommitTransactionAsync();
-            return 201;
+            return (true, 201, createdProject.ProjectId);
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Error creating project: {ex.Message}");
             await _projectRepository.RollbackTransactionAsync();
-            return 500;
+            return (false, 500, null);
         }
     }
 
@@ -75,5 +75,15 @@ public class ProjectService : IProjectService
 
         var projects = list.Select(ProjectFactory.Create).ToList();
         return projects;
+    }
+
+    public async Task<ProjectModel> GetProjectAsync(int? id)
+    {
+        var projectEntity = await _projectRepository.GetAsync(x => x.ProjectId == id);
+        if (projectEntity == null)
+            return null!;
+
+        var projectModel = ProjectFactory.CreateBasic(projectEntity);
+        return projectModel;
     }
 }

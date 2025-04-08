@@ -7,7 +7,7 @@
 			<button type="button" class="button-close" data-close="true"></button>
 		</div>
 
-		<form method="post" asp-controller="Client" asp-action="AddClient" novalidate>
+        <form method="post" asp-controller="Client" asp-action="AddClient" class="js-form" novalidate>
 
 			<div class="image-preview-container circle">
                 <img id="image-preview" src="#" class="d-none" />
@@ -56,5 +56,5 @@
 </div>
 
 
-@await Html.PartialAsync("_ValidationScripts")
+@* @await Html.PartialAsync("_ValidationScripts") *@
 

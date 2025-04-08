@@ -1,5 +1,4 @@
 ﻿using Business.Models.Clients;
-using Data.Entities;
 
 namespace Business.Models.Projects;
 
@@ -13,7 +12,7 @@ public class ProjectModel
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 
-
+    public int? DaysLeft => EndDate.HasValue ? (EndDate.Value.Date - DateTime.Today).Days : null!;
     public int ClientId { get; set; }
     public ClientModel Client { get; set; } = null!;
 

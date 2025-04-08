@@ -18,3 +18,4 @@ public class UserModel
     public List<ProjectUserModel> ProjectUsers { get; set; } = new List<ProjectUserModel>();
     public List<NotificationDismissedModel> DismissedNotifications { get; set; } = new List<NotificationDismissedModel>();
 }
+

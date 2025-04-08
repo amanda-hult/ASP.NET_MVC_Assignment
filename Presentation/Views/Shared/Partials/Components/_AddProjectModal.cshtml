@@ -7,7 +7,7 @@
             <button type="button" class="button-close" data-close="true"></button>
         </div>
 
-        <form class="project-form-container" method="post" asp-controller="Projects" asp-action="AddProject" enctype="multipart/form-data" novalidate>
+        <form class="project-form-container js-form" method="post" asp-controller="Projects" asp-action="AddProject" enctype="multipart/form-data" novalidate>
 
             @* <div class="image-preview-container pt-1"> *@
             @*     <label asp-for="ProjectImage" id="circle-container" class="square"> *@
@@ -18,6 +18,13 @@
             @* </div> *@
 
             @* <input asp-for="ProjectImage" accept="image/*" class="d-none" /> *@
+
+
+            <input type="hidden" name="SelectedMemberIds" id="SelectedMemberIds" />
+
+
+
+
 
 
             <div class="image-preview-container square">
@@ -69,20 +76,19 @@
             </div>
 
 
+
             <div class="form-group">
-                <label asp-for="SelectedMemberId"></label>
-                <select asp-for="SelectedMemberId" asp-items="@Model?.Members" required multiple>
-                    <option value="" class="form-input" disabled selected></option>
-                </select>
-                <span asp-validation-for="SelectedMemberId"></span>
+
+                <label class="form-label" asp-for="SelectedMemberIds"></label>
+
+                <div id="tagged-users" class="form-input form-tag-select">
+                    <input type="text" id="user-search" class="form-tag-input" placeholder="Add member" />
+                    <label for="user-search" class="fa-regular fa-magnifying-glass-waveform"></label>
+                    <div id="user-search-results" class="search-results"></div>
+                </div>
+
             </div>
 
-            @* <div class="grid mt-4"> *@
-            @*     <select asp-for="AddProjectModel.Member" asp-items="@Model?.Members" class="form-input"> *@
-            @*         <option value="" disabled></option> *@
-            @*     </select> *@
-            @*     <span asp-validation-for="AddProjectModel.Member"></span> *@
-            @* </div> *@
 
             <div class="form-group">
                 <label asp-for="Budget"></label>
@@ -106,4 +112,7 @@
 </div>
 
 
-@await Html.PartialAsync("_ValidationScripts")
+@* @await Html.PartialAsync("_ValidationScripts") *@
+
+
+

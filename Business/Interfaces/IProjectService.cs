@@ -4,6 +4,7 @@ namespace Business.Interfaces;
 
 public interface IProjectService
 {
-    Task<int> CreateProjectAsync(ProjectCreateModel model);
+    Task<(bool succeded, int statuscode, int? projectId)> CreateProjectAsync(ProjectCreateModel model);
     Task<IEnumerable<ProjectModel>> GetAllProjectsAsync();
+    Task<ProjectModel> GetProjectAsync(int? id);
 }

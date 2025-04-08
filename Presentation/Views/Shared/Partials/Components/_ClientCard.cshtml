@@ -1,7 +1,7 @@
 ﻿@model ClientModel
 
 <tr>
-    <td class="client-check"><input type="checkbox" /></td>
+    <td class="client-check"><client type="checkbox" /></td>
     <td class="client-info">
         <img class="client-image" src="~/images/avatar-standard.svg" alt="" />
         <div class="client-name">@Model.ClientName</div>
@@ -15,7 +15,73 @@
             @Model.Status
         </div>
     </td>
-    <td class="client-actions">
-        <i class="fa-regular fa-ellipsis" data-modal="true" data-target="#editClientModal"></i>
+    <td class="client-actions flex">
+        <button class="fa-duotone fa-regular fa-pen-to-square btn-edit"
+                type="button"
+                data-modal="true"
+                data-target="#editClientModal"
+                data-id="@Model.Id"
+                data-name="@Model.ClientName"
+                data-email="@Model.Email"
+                data-location="@Model.Location"
+                data-phone="@Model.Phone"
+                data-image="@Model.ClientImage">
+        </button>
+        <button class="fa-duotone fa-solid fa-trash btn-remove"
+                type="button"
+                data-modal="true"
+                data-target="#deleteClientModal"
+                data-id="@Model.Id"
+                data-name="@Model.ClientName">
+        </button>
     </td>
 </tr>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const editBtns = document.querySelectorAll('[data-target="#editClientModal"]')
+        const deleteBtns = document.querySelectorAll('[data-target="#deleteClientModal"]')
+
+        const editClientModal = document.getElementById('editClientModal')
+        const editClientId = editClientModal.querySelector('[name="Id"]')
+        const editClientImage = editClientModal.querySelector('[name="ClientImage"]')
+        const editClientName = editClientModal.querySelector('[name="ClientName"]')
+        const editClientEmail = editClientModal.querySelector('[name="Email"]')
+        const editClientLocation = editClientModal.querySelector('[name="Location"]')
+        const editClientPhone = editClientModal.querySelector('[name="Phone"]')
+
+        const deleteClientId = document.getElementById('delete-client-id')
+        const deleteClientName = document.getElementById('delete-client-name')
+
+
+        
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                editClientId.value = btn.dataset.id || ''
+                editClientImage.value = btn.dataset.image || ''
+                editClientName.value = btn.dataset.name || ''
+                editClientEmail.value = btn.dataset.email || ''
+                editClientLocation.value = btn.dataset.location || ''
+                editClientPhone.value = btn.dataset.phone || ''
+            })
+        })
+
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                deleteClientId.value = btn.dataset.id || ''
+                deleteClientName.textContent = btn.dataset.name
+
+                const errorMessageContainer = document.getElementById('error-message')
+                if (errorMessageContainer) {
+                    errorMessageContainer.textContent = ''
+                    errorMessageContainer.style.display = 'none'
+                }
+            })
+        })
+    })
+
+</script>
+
+
+

@@ -12,7 +12,7 @@ public static class ProjectFactory
     {
         return new ProjectEntity
         {
-            //ProjectImageUrl
+            ProjectImageUrl = model.ProjectImage,
             ProjectName = model.ProjectName,
             Description = model.Description,
             StartDate = model.StartDate,
@@ -28,23 +28,31 @@ public static class ProjectFactory
         };
     }
 
+
+    public static ProjectModel CreateBasic(ProjectEntity entity)
+    {
+        return new ProjectModel
+        {
+            ProjectImageUrl = entity.ProjectImageUrl,
+            ProjectName = entity.ProjectName,
+        };
+    }
     public static ProjectModel Create(ProjectEntity entity)
     {
         return new ProjectModel
         {
-            //ProjectImageUrl = entity.ProjectImageUrl,
+            ProjectImageUrl = entity.ProjectImageUrl,
             ProjectName = entity.ProjectName,
             Description = entity.Description,
 
-            //TimeLeft =
-            //StartDate = entity.StartDate,
-            //EndDate = entity.EndDate,
+            StartDate = entity.StartDate,
+            EndDate = entity.EndDate,
 
             ClientId = entity.ClientId,
             Client = new ClientModel
             {
                 Id = entity.Client.ClientId,
-                ClientName = entity.ProjectName
+                ClientName = entity.Client.ClientName
             },
 
             StatusId = entity.StatusId,

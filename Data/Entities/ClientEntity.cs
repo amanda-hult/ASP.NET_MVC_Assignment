@@ -29,7 +29,7 @@ public class ClientEntity
     public string? Phone { get; set; }
 
     [Column(TypeName = "date")]
-    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public DateTime Created { get; set; } = DateTime.Now;
 
     public ICollection<ProjectEntity> Projects { get; set; } = [];
 

@@ -1,11 +1,12 @@
 ﻿@model NotificationViewModel
 
-<button id="notification-dropdown-button" data-type="dropdown" data-target="#notification-dropdown" class="fa-duotone fa-solid fa-bell" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;">
+<div class="relative">
+    <button id="notification-dropdown-button" data-type="dropdown" data-target="#notification-dropdown" class="notification-dropdown-button fa-duotone fa-solid fa-bell" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></button>
     @if (Model.Notifications.Any())
     {
         <div class="dot dot-red"></div>
     }
-</button>
+</div>
 
 <div id="notification-dropdown" class="notification-dropdown">
     <div class="notification-header">
@@ -18,11 +19,11 @@
     <div class="notifications">
         @foreach (var notification in Model.Notifications)
         {
-            <div class="notification-item" data-id="">
+            <div class="notification-item" data-id="@notification.NotificationId">
                 <img class="image" src="@notification.Image" />
                 <div class="message">@notification.Message</div>
-                <div class="time" data-created="@notification.Created.ToString("s")">@notification.Created</div>
-                <button class="btn-close" onclick="dismissNotification(@notification.NotificationId)"></button>
+                <div class="time" data-created="@notification.Created.ToString("o")">@notification.Created</div>
+                <button class="btn-close" onclick="dismissNotification('@notification.NotificationId')"></button>
             </div>
         }
     </div>

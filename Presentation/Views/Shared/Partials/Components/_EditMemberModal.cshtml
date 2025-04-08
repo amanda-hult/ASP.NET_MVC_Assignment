@@ -7,7 +7,7 @@
             <button type="button" class="button-close" data-close="true"></button>
         </div>
 
-        <form method="post" asp-controller="Member" asp-action="EditMember" novalidate>
+        <form method="post" asp-controller="Member" asp-action="EditMember" class="js-form" novalidate>
 
             <input asp-for="Id" readonly type="hidden" />
 
@@ -148,4 +148,4 @@
     </div>
 </div>
 
-@await Html.PartialAsync("_ValidationScripts")
+@* @await Html.PartialAsync("_ValidationScripts") *@

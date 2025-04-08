@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
 using Business.Factories;
 using Business.Interfaces;
+using Business.Models.Clients;
 using Business.Models.Users;
 using Data.Entities;
 using Data.Interfaces;
+using Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -65,6 +67,8 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
         //return users;
     }
 
+
+    // byt eventuellt ut denna metod mot nedan
     public async Task<IEnumerable<UserModel>> GetUsersByIdAsync(List<string> ids)
     {
         var list = await _userRepository.GetUsersByIdAsync(ids);
@@ -72,6 +76,17 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
             return null;
 
         var users = list.Select(UserFactory.CreateBasic).ToList();
+
+        return users;
+    }
+
+    public async Task<IEnumerable<BasicUserModel>> GetBasicUsersByStringAsync(string term)
+    {
+        var list = await _userRepository.GetUsersByStringAsync(term);
+        if (list == null)
+            return Enumerable.Empty<BasicUserModel>();
+
+        var users = list.Select(UserFactory.CreateBasicUser).ToList();
 
         return users;
     }
@@ -85,6 +100,15 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
         return users.ToList();
     }
 
+    //public async Task<UserModel> GetUserAsync(string id)
+    //{
+    //    var userEntity = await _userManager.FindByIdAsync(id);
+    //    if (userEntity == null)
+    //        return null;
+
+    //    var userModel = UserFactory.CreateBasic(userEntity);
+    //    return userModel;
+    //}
     // UPDATE
 
     // DELETE

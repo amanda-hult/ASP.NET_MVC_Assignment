@@ -1,15 +1,15 @@
 ﻿@model EditClientModel
 
 <div id="editClientModal" class="modal">
-	<div class="modal-content">
-		<div class="modal-header">
-			<h3>Edit Client</h3>
-			<button type="button" class="button-close" data-close="true"></button>
-		</div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Client</h3>
+            <button type="button" class="button-close" data-close="true"></button>
+        </div>
 
-		<form method="post" asp-controller="Client" asp-action="EditClient" novalidate>
+        <form method="post" asp-controller="Client" asp-action="EditClient" class="js-form" novalidate>
 
-			<input asp-for="Id" readonly type="hidden" />
+            <input asp-for="Id" readonly type="hidden" />
 
             <div class="image-preview-container circle">
                 <img id="image-preview" src="#" class="d-none" />
@@ -50,9 +50,16 @@
                 </div>
             </div>
 
-            <button type="submit" class="button btn-blue mt-4">Create</button>
+            @if (!string.IsNullOrEmpty(ViewBag?.ErrorMessage))
+            {
+                <div>
+                    @ViewBag?.ErrorMessage
+                </div>
+            }
+
+            <button type="submit" class="button btn-blue mt-4">Save</button>
 		</form>
 	</div>
 </div>
 
-@await Html.PartialAsync("_ValidationScripts")
+@* @await Html.PartialAsync("_ValidationScripts") *@

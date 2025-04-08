@@ -6,6 +6,17 @@ namespace Business.Factories;
 
 public static class UserFactory
 {
+    public static BasicUserModel CreateBasicUser(UserEntity entity)
+    {
+        return new BasicUserModel
+        {
+            Id = entity.Id,
+            UserImageUrl = entity.UserImageUrl,
+            FullName = $"{entity.FirstName} {entity.LastName}"
+        };
+    }
+
+    // ändra namn alternativt byt ut
     public static UserModel CreateBasic(UserEntity entity)
     {
         return new UserModel

@@ -9,4 +9,5 @@ public class ProjectViewModel
     public IEnumerable<ProjectModel> Projects { get; set; } = new List<ProjectModel>();
     public AddProjectModel AddProjectModel { get; set; } = new AddProjectModel();
     public EditProjectModel EditProjectModel { get; set; } = new EditProjectModel();
+
 }

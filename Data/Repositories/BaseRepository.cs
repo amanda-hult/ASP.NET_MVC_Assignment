@@ -20,6 +20,7 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         if (_transaction == null)
         {
             _transaction = await _context.Database.BeginTransactionAsync();
+            _context.Database.UseTransaction(_transaction.GetDbTransaction());
         }
     }
 
@@ -35,9 +36,12 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
 
     public virtual async Task RollbackTransactionAsync()
     {
-        await _transaction.RollbackAsync();
-        await _transaction.DisposeAsync();
-        _transaction = null!;
+        if (_transaction != null)
+        {
+            await _transaction.RollbackAsync();
+            await _transaction.DisposeAsync();
+            _transaction = null!;
+        }
     }
 
     // CREATE
@@ -144,6 +148,15 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
     // SAVE
     public virtual async Task<int> SaveAsync()
     {
-        return await _context.SaveChangesAsync();
+        try
+        {
+            return await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error saving changes: {ex.Message}");
+            throw;
+        }
+
     }
 }

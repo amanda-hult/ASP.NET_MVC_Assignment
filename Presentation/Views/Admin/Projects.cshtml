@@ -29,3 +29,26 @@
 	</div>
 
 </section>
+
+
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+			const preSelectedMembers = []
+
+	initTagSelector({
+		containerId: 'tagged-users',
+		inputId: 'user-search',
+		resultsId: 'user-search-results',
+		searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+		displayProperty: 'fullName',
+		imageProperty: 'imageUrl',
+		tagClass: 'user-tag',
+		avatarFolder: '/images/members',
+		emptyMessage: 'No members found.',
+		preselected: preSelectedMembers,
+		selectedInputIds: 'SelectedMemberIds'
+	})
+	})
+
+</script>

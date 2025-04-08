@@ -1,5 +1,8 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
 
+    updateRelativeTimes()
+    setInterval(updateRelativeTimes, 6000)
+
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/notificationHub")
         .build()
@@ -15,7 +18,7 @@
                 <img class="image" src="${notification.image}" />
                 <div class="message">${notification.message}</div >
                 <div class="time" data-created="${new Date(notification.created).toISOString()}">${notification.created}</div>
-                <button class="btn-close" onclick="dismissNotification('${notification.id}')"></button>
+                <button class="btn-close" onclick="dismissNotification('${notification.notificationId}')"></button>
             `
 
         notifications.insertBefore(item, notifications.firstChild)
@@ -24,7 +27,27 @@
         updateNotificationCount()
     })
 
-    connection.on("NotificationDismissed", function (notificatinoId) {
+    connection.on("AdminRecieveNotification", function (notification) {
+        const notifications = document.querySelector('.notifications')
+
+        const item = document.createElement('div')
+        item.className = 'notification-item'
+        item.setAttribute('data-id', notification.id)
+        item.innerHTML =
+            `
+                <img class="image" src="${notification.image}" />
+                <div class="message">${notification.message}</div >
+                <div class="time" data-created="${new Date(notification.created).toISOString()}">${notification.created}</div>
+                <button class="btn-close" onclick="dismissNotification('${notification.notificationId}')"></button>
+            `
+
+        notifications.insertBefore(item, notifications.firstChild)
+
+        updateRelativeTimes()
+        updateNotificationCount()
+    })
+
+    connection.on("NotificationDismissed", function (notificationId) {
         const element = document.querySelector(`.notification-item[data-id="${notificationId}]"`)
         if (element) {
             element.remove()
@@ -39,9 +62,9 @@
 
 async function dismissNotification(notificationId) {
     try {
-        const res = await fetch(`/api/notifications/dismiss/${notificationId}`, { method: 'POST' })
+        const res = await fetch(`/api/notification/dismiss/${notificationId}`, { method: 'POST' })
         if (res.ok) {
-            const element = document.querySelector(`.notification-item[data-id="${notificationId}]"`)
+            const element = document.querySelector(`.notification-item[data-id="${notificationId}"]`)
             if (element) {
                 element.remove()
                 updateNotificationCount()
@@ -79,7 +102,7 @@ function updateNotificationCount() {
 }
 
 function updateRelativeTimes() {
-    const elements = document.querySelectorAll('.notification-item.time')
+    const elements = document.querySelectorAll('.notification-item .time')
     const now = new Date();
 
     elements.forEach(element => {
@@ -95,26 +118,20 @@ function updateRelativeTimes() {
 
         if (diffMinutes < 1) {
             relativeTime = '0 min ago'
-        }
-        else if (diffMinutes < 60) {
+        } else if (diffMinutes < 60) {
             relativeTime = diffMinutes + ' min ago'
-        }
-        else if (diffHours < 2) {
+        } else if (diffHours < 2) {
             relativeTime = diffHours + ' hour ago'
-        }
-        else if (diffHours < 24) {
+        } else if (diffHours < 24) {
             relativeTime = diffHours + ' hours ago'
-        }
-        else if (diffDays < 2) {
+        } else if (diffDays < 2) {
             relativeTime = diffDays + ' day ago'
-        }
-        else if (diffDays < 7) {
+        } else if (diffDays < 7) {
             relativeTime = diffDays + ' days ago'
-        }
-        else {
+        } else {
             relativeTime = diffWeeks + ' weeks ago'
         }
 
-        element.texContent = relativeTime;
+        element.textContent = relativeTime;
     })
 }

@@ -5,7 +5,7 @@
     <div class="project-card-header">
 
         <div>
-            <img src="~/images/AlphaLogo.svg" alt="Project logo">
+            <img src="@Model.ProjectImageUrl" alt="Project logo">
         </div>
 
         <div>
@@ -23,9 +23,24 @@
     </div>
 
     <div class="project-card-footer">
-        <div class="time-wrapper">
+        <div class="time-wrapper @(Model.DaysLeft < 6 ? "error" : "normal")">
             <i class="fa-duotone fa-solid fa-clock"></i>
-            <p>1 week left</p>
+            @if (Model.DaysLeft < 1)
+            {
+                <p>Already ended</p>
+            }
+            else if (Model.DaysLeft == 1)
+            {
+                <p>1 day left</p>
+            }
+            else if (Model.DaysLeft < 7)
+            {
+                <p>@Model.DaysLeft days left</p>
+            }
+            else {
+                var weeks = Math.Ceiling(Model.DaysLeft.Value / 7.0);
+                <p>@weeks week@(weeks > 1 ? "s" : "") left</p>
+            }
         </div>
 
         <img src="~/images/avatar-standard.svg">

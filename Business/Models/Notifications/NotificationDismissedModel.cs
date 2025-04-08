@@ -1,5 +1,4 @@
 ﻿using Business.Models.Users;
-using Data.Entities;
 
 namespace Business.Models.Notifications;
 

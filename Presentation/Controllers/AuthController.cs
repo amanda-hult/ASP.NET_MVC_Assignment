@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Presentation.Hubs;
-using Presentation.Models;
 using Presentation.ViewModels;
 
 namespace Presentation.Controllers;
@@ -31,6 +30,8 @@ public class AuthController : Controller
     private readonly INotificationService _notificationService;
     private readonly IHubContext<NotificationHub> _hubContext;
 
+
+    #region Sign Up
 
     [Route("/signup")]
     [HttpGet]
@@ -63,7 +64,9 @@ public class AuthController : Controller
         return View();
     }
 
+    #endregion
 
+    #region Sign In
 
     [HttpPost]
     public IActionResult SignInExternal(string provider, string returnUrl = null!)
@@ -164,24 +167,16 @@ public class AuthController : Controller
                     Debug.WriteLine($"Field: {key}, Error: {error.ErrorMessage}");
                 }
             }
-            Debug.WriteLine("Modellen är ogiltig.");
         }
         if (ModelState.IsValid)
         {
             var result = await _authService.SignInAsync(model);
-
-            Debug.WriteLine($"Login secceeded: {result}");
 
             if (result)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
-                    //var notificationEntity = new NotificationEntity
-                    //{
-                    //    Message = $"{user.FirstName} {user.LastName} signed in.",
-                    //    NotificationTypeId = 1
-                    //};
                     var notificationCreateModel = new NotificationCreateModel
                     {
                         Message = $"{user.FirstName} {user.LastName} signed in.",
@@ -200,9 +195,6 @@ public class AuthController : Controller
                 return LocalRedirect(returnUrl);
             }
 
-
-
-
         }
 
         //bool exists = await _authService.Exists(model.Email);
@@ -216,10 +208,13 @@ public class AuthController : Controller
         return View(viewModel);
     }
 
+    #endregion
+
+    #region Sign Out
     public new async Task<IActionResult> SignOut()
     {
         await _authService.SignOutAsync();
         return RedirectToAction("SignIn", "Auth");
     }
-
+    #endregion
 }

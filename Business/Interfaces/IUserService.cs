@@ -8,5 +8,6 @@ public interface IUserService
     Task<bool> CreateUserAsync(UserCreateModel model);
     Task<IEnumerable<UserModel>> GetAllUsersAsync();
     Task<IEnumerable<UserModel>> GetUsersByIdAsync(List<string> ids);
+    Task<IEnumerable<BasicUserModel>> GetBasicUsersByStringAsync(string term);
     Task<List<UserEntity>> GetUserEntitiesByIdAsync(List<string> ids);
 }

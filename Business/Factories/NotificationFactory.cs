@@ -20,7 +20,7 @@ public static class NotificationFactory
         return new NotificationModel
         {
             NotificationId = entity.NotificationId,
-            NotificationTargetGroup = entity.NotificationTargetGroup,
+            TargetGroupId = entity.TargetGroupId,
             NotificationTypeId = entity.NotificationTypeId,
             Image = entity.Image,
             Message = entity.Message,

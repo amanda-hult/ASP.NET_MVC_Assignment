@@ -22,7 +22,7 @@ public class NotificationEntity
     [Column(TypeName = "nvarchar(max)")]
     public string Message { get; set; } = null!;
 
-    [Column(TypeName = "datetime2")]
-    public DateTime Created { get; set; } = DateTime.UtcNow;
+    [Column(TypeName = "datetimeoffset")]
+    public DateTimeOffset Created { get; set; } = DateTimeOffset.UtcNow;
     public ICollection<NotificationDisMissedEntity> DismissedNotifications { get; set; } = new List<NotificationDisMissedEntity>();
 }
