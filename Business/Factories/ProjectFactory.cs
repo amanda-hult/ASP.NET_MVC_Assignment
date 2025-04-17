@@ -8,7 +8,7 @@ namespace Business.Factories;
 
 public static class ProjectFactory
 {
-    public static ProjectEntity Create(ProjectCreateModel model, ClientEntity client, StatusEntity status, List<UserEntity> users)
+    public static ProjectEntity Create(ProjectCreateModel model, ClientEntity client, StatusEntity status)
     {
         return new ProjectEntity
         {
@@ -19,12 +19,9 @@ public static class ProjectFactory
             EndDate = model.EndDate,
             Budget = model.Budget,
             Client = client,
+            ClientId = client.ClientId,
             Status = status,
-            ProjectUsers = users.Select(user => new ProjectUserEntity
-            {
-                UserId = user.Id,
-                User = user
-            }).ToList()
+            StatusId = status.StatusId
         };
     }
 
@@ -41,9 +38,11 @@ public static class ProjectFactory
     {
         return new ProjectModel
         {
+            ProjectId = entity.ProjectId,
             ProjectImageUrl = entity.ProjectImageUrl,
             ProjectName = entity.ProjectName,
             Description = entity.Description,
+            Budget = entity.Budget,
 
             StartDate = entity.StartDate,
             EndDate = entity.EndDate,
@@ -73,5 +72,19 @@ public static class ProjectFactory
                 }
             }).ToList()
         };
+    }
+
+    public static ProjectEntity Update(ProjectEditModel model, ProjectEntity project, ClientEntity client, StatusEntity status)
+    {
+        project.ProjectImageUrl = model.ProjectImage;
+        project.ProjectName = model.ProjectName;
+        project.Description = model.Description;
+        project.Budget = model.Budget;
+        project.StartDate = model.StartDate;
+        project.EndDate = model.EndDate;
+        project.ClientId = client.ClientId;
+        project.StatusId = status.StatusId;
+
+        return project;
     }
 }

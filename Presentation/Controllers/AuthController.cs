@@ -8,6 +8,7 @@ using Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Presentation.Handlers;
 using Presentation.Hubs;
 using Presentation.ViewModels;
 
@@ -15,13 +16,15 @@ namespace Presentation.Controllers;
 
 public class AuthController : Controller
 {
-    public AuthController(IAuthService authService, SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, INotificationService notificationService, IHubContext<NotificationHub> hubContext)
+    public AuthController(IAuthService authService, IFileHandler fileHandler, SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, INotificationService notificationService, IHubContext<NotificationHub> hubContext)
     {
         _authService = authService;
         _userManager = userManager;
         _signInManager = signInManager;
         _notificationService = notificationService;
         _hubContext = hubContext;
+
+        _fileHandler = fileHandler;
     }
 
     private readonly IAuthService _authService;
@@ -29,6 +32,8 @@ public class AuthController : Controller
     private readonly UserManager<UserEntity> _userManager;
     private readonly INotificationService _notificationService;
     private readonly IHubContext<NotificationHub> _hubContext;
+
+    private readonly IFileHandler _fileHandler;
 
 
     #region Sign Up
@@ -168,6 +173,7 @@ public class AuthController : Controller
                 }
             }
         }
+
         if (ModelState.IsValid)
         {
             var result = await _authService.SignInAsync(model);
@@ -175,12 +181,26 @@ public class AuthController : Controller
             if (result)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
+
+                // handle member profile image
+                string imageUri;
+
+                if (user.UserImageUrl == null || user.UserImageUrl.Length == 0)
+                {
+                    imageUri = "/images/avatar-standard.svg";
+                }
+                else
+                {
+                    imageUri = user.UserImageUrl;
+                }
+
                 if (user != null)
                 {
                     var notificationCreateModel = new NotificationCreateModel
                     {
                         Message = $"{user.FirstName} {user.LastName} signed in.",
-                        NotificationTypeId = 1
+                        NotificationTypeId = 1,
+                        Image = imageUri,
                     };
 
                     await _notificationService.AddNotificationAsync(notificationCreateModel, user.Id);

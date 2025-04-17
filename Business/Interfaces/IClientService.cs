@@ -9,7 +9,7 @@ public interface IClientService
     Task<IEnumerable<ClientModel>> GetAllClientsAsync();
     Task<ClientModel?> GetClientAsync(int? id);
     Task<ClientModel> GetClientByNameAsync(string name);
-    Task<ClientEntity?> GetClientEntityAsync(int id);
+    Task<ClientEntity?> GetClientEntityAsync(int? id);
     Task<int> UpdateClientAsync(ClientEditModel model);
     Task<int> DeleteClientAsync(int id);
 }

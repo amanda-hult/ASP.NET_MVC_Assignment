@@ -49,7 +49,7 @@ public class AddProjectModel
     [Required(ErrorMessage = "Please choose at least one member")]
     public List<string?> SelectedMemberIds { get; set; } = new();
 
-    public IEnumerable<SelectListItem> Members { get; set; } = new List<SelectListItem>();
+    //public IEnumerable<SelectListItem> Members { get; set; } = new List<SelectListItem>();
 
 
 

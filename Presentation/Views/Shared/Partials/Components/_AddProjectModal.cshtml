@@ -20,15 +20,9 @@
             @* <input asp-for="ProjectImage" accept="image/*" class="d-none" /> *@
 
 
-            <input type="hidden" name="SelectedMemberIds" id="SelectedMemberIds" />
-
-
-
-
-
 
             <div class="image-preview-container square">
-                <img id="image-preview" src="#" class="d-none" />
+                <img src="#" class="image-preview d-none" />
                 <input asp-for="ProjectImage" accept="image/*" class="d-none" />
             </div>
 
@@ -48,11 +42,34 @@
                 <span asp-validation-for="SelectedClientId"></span>
             </div>
 
-
             <div class="form-group">
                 <label asp-for="Description"></label>
-                <div class="field-group">
-                    <input asp-for="Description" />
+                <div class="wysiwyg">
+                    <textarea asp-for="Description" id="add-project-description" class="hide"></textarea>
+                    <div id="add-project-description-wysiwyg-editor" class="wysiwyg-editor"></div>
+                    <div id="add-project-description-wysiwyg-toolbar" class="wysiwyg-toolbar">
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+
+                        <span class="ql-formats">
+                            <button class="ql-align" value=""></button>
+                            <button class="ql-align" value="center"></button>
+                            <button class="ql-align" value="right"></button>
+                        </span>
+
+                        <span class="ql-formats">
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-list" value="ordered"></button>
+                        </span>
+
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                        </span>
+                    </div>
                     <span asp-validation-for="Description"></span>
                 </div>
             </div>
@@ -76,15 +93,16 @@
             </div>
 
 
+            <input type="hidden" name="SelectedMemberIdsAdd" id="SelectedMemberIdsAdd" />
 
             <div class="form-group">
 
                 <label class="form-label" asp-for="SelectedMemberIds"></label>
 
-                <div id="tagged-users" class="form-input form-tag-select">
-                    <input type="text" id="user-search" class="form-tag-input" placeholder="Add member" />
+                <div id="tagged-users-add" class="form-input form-tag-select">
+                    <input id="user-search-add" type="text" class="form-tag-input" placeholder="Add member" />
                     <label for="user-search" class="fa-regular fa-magnifying-glass-waveform"></label>
-                    <div id="user-search-results" class="search-results"></div>
+                    <div id="user-search-results-add" class="search-results"></div>
                 </div>
 
             </div>
@@ -106,13 +124,11 @@
                 <span asp-validation-for="SelectedStatusId"></span>
             </div>
 
+            <div id="error-message" class="error-message"></div>
+
             <button type="submit" class="button btn-blue mt-4">Create</button>
         </form>
     </div>
 </div>
-
-
-@* @await Html.PartialAsync("_ValidationScripts") *@
-
 
 

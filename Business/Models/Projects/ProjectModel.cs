@@ -8,6 +8,7 @@ public class ProjectModel
     public string? ProjectImageUrl { get; set; }
     public string ProjectName { get; set; } = null!;
     public string Description { get; set; } = null!;
+    public decimal? Budget { get; set; }
 
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }

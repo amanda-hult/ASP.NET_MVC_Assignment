@@ -22,13 +22,23 @@ public static class UserFactory
         return new UserModel
         {
             Id = entity.Id,
+            UserImageUrl = entity.UserImageUrl,
             FirstName = entity.FirstName,
             LastName = entity.LastName,
             Email = entity.Email,
             Phone = entity.PhoneNumber,
             JobTitle = entity.JobTitle,
             DateOfBirth = entity.DateOfBirth,
-            Address = null,
+            Address = entity.Address != null
+            ? new AddressModel
+            {
+                AddressId = entity.Address.AddressId,
+                StreetName = entity.Address.StreetName,
+                StreetNumber = entity.Address.StreetNumber,
+                PostalCode = entity.Address.PostalCode,
+                City = entity.Address.City
+            }
+            : null
         };
     }
 
@@ -68,18 +78,37 @@ public static class UserFactory
         };
     }
 
-    public static UserEntity Create(UserCreateModel user, AddressEntity address)
+    public static UserEntity Create(UserCreateModel user)
     {
         return new UserEntity
         {
+            UserImageUrl = user.ProfileImage,
             UserName = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email,
             PhoneNumber = user.Phone,
             JobTitle = user.JobTitle,
-            DateOfBirth = user.DateOfBirth,
-            Address = address
+            DateOfBirth = user.DateOfBirth
+        };
+    }
+
+    public static UserEntity CreateUpdated(UserEditModel model, UserEntity entity)
+    {
+        return new UserEntity
+        {
+            Id = entity.Id,
+            ProjectUsers = entity.ProjectUsers,
+            DismissedNotifications = entity.DismissedNotifications,
+
+            UserImageUrl = model.ProfileImage,
+            UserName = model.Email,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Email = model.Email,
+            PhoneNumber = model.Phone,
+            JobTitle = model.JobTitle,
+            DateOfBirth = model.DateOfBirth,
         };
     }
 }

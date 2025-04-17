@@ -11,9 +11,9 @@
 
             <input asp-for="Id" readonly type="hidden" />
 
-            <div class="image-preview-container circle">
-                <img id="image-preview" src="#" class="d-none" />
-                <input asp-for="ProfileImage" id="ProfileImage_@Model.Id" accept="image/*" class="d-none" />
+            <div id="image-preview-edit-member-modal-container" class="image-preview-container circle">
+                <img src="#" id="image-preview-edit-member-modal" class="image-preview d-none" />
+                <input asp-for="ProfileImage" id="ProfileImage_@Model.Id" accept="image/*" class="d-none" type="file" />
             </div>
 
             <div class="name-container mt-4">
@@ -145,7 +145,56 @@
 
             <button type="submit" class="button btn-blue mt-4">Save</button>
         </form>
+
+        <button type="button" 
+                asp-controller="Member" 
+                asp-action="DeleteMember" 
+                class="button btn-red mt-4"
+                data-modal="true"
+                data-target="#deleteMemberModal"
+                data-id="@Model.Id"
+                data-firstname="@Model.FirstName"
+                data-lastname="@Model.LastName">
+            Delete  
+        </button>
     </div>
 </div>
 
-@* @await Html.PartialAsync("_ValidationScripts") *@
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const deleteBtns = document.querySelectorAll('[data-target="#deleteMemberModal"]')
+        const deleteMemberModal = document.getElementById('deleteMemberModal')
+
+        const deleteMemberId = document.getElementById('delete-member-id')
+        const deleteMemberName = document.getElementById('delete-member-name')
+
+
+        handleImagePreview({
+            imagePreview: 'image-preview-edit-member-modal',
+            containerId: 'image-preview-edit-member-modal-container'
+        })
+
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+
+                console.log("Clicked button: ", btn);
+                console.log("ID: ", btn.dataset.id);
+                console.log("Name: ", btn.dataset.firstname, btn.dataset.lastname);
+
+
+                deleteMemberId.value = btn.dataset.id || ''
+                deleteMemberName.textContent = `${btn.dataset.firstname} ${btn.dataset.lastname}` || ''
+
+                const errorMessageContainer = document.getElementById('error-message')
+                if(errorMessageContainer) {
+                    errorMessageContainer.textContent = ''
+                    errorMessageContainer.style.display = 'none'
+                }
+            })
+        })
+    })
+
+</script>

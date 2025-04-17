@@ -10,7 +10,7 @@
         <form asp-controller="Member" asp-action="AddMember" method="post" class="js-form" enctype="multipart/form-data" novalidate>
 
             <div class="image-preview-container circle">
-                <img id="image-preview" src="#" class="d-none" />
+                <img src="#" class="image-preview d-none" />
                 <input asp-for="ProfileImage" accept="image/*" class="d-none" />
             </div>
 
@@ -138,13 +138,12 @@
                 </div>
             </div>
 
+            <div id="error-message" class="error-message"></div>
+
             <button type="submit" class="button btn-blue mt-4">Add Contact</button>
         </form>
     </div>
 </div>
-
-
-@* @await Html.PartialAsync("_ValidationScripts") *@
 
 
                         

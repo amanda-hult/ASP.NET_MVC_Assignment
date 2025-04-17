@@ -1,31 +1,51 @@
-﻿@model ProjectViewModel
+﻿@using System.Text.Json
+@model ProjectViewModel
 @{
 	Layout = "_PortalLayout";
-
 	ViewData["Title"] = Model.Title;
+
+	var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+	var preselectedJson = JsonSerializer.Serialize(Model.PreselectedMembers, jsonOptions);
 }
 
+<script> 
+	window.preselectedMembersJson = @Html.Raw(preselectedJson)
+ </script>
+
+
 @await Html.PartialAsync("Partials/Components/_AddProjectModal", Model.AddProjectModel)
-@await Html.PartialAsync("Partials/Components/_EditProjectModal", Model.EditProjectModel)
+@await Html.PartialAsync("Partials/Components/Modals/_DeleteProjectModal")
+
 
 <section id="projects">
 	<header class="portal-header">
 		<h2>Projects</h2>
-		<button type="button" data-modal="true" data-target="#addProjectModal" class="button btn-blue btn-add">Add Project</button>
+		<button type="button" data-modal="true" data-target="#addProjectModal" class="button btn-blue btn-add btn-modal">Add Project</button>
 	</header>
 
 	<div class="project-statuses">
-		<p>ALL [@Model.Projects.Count()] </p>
-		<p>STARTED [@Model.Projects.Where(x => x.Status.StatusName == "Started").Count()]</p>
-		<p>NOT STARTED [@Model.Projects.Where(x => x.Status.StatusName == "Not started").Count()]</p>
-		<p>COMPLETED [@Model.Projects.Where(x => x.Status.StatusName == "Completed").Count()]</p>
+		<p data-filter="all" class="project-status">ALL [@Model.Projects.Count()] </p>
+		<p data-filter="started" class="project-status">STARTED [@Model.Projects.Where(x => x.Status.StatusName == "Started").Count()]</p>
+		<p data-filter="not started" class="project-status">NOT STARTED [@Model.Projects.Where(x => x.Status.StatusName == "Not started").Count()]</p>
+		<p data-filter="completed" class="project-status">COMPLETED [@Model.Projects.Where(x => x.Status.StatusName == "Completed").Count()]</p>
 	</div>
 
 	<div class="project-wrapper">
-		@foreach (var project in Model.Projects)
+
+		@foreach (var project in Model.Projects) 
 		{
 			@await Html.PartialAsync("Partials/Components/_ProjectCard", project)
-		}
+
+
+			@* var preselectedMembersJson = JsonSerializer.Serialize(Model.PreselectedMembers[project.ProjectId]); *@
+			var editModel = Model.EditProjectModel[project.ProjectId];
+
+			@await Html.PartialAsync("Partials/Components/_EditProjectModal", editModel)
+
+			@* @await Html.PartialAsync("Partials/Components/_AddMemberToProjectModal", editModel) *@
+
+		 }
+
 	</div>
 
 </section>
@@ -34,21 +54,107 @@
 
 <script>
 	document.addEventListener('DOMContentLoaded', () => {
-			const preSelectedMembers = []
 
-	initTagSelector({
-		containerId: 'tagged-users',
-		inputId: 'user-search',
-		resultsId: 'user-search-results',
-		searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
-		displayProperty: 'fullName',
-		imageProperty: 'imageUrl',
-		tagClass: 'user-tag',
-		avatarFolder: '/images/members',
-		emptyMessage: 'No members found.',
-		preselected: preSelectedMembers,
-		selectedInputIds: 'SelectedMemberIds'
-	})
-	})
+		//FOR ADD FORM
+		initTagSelector({
+			containerId: 'tagged-users-add',
+			inputId: 'user-search-add',
+			resultsId: 'user-search-results-add',
+			searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+			displayProperty: 'fullName',
+			imageProperty: 'userImageUrl',
+			tagClass: 'user-tag',
+			emptyMessage: 'No members found.',
+			preselected: [],
+			selectedInputIds: 'SelectedMemberIdsAdd'
+		})
 
+
+		// const projectId = btn.dataset.id
+		// const preSelectedMembers = window.preselectedMembersJson?.[projectId]
+
+		// initTagSelector({
+		// 	containerId: `tagged-users-edit-${projectId}`,
+		// 	inputId: `user-search-edit-${projectId}`,
+		// 	resultsId: `user-search-results-edit-${projectId}`,
+		// 	searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+		// 	displayProperty: 'fullName',
+		// 	imageProperty: 'userImageUrl',
+		// 	tagClass: 'user-tag',
+		// 	emptyMessage: 'No members found.',
+		// 	preselected: preSelectedMembers,
+		// 	selectedInputIds: `SelectedMemberIdsEdit-${projectId}`
+		// })
+
+
+		//FOR EDIT FORM
+		const editBtns = document.querySelectorAll('[data-target="#editProjectModal"]')
+
+		editBtns.forEach(btn => {
+			btn.addEventListener('click', () => {
+				const projectId = btn.dataset.id
+				var preSelectedMembers = window.preselectedMembersJson?.[projectId]
+				console.log("preSelectedMembers: ", preSelectedMembers)
+
+
+				initTagSelector({
+					containerId: 'tagged-users-edit',
+					inputId: 'user-search-edit',
+					resultsId: 'user-search-results-edit',
+					searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+					displayProperty: 'fullName',
+					imageProperty: 'userImageUrl',
+					tagClass: 'user-tag',
+					emptyMessage: 'No members found.',
+					preselected: preSelectedMembers,
+					selectedInputIds: 'SelectedMemberIdsEdit'
+				})
+
+				// initTagSelector({
+				// 	containerId: `tagged-users-edit-${projectId}`,
+				// 	inputId: `user-search-edit-${projectId}`,
+				// 	resultsId: `user-search-results-edit-${projectId}`,
+				// 	searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+				// 	displayProperty: 'fullName',
+				// 	imageProperty: 'userImageUrl',
+				// 	tagClass: 'user-tag',
+				// 	emptyMessage: 'No members found.',
+				// 	preselected: preSelectedMembers,
+				// 	selectedInputIds: `SelectedMemberIdsEdit-${projectId}`
+				// })
+
+			})
+		})
+
+
+
+
+
+		const statuses = document.querySelectorAll('[data-filter]')
+		const cards = document.querySelectorAll('.project-card')
+
+		statuses.forEach(status => {
+			status.addEventListener('click', () => {
+				const selectedStatus = status.dataset.filter
+
+				statuses.forEach(s => {
+					if (s === status) {
+						s.classList.add('focused')
+					} else {
+						s.classList.remove('focused')
+					}
+				})
+
+				cards.forEach(card => {
+					const projectStatus = card.dataset.status
+
+					 if (selectedStatus === "all" || projectStatus === selectedStatus) {
+						 card.style.display = 'grid'
+					 } else {
+						 card.style.display = 'none'
+					 }
+				})
+			})
+		})
+	})
 </script>

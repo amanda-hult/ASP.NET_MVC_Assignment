@@ -5,8 +5,9 @@
 	ViewData["Title"] = Model.Title;
 }
 
-@await Html.PartialAsync("Partials/Components/_AddMemberModal", Model.AddMemberModal)
-@await Html.PartialAsync("Partials/Components/_EditMemberModal", Model.EditMemberModal)
+@await Html.PartialAsync("Partials/Components/Modals/_AddMemberModal", Model.AddMemberModal)
+@await Html.PartialAsync("Partials/Components/Modals/_EditMemberModal", Model.EditMemberModal)
+@await Html.PartialAsync("Partials/Components/Modals/_DeleteMemberModal")
 
 <section id="members">
 	<header class="portal-header">
@@ -17,7 +18,7 @@
 	<div class="member-wrapper">
 		@foreach (var member in Model.Members)
 		{
-			@await Html.PartialAsync("Partials/Components/_MemberCard", member)
+			@await Html.PartialAsync("Partials/Components/Cards/_MemberCard", member)
 		}
 	</div>
 

@@ -10,7 +10,7 @@
         <form method="post" asp-controller="Client" asp-action="AddClient" class="js-form" novalidate>
 
 			<div class="image-preview-container circle">
-                <img id="image-preview" src="#" class="d-none" />
+                <img src="#" class="image-preview d-none" />
                 <input asp-for="ClientImage" accept="image/*" class="d-none"/>
 
 			</div>
@@ -47,6 +47,8 @@
                     <span asp-validation-for="Phone"></span>
                 </div>
             </div>
+
+            <div id="error-message" class="error-message"></div>
 
             <button type="submit" class="button btn-blue mt-4">Create</button>
 		</form>

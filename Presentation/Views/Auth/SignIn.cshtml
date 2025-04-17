@@ -6,7 +6,7 @@
 	ViewData["Title"] = Model.Title;
 }
 
-<div class="surface-35" id="signin">
+<div class="surface-35 flex-column" id="signin">
     <h1 class="text-center">Login</h1>
 
     <form class="js-form" method="post" asp-controller="Auth" asp-action="SignInExternal" novalidate>
@@ -21,7 +21,7 @@
         <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
 
 
-        <p class="mt-4">OR</p>
+        <p class="mt-4 text-center">OR</p>
 
         <div class="grid mt-4">
             <label asp-for="Form.Email"></label>
@@ -36,8 +36,14 @@
         </div>
 
         <div class="flex mt-2">
-            <input type="checkbox">
-            <p>Remember me</p>
+            <div>
+                <input type="checkbox">
+                <p>Remember me</p>
+            </div>
+            <div>
+                <a>Forgot Password?</a>
+            </div>
+
         </div>
 
         @if (!string.IsNullOrEmpty(ViewBag?.ErrorMessage))
@@ -49,7 +55,7 @@
 
         <button type="submit" class="button btn-blue mt-4">Log In</button>
 
-        <p class="mt-5 text-center">Don't have an account?<a asp-asp-controller="Auth" asp-action="SignUp">Sign Up</a></p>
+        <p class="mt-5 text-center">Don't have an account?<a asp-asp-controller="Auth" asp-action="SignUp"> Sign Up</a></p>
     </form>
 </div>
 

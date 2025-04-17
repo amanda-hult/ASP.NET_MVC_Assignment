@@ -7,12 +7,18 @@ using Data.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
+using Presentation.Handlers;
 using Presentation.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
+
+var connectionString = builder.Configuration.GetConnectionString("AzureBlobStorage");
+var containerName = "images";
+builder.Services.AddScoped<IFileHandler>(_ => new AzureFileHandler(connectionString, containerName));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 

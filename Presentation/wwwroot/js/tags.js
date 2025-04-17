@@ -7,6 +7,13 @@
     const result = document.getElementById(config.resultsId)
     const selectedInputIds = document.getElementById(config.selectedInputIds)
 
+    if (tagContainer) {
+        tagContainer.querySelectorAll('.user-tag').forEach(tag => tag.remove())
+    }
+    if (selectedInputIds) {
+        selectedInputIds.value = ''
+    }
+
     // if config.preselected is an array, send every item in array to addTag function
     if (Array.isArray(config.preselected)) {
         config.preselected.forEach(item => {
@@ -36,10 +43,12 @@
             result.innerHTML = ''
             return
         }
+
         // otherwise, send query request, convert to json and send data to renderSearchResults function
         fetch(config.searchUrl(query))
             .then(r => r.json())
             .then(data => renderSearchResults(data))
+
     })
 
     input.addEventListener('keydown', (e) => {
@@ -104,7 +113,7 @@
                     if (config.tagClass === 'user-tag') {
                         resultItem.innerHTML =
                             `
-                            <img class="user-avatar" src="${config.avatarFolder || ''} ${item[config.imageProperty]}">
+                            <img class="user-avatar" src="${item[config.imageProperty]}">
                             <span>${item[config.displayProperty]}</span>
                             `
                     } else {
@@ -126,7 +135,10 @@
 
 
     function addTag(item) {
-        const id = parseInt(item.id)
+        const id = item.id
+
+
+        console.log("Adding preselected: ", item)
 
         // do not add tag if already added
         if (selectedIds.includes(id)) {
@@ -135,13 +147,17 @@
 
         selectedIds.push(id)
 
+        console.log(item[config.imageProperty])
+        console.log(item[config.displayProperty])
+
+
         // add tag to list
         const tag = document.createElement('div')
         tag.classList.add(config.tagClass || 'tag')
         if (config.tagClass === 'user-tag') {
             tag.innerHTML =
                 `
-                <img class="user-avatar" src="${config.avatarFolder || ''} ${item[config.imageProperty]}">
+                <img class="user-avatar" src="${item[config.imageProperty]}">
                 <span>${item[config.displayProperty]}</span>
                 `
         } else {

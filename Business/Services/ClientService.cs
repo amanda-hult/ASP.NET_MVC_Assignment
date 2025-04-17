@@ -81,7 +81,7 @@ public class ClientService(IClientRepository clientRepository, IProjectRepositor
         return clientModel;
     }
 
-    public async Task<ClientEntity?> GetClientEntityAsync(int id)
+    public async Task<ClientEntity?> GetClientEntityAsync(int? id)
     {
         var clientEntity = await _clientRepository.GetAsync(x => x.ClientId == id);
         if (clientEntity == null)

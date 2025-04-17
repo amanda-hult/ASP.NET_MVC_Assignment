@@ -34,7 +34,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
             .HasOne(x => x.Project)
             .WithMany(x => x.ProjectUsers)
             .HasForeignKey(x => x.ProjectId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<ProjectUserEntity>()
             .HasOne(x => x.User)

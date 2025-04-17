@@ -15,4 +15,16 @@ public static class AddressFactory
             City = model.City,
         };
     }
+
+    public static AddressEntity Update(AddressEditModel model)
+    {
+        return new AddressEntity
+        {
+            AddressId = model.Id,
+            StreetName = model.StreetName,
+            StreetNumber = model.StreetNumber,
+            PostalCode = model.PostalCode,
+            City = model.City,
+        };
+    }
 }

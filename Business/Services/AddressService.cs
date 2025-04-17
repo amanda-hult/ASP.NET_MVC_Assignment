@@ -10,15 +10,17 @@ public class AddressService(IAddressRepository addressRepository) : IAddressServ
 {
     private readonly IAddressRepository _addressRepository = addressRepository;
 
-    // CREATE
+
+    #region Create
     public async Task<AddressEntity> CreateAddressAsync(AddressCreateModel model)
     {
-        return await _addressRepository.CreateAsync(AddressFactory.Create(model));
-        //if (createdAddress == null)
-        //    return false;
+        var addressEntity = await _addressRepository.CreateAsync(AddressFactory.Create(model));
+        if (addressEntity == null)
+            return null!;
 
-        //return true;
+        return addressEntity;
     }
+    #endregion
 
     // READ
     public async Task<AddressEntity> GetAddressEntityByIdAsync(int id)
@@ -31,7 +33,19 @@ public class AddressService(IAddressRepository addressRepository) : IAddressServ
         return addressEntity;
     }
 
-    // UPDATE
+
+    #region Update
+    public async Task<AddressEntity> UpdateAddressAsync(AddressEditModel model)
+    {
+        var updatedAddress = AddressFactory.Update(model);
+
+        var result = await _addressRepository.UpdateAsync(x => x.AddressId == model.Id, updatedAddress);
+        if (result == null)
+            return null;
+
+        return result;
+    }
+    #endregion
 
     // DELETE
 }

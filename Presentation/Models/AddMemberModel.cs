@@ -12,14 +12,15 @@ public class AddMemberModel
     [Display(Name = "First name", Prompt = "Your first name")]
     [DataType(DataType.Text)]
     [Required(ErrorMessage = "Required")]
+    [StringLength(50)]
     public string FirstName { get; set; } = null!;
 
 
     [Display(Name = "Last name", Prompt = "Your last name")]
     [DataType(DataType.Text)]
     [Required(ErrorMessage = "Required")]
+    [StringLength(50)]
     public string LastName { get; set; } = null!;
-
 
 
     [Display(Name = "Email", Prompt = "Your email address")]
@@ -29,19 +30,14 @@ public class AddMemberModel
     public string Email { get; set; } = null!;
 
 
-
     [Display(Name = "Phone", Prompt = "Your phone number")]
     [DataType(DataType.PhoneNumber)]
+    [StringLength(20)]
     public string? Phone { get; set; }
 
 
     [Display(Name = "Job Title", Prompt = "Your job title")]
     public string? JobTitle { get; set; }
-
-
-    //[Display(Name = "Date of Birth")]
-    //[Required(ErrorMessage = "Required, please select date of birth")]
-    //public DateTime DateOfBirth { get; set; }
 
 
     [Display(Name = "Address", Prompt = "Your address")]
@@ -66,7 +62,6 @@ public class AddMemberModel
 
     [Required(ErrorMessage = "Required")]
     public int? SelectedYear { get; set; }
-
 
     public IEnumerable<int> Days { get; set; } = Enumerable.Range(1, 31).ToList();
     public IEnumerable<int> Months { get; set; } = Enumerable.Range(1, 12).ToList();

@@ -20,23 +20,23 @@ public class NotificationService : INotificationService
 
     public async Task AddNotificationAsync(NotificationCreateModel notification, string userId = "anonymous")
     {
-        if (string.IsNullOrEmpty(notification.Image))
-        {
-            switch (notification.NotificationTypeId)
-            {
-                case 1:
-                    notification.Image = ""; //lägg till korrekt sökväg till standardbild / flytta ev till presentationslagret (user)
-                    break;
+        //if (string.IsNullOrEmpty(notification.Image))
+        //{
+        //    switch (notification.NotificationTypeId)
+        //    {
+        //        case 1:
+        //            notification.Image = "";
+        //            break;
 
-                case 2:
-                    notification.Image = ""; //lägg till korrekt sökväg till standardbild (project)
-                    break;
+        //        case 2:
+        //            notification.Image = ""; 
+        //            break;
 
-                case 3:
-                    notification.Image = ""; //lägg till korrekt sökväg till standardbild (client)
-                    break;
-            }
-        }
+        //        case 3:
+        //            notification.Image = "";
+        //            break;
+        //    }
+        //}
 
         var notificationEntity = NotificationFactory.Create(notification);
 

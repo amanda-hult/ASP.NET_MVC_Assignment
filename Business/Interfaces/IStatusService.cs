@@ -7,5 +7,5 @@ public interface IStatusService
 {
     Task<IEnumerable<StatusModel>> GetAllStatuses();
     Task<StatusModel> GetStatusAsync(int? id);
-    Task<StatusEntity> GetStatusEntityAsync(int id);
+    Task<StatusEntity> GetStatusEntityAsync(int? id);
 }

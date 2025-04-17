@@ -7,4 +7,5 @@ public interface IAddressService
 {
     Task<AddressEntity> CreateAddressAsync(AddressCreateModel model);
     Task<AddressEntity> GetAddressEntityByIdAsync(int id);
+    Task<AddressEntity> UpdateAddressAsync(AddressEditModel model);
 }

@@ -22,6 +22,7 @@
     --green-dark: #24B26B;
     --clr-error: var(--red-dark);
     --clr-bg: #F1F3F7;
+    --clr-bg-dropdown: #f7f6f6;
     --clr-bg-transparent: #1a1a1a4d;
     --clr-bg-card: var(--white);
     --clr-text-color: #1A1926;
@@ -116,6 +117,10 @@ p, h1, h2, h3, h4, h5 {
     margin-bottom: 0;
 }
 
+a {
+    text-decoration: none;
+}
+
 
 /*STRUCTURE*/
 .portal {
@@ -190,7 +195,7 @@ p, h1, h2, h3, h4, h5 {
 
 .surface-35 {
     background-color: var(--white);
-    padding: 2rem;
+    padding: 5rem;
     border-radius: 1rem;
     box-shadow: 0 15px 3px -10px var(--clr-border-100);
     width: 100%;
@@ -220,6 +225,20 @@ p, h1, h2, h3, h4, h5 {
     align-items: center;
     justify-content: center;
     gap: 1.5rem;
+}
+
+.flex-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
 }
 
 .flex-grow {
@@ -254,6 +273,10 @@ p, h1, h2, h3, h4, h5 {
 
 .cursor {
     cursor: pointer;
+}
+
+.hide {
+    display: none;
 }
 
 /*STATUSES*/
@@ -424,11 +447,16 @@ p, h1, h2, h3, h4, h5 {
     margin: 0 auto;
 }
 
-.main-entry {
+.main-input {
     background-color: var(--clr-bg);
     color: var(--clr-text-light);
     border: none;
+    outline: none;
 }
+    .main-input:focus {
+        border: none;
+        outline: none;
+    }
 
 .profile-avatar {
     width: 2.5rem;
@@ -442,7 +470,7 @@ p, h1, h2, h3, h4, h5 {
 }
 
 
-.card {
+.project-card {
     display: grid;
     grid-template-rows: 1fr 2fr 1fr;
     gap: .5rem;
@@ -453,16 +481,17 @@ p, h1, h2, h3, h4, h5 {
     box-shadow: 0 15px 5px -10px var(--clr-border-200);
     height: 17rem;
     width: 22rem;
+    position: relative;
 }
 
-    .card > * {
+    .project-card > * {
         margin: .5rem;
     }
 
 
 .project-card-header {
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-columns: 1fr 3fr .5fr;
     gap: 1rem;
 }
 
@@ -498,9 +527,14 @@ p, h1, h2, h3, h4, h5 {
     padding: 1rem 0;
     font-weight: var(--font-semibold);
 }
-.project-statuses p {
+.project-status {
     cursor: pointer;
-    color: var(--gray-800);
+    color: var(--gray-700);
+}
+
+.project-status.focused {
+    color: var(--clr-accent);
+    font-weight: var(--font-bold);
 }
 
 /* MODALS */
@@ -552,12 +586,24 @@ p, h1, h2, h3, h4, h5 {
     width: 550px;
 }
 
+#deleteProjectModal .modal-content {
+    width: 400px;
+}
+
+#addMemberToProjectModal .modal-content {
+    width: 400px;
+}
+
 #addMemberModal .modal-content {
     width: 550px;
 }
 
 #editMemberModal .modal-content {
     width: 550px;
+}
+
+#deleteMemberModal .modal-content {
+    width: 400px;
 }
 
 
@@ -572,6 +618,7 @@ p, h1, h2, h3, h4, h5 {
 
 .profile-dropdown {
     background-color: var(--clr-bg-card);
+    border-radius: 1rem;
     display: none;
     justify-content: center;
     align-items: center;
@@ -617,14 +664,24 @@ p, h1, h2, h3, h4, h5 {
                 margin-top: .5rem;
             }
 
-            .profile-dropdown .profile-content > *:nth-child(3) {
-                padding: 1.5rem 1rem 1rem 1rem;
-                border-top: 1.5px solid var(--gray-200);
-            }
-                .profile-dropdown .profile-content > *:nth-child(3) a {
-                    text-decoration: none;
-                    color: var(--clr-text-color);
+                .profile-dropdown .profile-content > *:nth-child(2):hover {
+                    background-color: var(--gray-100);
+                    border-radius: 1rem;
                 }
+
+        .profile-dropdown .profile-content > *:nth-child(3) {
+            padding: 1.5rem 1rem 1rem 1rem;
+            border-top: 1.5px solid var(--gray-200);
+        }
+
+            .profile-dropdown .profile-content > *:nth-child(3):hover {
+                background-color: var(--gray-100);
+                border-radius: 1rem;
+            }
+            .profile-dropdown .profile-content > *:nth-child(3) a {
+                text-decoration: none;
+                color: var(--clr-text-color);
+            }
 
 
 
@@ -725,6 +782,65 @@ p, h1, h2, h3, h4, h5 {
     .notification-item:hover .btn-close {
         grid-area: btn;
         opacity: 1;
+    }
+
+
+.project-dropdown {
+    position: absolute;
+    display: none;
+    top: 3rem;
+    left: 4rem;
+    z-index: 100;
+}
+
+.project-dropdown.show {
+    display: block;
+}
+
+.edit-dropdown-container {
+    border: 1px solid var(--gray-300);
+    border-radius: 1rem;
+    box-shadow: 0 15px 3px -10px var(--clr-border-100);
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.edit-dropdown {
+    width: 15rem;
+    background-color: var(--clr-bg-dropdown);
+    border-radius: 1rem;
+    padding: .5rem;
+}
+
+    .edit-dropdown > *:nth-child(4) {
+        color: var(--red-dark);
+    }
+
+.edit-dropdown-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    cursor: pointer;
+}
+.edit-dropdown-button {
+    border: none;
+    display: flex;
+    gap: 1rem;
+    background-color: var(--clr-bg-dropdown);
+}
+    .edit-dropdown-item:hover {
+        background-color: var(--clr-accent-10);
+        border-radius: 1rem;
+    }
+        .edit-dropdown-item:hover .edit-dropdown-button {
+            color: var(--clr-accent);
+            background-color: var(--clr-accent-10);
+        }
+
+    .edit-dropdown > *:last-child:hover {
+        background-color: var(--red-light);
+        border-radius: 1rem;
     }
 
 
@@ -834,6 +950,11 @@ form {
     width: 100%;
 }
 
+form label {
+    font-size: 1rem;
+    font-weight: var(--font-semibold);
+}
+
     form .form-group {
         display: grid;
         gap: .2rem;
@@ -848,7 +969,7 @@ form {
     form input, form select, form textarea {
         width: 100%;
         font-size: 1em;
-        padding: .5rem 1rem;
+        padding: .8rem 1rem;
         border-radius: 1rem;
         border: 1px solid var(--clr-border-100);
         outline: none;
@@ -876,7 +997,7 @@ form {
         position: absolute;
         z-index: 1;
         right: .4rem;
-        top: .4rem;
+        top: .7rem;
         font-size: .8em;
         background-color: var(--red-light);
         color: var(--red-dark);
@@ -888,6 +1009,51 @@ form {
         gap: .5rem;
     }
 
+.wysiwyg {
+    padding-bottom: 2.5rem;
+}
+.wysiwyg-editor {
+    min-height: 8rem;
+    width: 100%;
+    font-size: 1em;
+    font-weight: var(--font-regular);
+    font-family: var(--font-standard);
+    color: var(--clr-text-color);
+    position: relative;
+    border: none !important;
+    transition: border-color .1s ease-in-out;
+}
+
+.ql-editor {
+    border: 1px solid var(--gray-200);
+    border-top-right-radius: 1rem;
+    border-top-left-radius: 1rem;
+}
+    .ql-editor:focus {
+        border: 1px solid var(--clr-accent);
+        border-top-right-radius: 1rem;
+        border-top-left-radius: 1rem;
+    }
+
+    .ql-editor.ql-blank::before {
+        color: var(--gray-700);
+        font-size: .9rem;
+        font-style: normal;
+        font-weight: var(--font-regular);
+    }
+
+
+.wysiwyg-toolbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    border: 1px solid var(--gray-200) !important;
+    border-bottom-right-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    color: var(--gray-800);
+}
 
 .budget-input-wrapper {
     position: relative;
@@ -956,6 +1122,11 @@ form {
 }
 
 /* LINKS */
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
 .nav-links > .nav-link {
     font-family: var(--font-standard);
     font-weight: var(--font-semibold);
@@ -1000,6 +1171,7 @@ form {
     background-color: var(--clr-accent);
     color: var(--white);
     border: 1px solid var(--white);
+    transition: background-color .1s ease-in-out;
 }
     .btn-blue:hover {
         background-color: var(--clr-dark-accent);
@@ -1025,6 +1197,14 @@ form {
     color: var(--clr-text-color);
     border: none;
     padding: 1rem;
+    transition: background-color .1s ease-in-out;
+}
+
+    .btn-gray:hover {
+        background-color: var(--gray-200);
+    }
+
+.btn-message {
     position: absolute;
     bottom: 1rem;
     left: 1rem;
@@ -1064,6 +1244,9 @@ form {
     padding: .5rem;
     background-color: var(--clr-bg-card);
 }
+
+
+
 /* BADGES */
 .badge {
     border-radius: 10px;
@@ -1196,3 +1379,16 @@ form {
     font-size: .8rem;
     font-weight: var(--font-bold);
 }
+
+
+
+
+.divider {
+    height: 2px;
+    width: 100%;
+    background-color: var(--gray-300);
+    margin: .5rem 0;
+}
+
+
+

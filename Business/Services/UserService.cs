@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Business.Factories;
 using Business.Interfaces;
-using Business.Models.Clients;
 using Business.Models.Users;
 using Data.Entities;
 using Data.Interfaces;
@@ -11,52 +10,61 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
-public class UserService(UserManager<UserEntity> userManager, IUserRepository userRepository, IAddressService addressService) : IUserService
+public class UserService(UserManager<UserEntity> userManager, IUserRepository userRepository, IAddressService addressService, IProjectRepository projectRepository) : IUserService
 {
     private readonly IUserRepository _userRepository = userRepository;
-    //private readonly IProjectRepository _projectRepository = projectRepository;
-
+    private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly IAddressService _addressService = addressService;
-    //private readonly IDateOfBirthService _dateofbirthService = dateofbirthService;
 
 
     private readonly UserManager<UserEntity> _userManager = userManager;
 
-    // CREATE
-    public async Task<bool> CreateUserAsync(UserCreateModel model)
+    #region Create
+    public async Task<int> CreateUserAsync(UserCreateModel model)
     {
         // check if user already exists
         bool exists = await _userRepository.ExistsAsync(x => x.Email == model.Email);
         if (exists)
-            return false;
-
-        // begin transaction
+            return 409;
 
         try
         {
+            var userEntity = UserFactory.Create(model);
+            var result = await _userManager.CreateAsync(userEntity, model.Password);
+
+            if (!result.Succeeded)
+            {
+                return 500;
+            }
+
             var createdAddress = await _addressService.CreateAddressAsync(model.Address);
             if (createdAddress == null)
             {
-                return false;
+                await _userManager.DeleteAsync(userEntity);
+                return 500;
             }
 
-            var userEntity = UserFactory.Create(model, createdAddress);
-            var result = await _userManager.CreateAsync(userEntity, model.Password);
+            userEntity.Address = createdAddress;
 
-            return result.Succeeded;
+            await _userRepository.SaveAsync();
+            return 201;
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Error creating user: {ex.Message}");
-            return false;
+            return 500;
         }
 
     }
+    #endregion
 
-    // READ
+    #region Read
     public async Task<IEnumerable<UserModel>> GetAllUsersAsync()
     {
-        var list = await _userManager.Users.ToListAsync();
+        var list = await _userManager.Users
+                    .Include(u => u.Address)
+                    .ToListAsync();
+
         var users = list.Select(UserFactory.CreateBasic).ToList();
         return users;
         //var users = (await _userRepository.GetAllAsync()).Select(UserFactory.Create).ToList();
@@ -66,7 +74,6 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
 
         //return users;
     }
-
 
     // byt eventuellt ut denna metod mot nedan
     public async Task<IEnumerable<UserModel>> GetUsersByIdAsync(List<string> ids)
@@ -83,6 +90,17 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
     public async Task<IEnumerable<BasicUserModel>> GetBasicUsersByStringAsync(string term)
     {
         var list = await _userRepository.GetUsersByStringAsync(term);
+        if (list == null)
+            return Enumerable.Empty<BasicUserModel>();
+
+        var users = list.Select(UserFactory.CreateBasicUser).ToList();
+
+        return users;
+    }
+
+    public async Task<IEnumerable<BasicUserModel>> GetBasicUsersByIdAsync(List<string> ids)
+    {
+        var list = await _userRepository.GetUsersByIdAsync(ids);
         if (list == null)
             return Enumerable.Empty<BasicUserModel>();
 
@@ -111,18 +129,72 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
     //}
     // UPDATE
 
-    // DELETE
-    //public async Task<bool> DeleteUserAsync(int id)
+
+
+    #endregion
+
+    #region Update
+    public async Task<int> UpdateUserAsync(UserEditModel model)
+    {
+        // check if user already exists
+        bool exists = await _userRepository.ExistsAsync(x => x.Email == model.Email && x.Id != model.Id);
+        if (exists)
+            return 409;
+
+        try
+        {
+            var existingEntity = await _userManager.FindByIdAsync(model.Id);
+            if (existingEntity == null)
+                return 404;
+
+            var updatedEntity = UserFactory.CreateUpdated(model, existingEntity);
+
+            var result = await _userManager.UpdateAsync(updatedEntity);
+            if (!result.Succeeded)
+            {
+                return 500;
+            }
+
+            var updatedAddress = await _addressService.UpdateAddressAsync(model.Address);
+            if (updatedAddress == null)
+            {
+                Debug.WriteLine("Address update failed, but user was updated.");
+                return 500;
+            }
+
+            updatedEntity.Address = updatedAddress;
+
+            return 200;
+        }
+
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error updating user: {ex.Message}");
+            return 500;
+        }
+
+    }
+    #endregion
+
+    #region Delete
+    //public async Task<int> DeleteUserAsync(string id)
     //{
-    //    var user = await _userRepository.GetAsync(x => x.UserId == id);
-    //    if (user == null)
-    //        return false;
 
-    //    var exists = await _projectRepository.ExistsAsync(x => x.UserId == id);
-    //    if (exists)
-    //        return false;
+        // delete address
 
-    //    await _userRepository.DeleteAsync(x => x.UserId == id);
-    //    return true;
+        //var user = await _userManager.FindByIdAsync(id);
+        //if (user == null)
+        //    return 404;
+
+        //bool existsInProject = await _projectRepository.UserExistsInProject(id);
+        //if (existsInProject)
+        //    return 409;
+
+        //var result = await _userManager.DeleteAsync(user);
+        //if (!result.Succeeded)
+        //    return 500;
+
+        //return 201;
     //}
+    #endregion
 }

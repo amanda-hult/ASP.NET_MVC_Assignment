@@ -1,7 +1,10 @@
 ﻿@model ProjectModel
 
-<div class="card">
 
+
+
+<div class="project-card" data-status="@Model.Status.StatusName.ToLower()">
+    @await Html.PartialAsync("Partials/Components/_EditProjectDropdown", Model)
     <div class="project-card-header">
 
         <div>
@@ -13,8 +16,8 @@
             <p>@Model.Client.ClientName</p>
         </div>
 
-
-        <a><i class="fa-duotone fa-solid fa-colon fa-rotate-90 cursor" style="--fa-secondary-opacity: 1;" data-modal="true" data-target="#editProjectModal"></i></a>
+        <button type="button" data-type="dropdown" data-target="#editProjectDropdown-@Model.ProjectId" class="fa-duotone fa-solid fa-colon fa-rotate-90 cursor btn-edit" style="--fa-secondary-opacity: 1;">
+        </button>
 
     </div>
 
@@ -37,13 +40,15 @@
             {
                 <p>@Model.DaysLeft days left</p>
             }
-            else {
-                var weeks = Math.Ceiling(Model.DaysLeft.Value / 7.0);
+            else
+            {
+                var weeks = Math.Ceiling(@Model.DaysLeft.Value / 7.0);
                 <p>@weeks week@(weeks > 1 ? "s" : "") left</p>
             }
         </div>
 
         <img src="~/images/avatar-standard.svg">
     </div>
-
 </div>
+
+

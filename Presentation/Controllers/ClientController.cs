@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Business.Interfaces;
 using Business.Models.Clients;
 using Business.Models.Notifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Presentation.Handlers;
 using Presentation.Hubs;
 using Presentation.Models;
 
@@ -15,12 +15,14 @@ public class ClientController : Controller
     private readonly IClientService _clientService;
     private readonly INotificationService _notificationService;
     private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly IFileHandler _fileHandler;
 
-    public ClientController(IClientService clientService, INotificationService notificationService, IHubContext<NotificationHub> hubContext)
+    public ClientController(IClientService clientService, INotificationService notificationService, IHubContext<NotificationHub> hubContext, IFileHandler fileHandler)
     {
         _clientService = clientService;
         _notificationService = notificationService;
         _hubContext = hubContext;
+        _fileHandler = fileHandler;
     }
 
     #region Add Client
@@ -39,9 +41,20 @@ public class ClientController : Controller
             return BadRequest(new { success = false, errors });
         }
 
+        string imageUri;
+
+        if (model.ClientImage == null || model.ClientImage.Length == 0)
+        {
+            imageUri = "/images/client-avatar-standard.svg";
+        }
+        else
+        {
+            imageUri = await _fileHandler.UploadFileAsync(model.ClientImage);
+        }
+
         var clientCreateModel = new ClientCreateModel
         {
-            ClientImage = model.ClientImage,
+            ClientImage = imageUri,
             ClientName = model.ClientName,
             Email = model.Email,
             Location = model.Location,
@@ -98,7 +111,7 @@ public class ClientController : Controller
             return BadRequest(new { success = false, errors });
         }
 
-        var clientCreateModel = new ClientEditModel
+        var clientEditModel = new ClientEditModel
         {
             Id = model.Id,
             ClientImage = model.ClientImage,
@@ -108,8 +121,7 @@ public class ClientController : Controller
             Phone = model.Phone,
         };
 
-        var result = await _clientService.UpdateClientAsync(clientCreateModel);
-        Debug.WriteLine($"{result}");
+        var result = await _clientService.UpdateClientAsync(clientEditModel);
 
         if (result == 200)
             return RedirectToAction("Clients", "Admin");

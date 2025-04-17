@@ -9,6 +9,7 @@ public static class ClientFactory
     {
         return new ClientEntity
         {
+            ClientImageUrl = model.ClientImage,
             ClientName = model.ClientName,
             Email = model.Email,
             Location = model.Location,
@@ -22,6 +23,7 @@ public static class ClientFactory
         return new ClientModel
         {
             Id = entity.ClientId,
+            ClientImage = entity.ClientImageUrl,
             ClientName = entity.ClientName,
             Email = entity.Email,
             Location = entity.Location,

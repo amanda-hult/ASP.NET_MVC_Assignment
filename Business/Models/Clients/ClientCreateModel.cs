@@ -4,7 +4,7 @@ namespace Business.Models.Clients;
 
 public class ClientCreateModel
 {
-    public IFormFile? ClientImage { get; set; }
+    public string? ClientImage { get; set; }
 
     public string ClientName { get; set; } = null!;
 

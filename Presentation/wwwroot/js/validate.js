@@ -89,6 +89,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const formData = new FormData(form)
 
+            //const selectedIdsInput = document.getElementById('SelectedMemberIds')
+
+            //console.log("SelectedMemberIds value: ", selectedIdsInput?.value)
+
             try {
                 const res = await fetch(form.action, {
                     method: 'post',
@@ -125,8 +129,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     window.location.href = res.url
                 }
             }
-            catch {
-                console.log("Error submitting form")
+            catch (error) {
+                console.log("Error submitting form", error)
             }
         })
     })

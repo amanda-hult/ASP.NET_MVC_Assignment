@@ -30,11 +30,11 @@ public class EditProjectModel
 
     [Display(Name = "End Date")]
     [Required(ErrorMessage = "Required")]
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
 
-    [Display(Name = "Budget", Prompt = "0")]
-    public string? Budget { get; set; }
+    [Display(Name = "Budget")]
+    public decimal? Budget { get; set; }
 
 
 
@@ -50,7 +50,7 @@ public class EditProjectModel
     [Required(ErrorMessage = "Please choose at least one member")]
     public string? SelectedMemberIds { get; set; } = null!;
 
-    public IEnumerable<SelectListItem> Members { get; set; } = new List<SelectListItem>();
+    //public IEnumerable<SelectListItem> Members { get; set; } = new List<SelectListItem>();
 
 
 

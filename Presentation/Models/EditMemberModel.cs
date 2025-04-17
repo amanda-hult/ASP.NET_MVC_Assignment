@@ -5,7 +5,7 @@ namespace Presentation.Models;
 
 public class EditMemberModel
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = null!;
 
     [DataType(DataType.Upload)]
     public IFormFile? ProfileImage { get; set; }
@@ -14,14 +14,15 @@ public class EditMemberModel
     [Display(Name = "First name", Prompt = "Your first name")]
     [DataType(DataType.Text)]
     [Required(ErrorMessage = "Required")]
+    [StringLength(50)]
     public string FirstName { get; set; } = null!;
 
 
     [Display(Name = "Last name", Prompt = "Your last name")]
     [DataType(DataType.Text)]
     [Required(ErrorMessage = "Required")]
+    [StringLength(50)]
     public string LastName { get; set; } = null!;
-
 
 
     [Display(Name = "Email", Prompt = "Your email address")]
@@ -31,18 +32,19 @@ public class EditMemberModel
     public string Email { get; set; } = null!;
 
 
-
     [Display(Name = "Phone", Prompt = "Your phone number")]
     [DataType(DataType.PhoneNumber)]
+    [StringLength(20)]
     public string? Phone { get; set; }
 
 
     [Display(Name = "Job Title", Prompt = "Your job title")]
+    [StringLength(50)]
     public string? JobTitle { get; set; }
 
 
     [Display(Name = "Address", Prompt = "Your address")]
-    public AddressCreateModel? Address { get; set; }
+    public AddressEditModel? Address { get; set; }
 
 
     [Display(Name = "Password", Prompt = "Temporary password")]

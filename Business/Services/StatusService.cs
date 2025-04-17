@@ -28,7 +28,7 @@ public class StatusService(IStatusRepository statusRepository) : IStatusService
         return status;
     }
 
-    public async Task<StatusEntity> GetStatusEntityAsync(int id)
+    public async Task<StatusEntity> GetStatusEntityAsync(int? id)
     {
         var statusEntity = await _statusRepository.GetAsync(x => x.StatusId == id);
         if (statusEntity == null)

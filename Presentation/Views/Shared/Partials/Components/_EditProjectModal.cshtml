@@ -1,5 +1,6 @@
 ﻿@model EditProjectModel
 
+
 <div id="editProjectModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -20,8 +21,11 @@
             @* <input asp-for="ProjectImage" accept="image/*" class="d-none" /> *@
 
 
+            <input asp-for="Id" readonly type="hidden" />
+
+
             <div class="image-preview-container square">
-                <img id="image-preview" src="#" class="d-none" />
+                <img src="#" class="image-preview d-none" />
                 <input asp-for="ProjectImage" accept="image/*" class="d-none" />
             </div>
 
@@ -41,11 +45,34 @@
                 <span asp-validation-for="SelectedClientId"></span>
             </div>
 
-
             <div class="form-group">
                 <label asp-for="Description"></label>
-                <div class="field-group">
-                    <input asp-for="Description" />
+                <div class="wysiwyg">
+                    <textarea asp-for="Description" id="edit-project-description"></textarea>
+                    <div id="edit-project-description-wysiwyg-editor" class="wysiwyg-editor"></div>
+                    <div id="edit-project-description-wysiwyg-toolbar" class="wysiwyg-toolbar">
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+
+                        <span class="ql-formats">
+                            <button class="ql-align" value=""></button>
+                            <button class="ql-align" value="center"></button>
+                            <button class="ql-align" value="right"></button>
+                        </span>
+
+                        <span class="ql-formats">
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-list" value="ordered"></button>
+                        </span>
+
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                        </span>
+                    </div>
                     <span asp-validation-for="Description"></span>
                 </div>
             </div>
@@ -54,7 +81,7 @@
                 <div class="form-group">
                     <label asp-for="StartDate"></label>
                     <div class="field-group">
-                        <input asp-for="StartDate" />
+                        <input asp-for="StartDate" type="date"/>
                         <span asp-validation-for="StartDate"></span>
                     </div>
                 </div>
@@ -62,7 +89,7 @@
                 <div class="form-group">
                     <label asp-for="EndDate"></label>
                     <div class="field-group">
-                        <input asp-for="EndDate" />
+                        <input asp-for="EndDate" type="date" />
                         <span asp-validation-for="EndDate"></span>
                     </div>
                 </div>
@@ -70,24 +97,24 @@
 
 
             <div class="form-group">
-                <label asp-for="SelectedMemberIds"></label>
-                <select asp-for="SelectedMemberIds" asp-items="@Model?.Members" required multiple>
-                    <option value="" class="form-input" disabled selected></option>
-                </select>
-                <span asp-validation-for="SelectedMemberIds"></span>
+
+                <input type="hidden" name="SelectedMemberIdsEdit" id="SelectedMemberIdsEdit" />
+
+                <label class="form-label" asp-for="SelectedMemberIds"></label>
+
+                <div id="tagged-users-edit" class="form-input form-tag-select">
+                    <input id="user-search-edit" type="text" class="form-tag-input" placeholder="Add member" />
+                    <label for="user-search" class="fa-regular fa-magnifying-glass-waveform"></label>
+                    <div id="user-search-results-edit" class="search-results"></div>
+                </div>
+
             </div>
 
-            @* <div class="grid mt-4"> *@
-            @*     <select asp-for="AddProjectModel.Member" asp-items="@Model?.Members" class="form-input"> *@
-            @*         <option value="" disabled></option> *@
-            @*     </select> *@
-            @*     <span asp-validation-for="AddProjectModel.Member"></span> *@
-            @* </div> *@
 
             <div class="form-group">
                 <label asp-for="Budget"></label>
                 <div class="field-group budget-input-wrapper">
-                    <input asp-for="Budget" class="budget-input" />
+                    <input asp-for="Budget" class="budget-input" type="number" />
                     <span asp-validation-for="Budget"></span>
                 </div>
             </div>
@@ -100,10 +127,9 @@
                 <span asp-validation-for="SelectedStatusId"></span>
             </div>
 
-            <button type="submit" class="button btn-blue mt-4">Create</button>
+            <div id="error-message" class="error-message"></div>
+
+            <button type="submit" class="button btn-blue mt-4">Save</button>
         </form>
     </div>
 </div>
-
-
-@* @await Html.PartialAsync("_ValidationScripts") *@

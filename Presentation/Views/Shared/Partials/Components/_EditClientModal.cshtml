@@ -12,7 +12,7 @@
             <input asp-for="Id" readonly type="hidden" />
 
             <div class="image-preview-container circle">
-                <img id="image-preview" src="#" class="d-none" />
+                <img src="#" class="image-preview d-none" />
                 <input asp-for="ClientImage" accept="image/*" class="d-none" />
 
             </div>
@@ -50,12 +50,7 @@
                 </div>
             </div>
 
-            @if (!string.IsNullOrEmpty(ViewBag?.ErrorMessage))
-            {
-                <div>
-                    @ViewBag?.ErrorMessage
-                </div>
-            }
+            <div id="error-message" class="error-message"></div>
 
             <button type="submit" class="button btn-blue mt-4">Save</button>
 		</form>

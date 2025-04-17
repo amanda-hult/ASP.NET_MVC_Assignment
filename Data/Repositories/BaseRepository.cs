@@ -131,7 +131,7 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         }
     }
 
-    // EXISTS
+    #region Exists
     public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
     {
         try
@@ -144,6 +144,7 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
             throw;
         }
     }
+    #endregion
 
     // SAVE
     public virtual async Task<int> SaveAsync()

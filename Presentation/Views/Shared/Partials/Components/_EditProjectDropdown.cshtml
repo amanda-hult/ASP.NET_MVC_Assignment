@@ -1,0 +1,136 @@
+﻿@using System.Globalization
+
+@model ProjectModel
+<div id="editProjectDropdown-@Model.ProjectId" class="project-dropdown">
+    <div class="edit-dropdown-container">
+
+        <div id="edit-dropdown" class="edit-dropdown">
+            <div class="edit-dropdown-item">
+                <button class="edit-dropdown-button btn-modal-edit"
+                        type="button"
+                        data-modal="true"
+                        data-target="#editProjectModal"
+                        data-id="@Model.ProjectId"
+                        data-image="@Model.ProjectImageUrl"
+                        data-name="@Model.ProjectName"
+                        data-description="@Model.Description"
+                        data-startdate="@Model.StartDate.ToString("yyyy-MM-dd")"
+                        data-enddate="@Model.EndDate?.ToString("yyyy-MM-dd")"
+                        data-budget="@(Model.Budget?.ToString("0.##", CultureInfo.InvariantCulture) ?? "10")"
+                        data-clientid="@Model.ClientId"
+                        data-statusid="@Model.StatusId"
+                        data-members="@Model.ProjectUsers."
+                        >
+
+                    <i class="fa-duotone fa-regular fa-pen-to-square"></i>
+                    <p>Edit</p>
+                </button>
+            </div>
+
+
+            <div class="edit-dropdown-item">
+                <button class="fa-duotone fa-solid fa-user-plus edit-dropdown-button"
+                        type="button"
+                        data-modal="true"
+                        data-target="#addMemberToProjectModal"
+                        data-id="@Model.ProjectId"
+                        data-name="@Model.ProjectName"
+                        data-members="@Model.ProjectUsers">
+                </button>
+                @* <i class="fa-duotone fa-solid fa-user-plus"></i> *@
+
+                <p>Add Member</p>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="edit-dropdown-item"
+                 data-modal="true"
+                 data-target="#deleteProjectModal"
+                 data-id="@Model.ProjectId"
+                 data-name="@Model.ProjectName">
+                <i class="fa-duotone fa-solid fa-trash"></i>
+                <p>Delete Project</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const editBtns = document.querySelectorAll('[data-target="#editProjectModal"]')
+        const editProjectModal = document.getElementById('editProjectModal')
+
+
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.currentTarget
+
+                const editProjectIdElement = editProjectModal.querySelector('[name="Id"]')
+                editProjectIdElement.value = target.dataset.id || ''
+
+
+                // const editProjectId = editProjectIdElement.value
+
+                // const editProjectImage = editProjectModal.querySelector('[name="ProjectImage"]')
+                const editProjectName = editProjectModal.querySelector('[name="ProjectName"]')
+                // const editProjectDescription = editProjectModal.querySelector('.wysiwyg-editor')
+                const editProjectStartDate = editProjectModal.querySelector('[name="StartDate"]')
+                const editProjectEndDate = editProjectModal.querySelector('[name="EndDate"]')
+                const editProjectBudget = editProjectModal.querySelector('[name="Budget"]')
+                const editProjectClient = editProjectModal.querySelector('[name="SelectedClientId"]')
+                const editProjectStatus = editProjectModal.querySelector('[name="SelectedStatusId"]')
+
+                // editProjectImage.value = btn.dataset.image || ''
+                editProjectName.value = target.dataset.name || ''
+                window.editProjectDescriptionQuill.root.innerHTML = target.dataset.description || ''
+                // editProjectDescription.value = target.dataset.description || ''
+                editProjectStartDate.value = target.dataset.startdate || ''
+                editProjectEndDate.value = target.dataset.enddate || ''
+                editProjectBudget.value = target.dataset.budget || ''
+                editProjectClient.value = target.dataset.clientid || ''
+                editProjectStatus.value = target.dataset.statusid || ''
+
+
+            })
+
+        })
+
+
+
+        // const addBtns = document.querySelectorAll('[data-target="#addProjectModal"]')
+        // const addProjectModal = document.getElementById('addProjectModal')
+        // addBtns.forEach(btn => {
+        //     btn.addEventListener('click', () => {
+
+        //     })
+        // })
+
+
+
+        const deleteBtns = document.querySelectorAll('[data-target="#deleteProjectModal"]')
+        const deleteProjectId = document.getElementById('delete-project-id')
+        const deleteProjectName = document.getElementById('delete-project-name')
+        // const addMemberModal = document.getElementById('addMemberToProjectModal')
+        // const addMemberId = addMemberModal.querySelector('[name="Id"]')
+
+
+
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                deleteProjectId.value = btn.dataset.id || ''
+                deleteProjectName.textContent = btn.dataset.name
+
+                const errorMessageContainer = document.getElementById('error-message')
+                if (errorMessageContainer) {
+                    errorMessageContainer.textContent = ''
+                    errorMessageContainer.style.display = 'none'
+                }
+            })
+        })
+    })
+
+</script>

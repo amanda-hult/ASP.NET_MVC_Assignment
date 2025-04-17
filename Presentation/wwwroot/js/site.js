@@ -1,9 +1,7 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
     //updateRelativeTimes()
     //setInterval(updateRelativeTimes, 6000)
-
-    const previewSize = 144
-
+    //const previewSize = 144
 
     // open modal
     const modalButtons = document.querySelectorAll('[data-modal="true"]')
@@ -29,7 +27,7 @@
                     form.reset()
                     clearErrorMessages(form)
 
-                    const imagePreview = form.querySelector('#image-preview')
+                    const imagePreview = form.querySelector('.image-preview')
                     if (imagePreview)
                         imagePreview.src = ''
 
@@ -46,28 +44,61 @@
     })
 
 
-    // handle image preview
-    document.querySelectorAll('.image-preview-container').forEach(container => {
-        const fileInput = document.querySelector('input[type="file"]')
-        if (!fileInput) return
+    // WYSIWYG editor
+    const addProjectDescriptionTextArea = document.getElementById('add-project-description')
+    const addProjectDescriptionQuill = new Quill('#add-project-description-wysiwyg-editor', {
+        modules: {
+            syntax: true,
+            toolbar: '#add-project-description-wysiwyg-toolbar',
+        },
+        placeholder: 'Type something',
+        theme: 'snow',
+    });
 
-        container.addEventListener('click', () => fileInput.click())
-
-        fileInput.addEventListener("change", (e) => {
-            const file = e.target.files[0]
-            const imagePreview = document.querySelector("#image-preview")
-
-            const isRound = container.classList.contains('.circle')
-
-            if (file) {
-                processImage(file, imagePreview, container, previewSize, isRound)
-            }
-        })
+    addProjectDescriptionQuill.on('text-change', function () {
+        addProjectDescriptionTextArea.value = addProjectDescriptionQuill.root.innerHTML
     })
+
+    editProjectDescriptionTextArea = document.getElementById('edit-project-description')
+    window.editProjectDescriptionQuill = new Quill('#edit-project-description-wysiwyg-editor', {
+        modules: {
+            syntax: true,
+            toolbar: '#edit-project-description-wysiwyg-toolbar',
+        },
+        theme: 'snow',
+    });
+
+    window.editProjectDescriptionQuill.on('text-change', function () {
+        editProjectDescriptionTextArea.value = editProjectDescriptionQuill.root.innerHTML
+    })
+
 })
 
 
+// handle image preview
+function handleImagePreview(config) {
+    const previewSize = 144
+    const container = document.getElementById(config.containerId)
+    if (!container) return
 
+    const fileInput = container.querySelector('input[type="file"]')
+    if (!fileInput) return
+
+    const imagePreview = document.getElementById(config.imagePreview)
+    if (!imagePreview) return
+
+    container.addEventListener('click', () => fileInput.click())
+
+    fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0]
+        const isRound = container.classList.contains('.circle')
+
+        if (file) {
+            processImage(file, imagePreview, container, previewSize, isRound)
+        }
+    })
+
+}
 
 async function loadImage(file) {
     return new Promise(function (resolve, reject) {
