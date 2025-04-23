@@ -5,7 +5,7 @@ namespace Presentation.Models;
 
 public class EditMemberModel
 {
-    public string Id { get; set; } = null!;
+    public string Id { get; set; }
 
     [DataType(DataType.Upload)]
     public IFormFile? ProfileImage { get; set; }
@@ -47,23 +47,17 @@ public class EditMemberModel
     public AddressEditModel? Address { get; set; }
 
 
-    [Display(Name = "Password", Prompt = "Temporary password")]
-    [Required(ErrorMessage = "Required")]
-    [DataType(DataType.Password)]
-    public string Password { get; set; } = null!;
+    //[Display(Name = "Password", Prompt = "Change password")]
+    //[DataType(DataType.Password)]
+    //public string Password { get; set; } = null!;
 
 
-    [Display(Name = "")]
     [Required(ErrorMessage = "Required")]
     public int? SelectedDay { get; set; }
 
-
-    [Display(Name = "")]
     [Required(ErrorMessage = "Required")]
     public int? SelectedMonth { get; set; }
 
-
-    [Display(Name = "")]
     [Required(ErrorMessage = "Required")]
     public int? SelectedYear { get; set; }
 

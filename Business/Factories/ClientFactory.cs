@@ -33,15 +33,17 @@ public static class ClientFactory
         };
     }
 
-    public static ClientEntity CreateUpdated(ClientEditModel model, ClientEntity existingEntity)
+    public static ClientEntity CreateUpdated(ClientEditModel model)
     {
         return new ClientEntity
         {
-            ClientId = existingEntity.ClientId,
-            Created = existingEntity.Created,
-            //Status = existingEntity.Status,
-            Projects = existingEntity.Projects,
+            ClientId = model.Id,
+            //Created = existingEntity.Created,
+            //Projects = existingEntity.Projects,
 
+            //Status = existingEntity.Status,
+
+            ClientImageUrl = model.ClientImage,
             ClientName = model.ClientName,
             Email = model.Email,
             Location = model.Location,

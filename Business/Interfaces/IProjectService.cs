@@ -8,5 +8,6 @@ public interface IProjectService
     Task<IEnumerable<ProjectModel>> GetAllProjectsAsync();
     Task<ProjectModel> GetProjectAsync(int? id);
     Task<int> UpdateProjectAsync(ProjectEditModel model);
+    Task<int> AddUserToProjectAsync(int projectId, List<string> memberIds);
     Task<int> DeleteProjectAsync(int id);
 }

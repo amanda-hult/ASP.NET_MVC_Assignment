@@ -15,6 +15,6 @@ public class UserEditModel
     public string? JobTitle { get; set; }
 
     public AddressEditModel? Address { get; set; }
-    public string Password { get; set; } = null!;
+    //public string? Password { get; set; }
     public DateTime? DateOfBirth { get; set; }
 }

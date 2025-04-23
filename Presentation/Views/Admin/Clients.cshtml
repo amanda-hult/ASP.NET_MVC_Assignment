@@ -5,9 +5,8 @@
 	ViewData["Title"] = Model.Title;
 }
 
-@* <partial name="Partials/Components/_AddClientModal" /> *@
-@await Html.PartialAsync("Partials/Components/_AddClientModal", Model.AddClientModel)
-@await Html.PartialAsync("Partials/Components/_EditClientModal", Model.EditClientModel)
+@await Html.PartialAsync("Partials/Components/Modals/_AddClientModal", Model.AddClientModel)
+@await Html.PartialAsync("Partials/Components/Modals/_EditClientModal", Model.EditClientModel)
 @await Html.PartialAsync("Partials/Components/Modals/_DeleteClientModal")
 
 <section id="clients">
@@ -19,5 +18,4 @@
 	<div class="surface">
 		@await Html.PartialAsync("Partials/Sections/_ClientList", Model.Clients)
 	</div>
-
 </section>

@@ -1,14 +1,13 @@
-﻿@model EditProjectModel
+﻿@model AddProjectModel
 
-
-<div id="editProjectModal" class="modal">
+<div id="addProjectModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Edit Project</h3>
+            <h3>Add Project</h3>
             <button type="button" class="button-close" data-close="true"></button>
         </div>
 
-        <form class="project-form-container js-form" method="post" asp-controller="Projects" asp-action="EditProject" enctype="multipart/form-data" novalidate>
+        <form class="project-form-container js-form" method="post" asp-controller="Projects" asp-action="AddProject" enctype="multipart/form-data" novalidate>
 
             @* <div class="image-preview-container pt-1"> *@
             @*     <label asp-for="ProjectImage" id="circle-container" class="square"> *@
@@ -20,8 +19,6 @@
 
             @* <input asp-for="ProjectImage" accept="image/*" class="d-none" /> *@
 
-
-            <input asp-for="Id" readonly type="hidden" />
 
 
             <div class="image-preview-container square">
@@ -48,9 +45,9 @@
             <div class="form-group">
                 <label asp-for="Description"></label>
                 <div class="wysiwyg">
-                    <textarea asp-for="Description" id="edit-project-description"></textarea>
-                    <div id="edit-project-description-wysiwyg-editor" class="wysiwyg-editor"></div>
-                    <div id="edit-project-description-wysiwyg-toolbar" class="wysiwyg-toolbar">
+                    <textarea asp-for="Description" id="add-project-description" class="hide"></textarea>
+                    <div id="add-project-description-wysiwyg-editor" class="wysiwyg-editor"></div>
+                    <div id="add-project-description-wysiwyg-toolbar" class="wysiwyg-toolbar">
                         <span class="ql-formats">
                             <button class="ql-bold"></button>
                             <button class="ql-italic"></button>
@@ -81,7 +78,7 @@
                 <div class="form-group">
                     <label asp-for="StartDate"></label>
                     <div class="field-group">
-                        <input asp-for="StartDate" type="date"/>
+                        <input asp-for="StartDate" />
                         <span asp-validation-for="StartDate"></span>
                     </div>
                 </div>
@@ -89,23 +86,25 @@
                 <div class="form-group">
                     <label asp-for="EndDate"></label>
                     <div class="field-group">
-                        <input asp-for="EndDate" type="date" />
+                        <input asp-for="EndDate" />
                         <span asp-validation-for="EndDate"></span>
                     </div>
                 </div>
             </div>
 
 
+
+
             <div class="form-group">
 
-                <input type="hidden" name="SelectedMemberIdsEdit" id="SelectedMemberIdsEdit" />
+                <input type="hidden" name="SelectedMemberIdsAdd" id="SelectedMemberIdsAdd" />
 
                 <label class="form-label" asp-for="SelectedMemberIds"></label>
 
-                <div id="tagged-users-edit" class="form-input form-tag-select">
-                    <input id="user-search-edit" type="text" class="form-tag-input" placeholder="Add member" />
+                <div id="tagged-users-add" class="form-input form-tag-select">
+                    <input id="user-search-add" type="text" class="form-tag-input" placeholder="Add member" />
                     <label for="user-search" class="fa-regular fa-magnifying-glass-waveform"></label>
-                    <div id="user-search-results-edit" class="search-results"></div>
+                    <div id="user-search-results-add" class="search-results"></div>
                 </div>
 
             </div>
@@ -114,14 +113,14 @@
             <div class="form-group">
                 <label asp-for="Budget"></label>
                 <div class="field-group budget-input-wrapper">
-                    <input asp-for="Budget" class="budget-input" type="number" />
+                    <input asp-for="Budget" class="budget-input" />
                     <span asp-validation-for="Budget"></span>
                 </div>
             </div>
 
             <div class="form-group">
                 <label asp-for="SelectedStatusId"></label>
-                <select asp-for="SelectedStatusId" asp-items="@Model.Statuses" required>
+                <select asp-for="SelectedStatusId" asp-items="@Model?.Statuses" required>
                     <option value="" class="form-input" disabled selected></option>
                 </select>
                 <span asp-validation-for="SelectedStatusId"></span>
@@ -129,7 +128,9 @@
 
             <div id="error-message" class="error-message"></div>
 
-            <button type="submit" class="button btn-blue mt-4">Save</button>
+            <button type="submit" class="button btn-blue mt-4">Create</button>
         </form>
     </div>
 </div>
+
+

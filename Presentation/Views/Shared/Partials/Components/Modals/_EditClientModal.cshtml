@@ -11,8 +11,8 @@
 
             <input asp-for="Id" readonly type="hidden" />
 
-            <div class="image-preview-container circle">
-                <img src="#" class="image-preview d-none" />
+            <div id="image-preview-edit-client-modal-container" class="image-preview-container circle">
+                <img src="#" id="image-preview-edit-client-modal" class="image-preview d-none " />
                 <input asp-for="ClientImage" accept="image/*" class="d-none" />
 
             </div>
@@ -57,4 +57,12 @@
 	</div>
 </div>
 
-@* @await Html.PartialAsync("_ValidationScripts") *@
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        handleImagePreview({
+            containerId: 'image-preview-edit-client-modal-container',
+            imagePreview: 'image-preview-edit-client-modal'
+        })
+    })
+</script>

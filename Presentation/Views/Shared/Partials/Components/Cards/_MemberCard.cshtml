@@ -10,7 +10,7 @@
             data-modal="true"
             data-target="#editMemberModal"
             data-id="@Model.Id"
-            data-profileimage="@Model.UserImageUrl"
+            data-image="@Model.UserImageUrl"
             data-firstname="@Model.FirstName"
             data-lastname="@Model.LastName"
             data-email="@Model.Email"
@@ -19,7 +19,10 @@
             data-streetname="@Model.Address?.StreetName"
             data-streetnumber="@Model.Address?.StreetNumber"
             data-postalcode="@Model.Address?.PostalCode"
-            data-city="@Model.Address?.City">
+            data-city="@Model.Address?.City"
+            data-day="@Model.DayOfBirth"
+            data-month="@Model.MonthOfBirth"
+            data-year="@Model.YearOfBirth">
         </button>
 
     <div class="project-form-container text-center">
@@ -59,12 +62,15 @@
                 const editMemberStreetNumber = editMemberModal.querySelector('[name="Address.StreetNumber"]')
                 const editMemberPostalCode = editMemberModal.querySelector('[name="Address.PostalCode"]')
                 const editMemberCity = editMemberModal.querySelector('[name="Address.City"]')
+                const editMemberSelectedDay = editMemberModal.querySelector('[name="SelectedDay"]')
+                const editMemberSelectedMonth = editMemberModal.querySelector('[name="SelectedMonth"]')
+                const editMemberSelectedYear = editMemberModal.querySelector('[name="SelectedYear"]')
 
                 editMemberImagePreview.classList.remove('d-none')
                 editMemberImagePreviewContainer.classList.add('selected')
 
                 editMemberId.value = btn.dataset.id || ''
-                editMemberImagePreview.src = btn.dataset.profileimage || ''
+                editMemberImagePreview.src = btn.dataset.image || ''
                 editMemberFirstName.value = btn.dataset.firstname || ''
                 editMemberLastName.value = btn.dataset.lastname || ''
                 editMemberEmail.value = btn.dataset.email || ''
@@ -74,6 +80,9 @@
                 editMemberStreetNumber.value = btn.dataset.streetnumber || ''
                 editMemberPostalCode.value = btn.dataset.postalcode || ''
                 editMemberCity.value = btn.dataset.city || ''
+                editMemberSelectedDay.value = btn.dataset.day || ''
+                editMemberSelectedMonth.value = btn.dataset.month || ''
+                editMemberSelectedYear.value = btn.dataset.year || ''
 
             })
         })

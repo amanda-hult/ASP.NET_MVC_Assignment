@@ -1,4 +1,5 @@
-﻿using Business.Interfaces;
+﻿using System.Diagnostics;
+using Business.Interfaces;
 using Business.Models.Users;
 using Business.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -48,9 +49,29 @@ public class AdminController : Controller
     {
         var members = await _userService.GetAllUsersAsync();
 
+        //var editMemberModels = new Dictionary<string, EditMemberModel>();
+        //foreach (var member in members)
+        //{
+        //    editMemberModels[member.Id] = new EditMemberModel
+        //    {
+        //        Id = member.Id,
+        //        SelectedDay = member.DateOfBirth.HasValue ? member.DateOfBirth.Value.Day : 1,
+        //        SelectedMonth = member.DateOfBirth.HasValue ? member.DateOfBirth.Value.Month : 1,
+        //        SelectedYear = member.DateOfBirth.HasValue ? member.DateOfBirth.Value.Year : 1,
+        //        Address = new AddressEditModel
+        //        {
+        //            StreetName = member.Address?.StreetName ?? string.Empty,
+        //            StreetNumber = member.Address?.StreetNumber ?? string.Empty,
+        //            PostalCode = member.Address?.PostalCode ?? string.Empty,
+        //            City = member.Address?.City ?? string.Empty,
+        //        }
+        //    };
+        //}
+
         var viewModel = new MembersViewModel
         {
-            Members = members
+            Members = members,
+
         };
 
         return View(viewModel);
@@ -92,26 +113,26 @@ public class AdminController : Controller
             preselectedMembers[project.ProjectId] = members.ToList();
         }
 
-        var editProjectModel = new Dictionary<int, EditProjectModel>();
-        foreach (var project in projects)
-        {
-            editProjectModel[project.ProjectId] = new EditProjectModel
-            {
-                Id = project.ProjectId,
+        //var editProjectModel = new Dictionary<int, EditProjectModel>();
+        //foreach (var project in projects)
+        //{
+        //    editProjectModel[project.ProjectId] = new EditProjectModel
+        //    {
+        //        Id = project.ProjectId,
 
-                Statuses = statuses.Select(x => new SelectListItem
-                {
-                    Text = x.StatusName,
-                    Value = x.StatusId.ToString(),
-                }),
+        //        Statuses = statuses.Select(x => new SelectListItem
+        //        {
+        //            Text = x.StatusName,
+        //            Value = x.StatusId.ToString(),
+        //        }),
 
-                Clients = clients.Select(x => new SelectListItem
-                {
-                    Text = x.ClientName,
-                    Value = x.Id.ToString()
-                }),
-            };
-        }
+        //        Clients = clients.Select(x => new SelectListItem
+        //        {
+        //            Text = x.ClientName,
+        //            Value = x.Id.ToString()
+        //        }),
+        //    };
+        //}
 
         var viewModel = new ProjectViewModel
         {
@@ -135,28 +156,28 @@ public class AdminController : Controller
                 //    Value = x.Id.ToString()
                 //})
             },
-            EditProjectModel = editProjectModel,
+            //EditProjectModel = editProjectModel,
 
-            //EditProjectModel = new EditProjectModel
-            //{
-            //    Statuses = statuses.Select(x => new SelectListItem
-            //    {
-            //        Text = x.StatusName,
-            //        Value = x.StatusId.ToString(),
-            //    }),
+            EditProjectModel = new EditProjectModel
+            {
+                Statuses = statuses.Select(x => new SelectListItem
+                {
+                    Text = x.StatusName,
+                    Value = x.StatusId.ToString(),
+                }),
 
-            //    Clients = clients.Select(x => new SelectListItem
-            //    {
-            //        Text = x.ClientName,
-            //        Value = x.Id.ToString()
-            //    }),
+                Clients = clients.Select(x => new SelectListItem
+                {
+                    Text = x.ClientName,
+                    Value = x.Id.ToString()
+                }),
 
-            //    Members = members.Select(x => new SelectListItem
-            //    {
-            //        Text = $"{x.FirstName} {x.LastName}",
-            //        Value = x.Id.ToString()
-            //    })
-            //},
+                //Members = members.Select(x => new SelectListItem
+                //{
+                //    Text = $"{x.FirstName} {x.LastName}",
+                //    Value = x.Id.ToString()
+                //})
+            },
             Projects = projects,
             PreselectedMembers = preselectedMembers
         };

@@ -111,10 +111,21 @@ public class ClientController : Controller
             return BadRequest(new { success = false, errors });
         }
 
+        string imageUri;
+
+        if (model.ClientImage == null || model.ClientImage.Length == 0)
+        {
+            imageUri = "/images/client-avatar-standard.svg";
+        }
+        else
+        {
+            imageUri = await _fileHandler.UploadFileAsync(model.ClientImage);
+        }
+
         var clientEditModel = new ClientEditModel
         {
             Id = model.Id,
-            ClientImage = model.ClientImage,
+            ClientImage = imageUri,
             ClientName = model.ClientName,
             Email = model.Email,
             Location = model.Location,
@@ -124,12 +135,41 @@ public class ClientController : Controller
         var result = await _clientService.UpdateClientAsync(clientEditModel);
 
         if (result == 200)
+        {
+            var client = await _clientService.GetClientAsync(model.Id);
+            if (client != null)
+            {
+                var notificationCreateModel = new NotificationCreateModel
+                {
+                    Message = $"Client {client.ClientName} was updated.",
+                    NotificationTypeId = 3,
+                    Image = client.ClientImage
+                };
+
+                await _notificationService.AddNotificationAsync(notificationCreateModel);
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var notifications = await _notificationService.GetNotificationsAsync(userId);
+                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
+                if (newNotification != null)
+                {
+                    await _hubContext.Clients.All.SendAsync("AdminRecieveNotification", newNotification);
+                }
+            }
+
             return RedirectToAction("Clients", "Admin");
+        }
 
-        // fix errormessages
-        ViewBag.ErrorMessage = "Could not update the client.";
+        if (result == 409)
+            return Conflict(new { message = "Client with the same name already exists." });
+
+        if (result == 404)
+            return Conflict(new { message = "Client not found." });
+
+        if (result == 500)
+            return StatusCode(500, new { message = "Unexpected error." });
+
         return View(model);
-
     }
     #endregion
 

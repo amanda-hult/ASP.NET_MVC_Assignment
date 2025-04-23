@@ -18,8 +18,22 @@ public class AddressService(IAddressRepository addressRepository) : IAddressServ
         if (addressEntity == null)
             return null!;
 
+        await _addressRepository.SaveAsync();
+
         return addressEntity;
     }
+
+    public async Task<AddressEntity> CreateNewAddressAsync(AddressEditModel model)
+    {
+        var addressEntity = await _addressRepository.CreateAsync(AddressFactory.Create(model));
+        if (addressEntity == null)
+            return null!;
+
+        await _addressRepository.SaveAsync();
+
+        return addressEntity;
+    }
+    
     #endregion
 
     // READ
@@ -37,13 +51,14 @@ public class AddressService(IAddressRepository addressRepository) : IAddressServ
     #region Update
     public async Task<AddressEntity> UpdateAddressAsync(AddressEditModel model)
     {
-        var updatedAddress = AddressFactory.Update(model);
+        var existingAddress = await _addressRepository.GetAsync(x => x.AddressId == model.Id);
+        if (existingAddress == null)
+            return null!;
 
-        var result = await _addressRepository.UpdateAsync(x => x.AddressId == model.Id, updatedAddress);
-        if (result == null)
-            return null;
+        AddressFactory.Update(model, existingAddress);
 
-        return result;
+        await _addressRepository.SaveAsync();
+        return existingAddress;
     }
     #endregion
 

@@ -101,7 +101,6 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
                 return null;
 
             _context.Entry(entityToUpdate).CurrentValues.SetValues(updatedEntity);
-            await _context.SaveChangesAsync();
             return entityToUpdate;
         }
         catch (Exception ex)

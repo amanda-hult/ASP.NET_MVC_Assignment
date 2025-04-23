@@ -94,17 +94,38 @@ public class ClientService(IClientRepository clientRepository, IProjectRepositor
     #region Update
     public async Task<int> UpdateClientAsync(ClientEditModel model)
     {
-        var existingEntity = await _clientRepository.GetAsync(x => x.ClientId == model.Id);
-        if (existingEntity == null)
-            return 404;
+        bool exists = await _clientRepository.ExistsAsync(x => x.ClientName == model.ClientName && x.ClientId != model.Id);
+        if (exists)
+            return 409;
 
-        var updatedEntity = ClientFactory.CreateUpdated(model, existingEntity);
+        try
+        {
+            var existingEntity = await _clientRepository.GetAsync(x => x.ClientId == model.Id);
+            if (existingEntity == null)
+                return 404;
 
-        var result = await _clientRepository.UpdateAsync(x => x.ClientId == model.Id, updatedEntity);
-        if (result == null)
+            var updatedEntity = ClientFactory.CreateUpdated(model);
+
+            await _clientRepository.BeginTransactionAsync();
+
+            var result = await _clientRepository.UpdateAsync(x => x.ClientId == model.Id, updatedEntity);
+            if (result == null)
+            {
+                await _clientRepository.RollbackTransactionAsync();
+                return 500;
+            }
+
+            await _clientRepository.SaveAsync();
+            await _clientRepository.CommitTransactionAsync();
+
+            return 200;
+        }
+        catch (Exception ex)
+        {
+            await _clientRepository.RollbackTransactionAsync();
+            Debug.WriteLine($"Error updating client: {ex.Message}");
             return 500;
-
-        return 200;
+        }
     }
     #endregion
 

@@ -13,6 +13,12 @@ using Presentation.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => !context.Request.Cookies.ContainsKey("cookieConsent");
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+});
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
@@ -89,7 +95,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 

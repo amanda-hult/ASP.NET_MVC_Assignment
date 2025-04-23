@@ -13,14 +13,16 @@
  </script>
 
 
-@await Html.PartialAsync("Partials/Components/_AddProjectModal", Model.AddProjectModel)
+@await Html.PartialAsync("Partials/Components/Modals/_AddProjectModal", Model.AddProjectModel)
+@await Html.PartialAsync("Partials/Components/Modals/_EditProjectModal", Model.EditProjectModel)
+@await Html.PartialAsync("Partials/Components/Modals/_AddMemberToProjectModal", Model.AddMemberToProjectModel)
 @await Html.PartialAsync("Partials/Components/Modals/_DeleteProjectModal")
 
 
 <section id="projects">
 	<header class="portal-header">
 		<h2>Projects</h2>
-		<button type="button" data-modal="true" data-target="#addProjectModal" class="button btn-blue btn-add btn-modal">Add Project</button>
+		<button type="button" data-modal="true" data-target="#addProjectModal" class="button btn-blue btn-add">Add Project</button>
 	</header>
 
 	<div class="project-statuses">
@@ -34,16 +36,7 @@
 
 		@foreach (var project in Model.Projects) 
 		{
-			@await Html.PartialAsync("Partials/Components/_ProjectCard", project)
-
-
-			@* var preselectedMembersJson = JsonSerializer.Serialize(Model.PreselectedMembers[project.ProjectId]); *@
-			var editModel = Model.EditProjectModel[project.ProjectId];
-
-			@await Html.PartialAsync("Partials/Components/_EditProjectModal", editModel)
-
-			@* @await Html.PartialAsync("Partials/Components/_AddMemberToProjectModal", editModel) *@
-
+			@await Html.PartialAsync("Partials/Components/Cards/_ProjectCard", project)
 		 }
 
 	</div>
@@ -52,109 +45,176 @@
 
 
 
+
+
+
 <script>
-	document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
 
-		//FOR ADD FORM
-		initTagSelector({
-			containerId: 'tagged-users-add',
-			inputId: 'user-search-add',
-			resultsId: 'user-search-results-add',
-			searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
-			displayProperty: 'fullName',
-			imageProperty: 'userImageUrl',
-			tagClass: 'user-tag',
-			emptyMessage: 'No members found.',
-			preselected: [],
-			selectedInputIds: 'SelectedMemberIdsAdd'
-		})
-
-
-		// const projectId = btn.dataset.id
-		// const preSelectedMembers = window.preselectedMembersJson?.[projectId]
-
-		// initTagSelector({
-		// 	containerId: `tagged-users-edit-${projectId}`,
-		// 	inputId: `user-search-edit-${projectId}`,
-		// 	resultsId: `user-search-results-edit-${projectId}`,
-		// 	searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
-		// 	displayProperty: 'fullName',
-		// 	imageProperty: 'userImageUrl',
-		// 	tagClass: 'user-tag',
-		// 	emptyMessage: 'No members found.',
-		// 	preselected: preSelectedMembers,
-		// 	selectedInputIds: `SelectedMemberIdsEdit-${projectId}`
-		// })
-
-
-		//FOR EDIT FORM
-		const editBtns = document.querySelectorAll('[data-target="#editProjectModal"]')
-
-		editBtns.forEach(btn => {
-			btn.addEventListener('click', () => {
-				const projectId = btn.dataset.id
-				var preSelectedMembers = window.preselectedMembersJson?.[projectId]
-				console.log("preSelectedMembers: ", preSelectedMembers)
-
-
-				initTagSelector({
-					containerId: 'tagged-users-edit',
-					inputId: 'user-search-edit',
-					resultsId: 'user-search-results-edit',
-					searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
-					displayProperty: 'fullName',
-					imageProperty: 'userImageUrl',
-					tagClass: 'user-tag',
-					emptyMessage: 'No members found.',
-					preselected: preSelectedMembers,
-					selectedInputIds: 'SelectedMemberIdsEdit'
-				})
-
-				// initTagSelector({
-				// 	containerId: `tagged-users-edit-${projectId}`,
-				// 	inputId: `user-search-edit-${projectId}`,
-				// 	resultsId: `user-search-results-edit-${projectId}`,
-				// 	searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
-				// 	displayProperty: 'fullName',
-				// 	imageProperty: 'userImageUrl',
-				// 	tagClass: 'user-tag',
-				// 	emptyMessage: 'No members found.',
-				// 	preselected: preSelectedMembers,
-				// 	selectedInputIds: `SelectedMemberIdsEdit-${projectId}`
-				// })
-
-			})
-		})
+        //FOR ADD FORM
+        initTagSelector({
+            containerId: 'tagged-users-add',
+            inputId: 'user-search-add',
+            resultsId: 'user-search-results-add',
+            searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+            displayProperty: 'fullName',
+            imageProperty: 'userImageUrl',
+            tagClass: 'user-tag',
+            emptyMessage: 'No members found.',
+            preselected: [],
+            selectedInputIds: 'SelectedMemberIdsAdd'
+        })
 
 
 
+        //FOR EDIT FORM
+        const editBtns = document.querySelectorAll('[data-target="#editProjectModal"]')
+        const editProjectModal = document.getElementById('editProjectModal')
 
 
-		const statuses = document.querySelectorAll('[data-filter]')
-		const cards = document.querySelectorAll('.project-card')
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.currentTarget
 
-		statuses.forEach(status => {
-			status.addEventListener('click', () => {
-				const selectedStatus = status.dataset.filter
+                const editProjectIdElement = editProjectModal.querySelector('[name="Id"]')
+                editProjectIdElement.value = target.dataset.id || ''
 
-				statuses.forEach(s => {
-					if (s === status) {
-						s.classList.add('focused')
-					} else {
-						s.classList.remove('focused')
-					}
-				})
+                // const editProjectId = editProjectIdElement.value
 
-				cards.forEach(card => {
-					const projectStatus = card.dataset.status
+                const projectId = btn.dataset.id
+                var preSelectedMembers = window.preselectedMembersJson?.[projectId]
 
-					 if (selectedStatus === "all" || projectStatus === selectedStatus) {
-						 card.style.display = 'grid'
-					 } else {
-						 card.style.display = 'none'
-					 }
-				})
-			})
-		})
-	})
+
+                initTagSelector({
+                    containerId: 'tagged-users-edit',
+                    inputId: 'user-search-edit',
+                    resultsId: 'user-search-results-edit',
+                    searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+                    displayProperty: 'fullName',
+                    imageProperty: 'userImageUrl',
+                    tagClass: 'user-tag',
+                    emptyMessage: 'No members found.',
+                    preselected: preSelectedMembers,
+                    selectedInputIds: 'SelectedMemberIdsEdit'
+                })
+
+
+                const editProjectImagePreviewContainer = editProjectModal.querySelector('.image-preview-container')
+                const editProjectImagePreview = editProjectModal.querySelector('#image-preview-edit-project-modal')
+
+                // const editProjectImage = editProjectModal.querySelector('[name="ProjectImage"]')
+                const editProjectName = editProjectModal.querySelector('[name="ProjectName"]')
+
+                // const editProjectDescription = editProjectModal.querySelector('.wysiwyg-editor')
+                
+                const editProjectStartDate = editProjectModal.querySelector('[name="StartDate"]')
+                const editProjectEndDate = editProjectModal.querySelector('[name="EndDate"]')
+                const editProjectBudget = editProjectModal.querySelector('[name="Budget"]')
+                const editProjectClient = editProjectModal.querySelector('[name="SelectedClientId"]')
+                const editProjectStatus = editProjectModal.querySelector('[name="SelectedStatusId"]')
+
+                editProjectImagePreview.classList.remove('d-none')
+                editProjectImagePreviewContainer.classList.add('selected')
+
+                editProjectImagePreview.src = btn.dataset.image || ''
+                editProjectName.value = target.dataset.name || ''
+
+                window.editProjectDescriptionQuill.root.innerHTML = target.dataset.description || ''
+                // editProjectDescription.value = target.dataset.description || ''
+                
+                editProjectStartDate.value = target.dataset.startdate || ''
+                editProjectEndDate.value = target.dataset.enddate || ''
+                editProjectBudget.value = target.dataset.budget || ''
+                editProjectClient.value = target.dataset.clientid || ''
+                editProjectStatus.value = target.dataset.statusid || ''
+            })
+
+        })
+
+
+        // ADD MEMBER TO PROJECT FORM
+        const addMembersBtns = document.querySelectorAll('[data-target="#addMemberToProjectModal"]')
+        const addMemberToProjectModal = document.getElementById('addMemberToProjectModal')
+
+        addMembersBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.currentTarget
+
+                const addMemberToProjectIdElement = addMemberToProjectModal.querySelector('[name="Id"]')
+                addMemberToProjectIdElement.value = target.dataset.id || ''
+
+                const projectId = btn.dataset.id
+
+                var preSelectedMembers = window.preselectedMembersJson?.[projectId]
+
+                initTagSelector({
+                   containerId: 'tagged-users-edit-members',
+                   inputId: 'user-search-edit-members',
+                   resultsId: 'user-search-results-edit-members',
+                   searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+                   displayProperty: 'fullName',
+                   imageProperty: 'userImageUrl',
+                   tagClass: 'user-tag',
+                   emptyMessage: 'No members found.',
+                   preselected: preSelectedMembers,
+                   selectedInputIds: 'SelectedMemberIdsUpdateMembers'
+                })
+
+            })
+
+        })
+
+
+
+        const deleteBtns = document.querySelectorAll('[data-target="#deleteProjectModal"]')
+        const deleteProjectId = document.getElementById('delete-project-id')
+        const deleteProjectName = document.getElementById('delete-project-name')
+
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                deleteProjectId.value = btn.dataset.id || ''
+                deleteProjectName.textContent = btn.dataset.name
+
+                const errorMessageContainer = document.getElementById('error-message')
+                if (errorMessageContainer) {
+                    errorMessageContainer.textContent = ''
+                    errorMessageContainer.style.display = 'none'
+                }
+            })
+        })
+
+
+
+        const statuses = document.querySelectorAll('[data-filter]')
+        const cards = document.querySelectorAll('.project-card')
+
+        statuses.forEach(status => {
+            status.addEventListener('click', () => {
+                const selectedStatus = status.dataset.filter
+
+                statuses.forEach(s => {
+                    if (s === status) {
+                        s.classList.add('focused')
+                    } else {
+                        s.classList.remove('focused')
+                    }
+                })
+
+                cards.forEach(card => {
+                    const projectStatus = card.dataset.status
+
+                     if (selectedStatus === "all" || projectStatus === selectedStatus) {
+                         card.style.display = 'grid'
+                     } else {
+                         card.style.display = 'none'
+                     }
+                })
+            })
+        })
+
+    })
+
 </script>
+
+
+

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Business.Models.Clients;
 
@@ -8,7 +7,7 @@ public class ClientEditModel
     public int Id { get; set; }
 
     [DataType(DataType.Upload)]
-    public IFormFile? ClientImage { get; set; }
+    public string? ClientImage { get; set; }
 
 
     [Display(Name = "Client name", Prompt = "Enter client name")]

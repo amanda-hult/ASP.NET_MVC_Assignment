@@ -16,15 +16,23 @@ public static class AddressFactory
         };
     }
 
-    public static AddressEntity Update(AddressEditModel model)
+    public static AddressEntity Create(AddressEditModel model)
     {
         return new AddressEntity
         {
-            AddressId = model.Id,
             StreetName = model.StreetName,
             StreetNumber = model.StreetNumber,
             PostalCode = model.PostalCode,
             City = model.City,
         };
+    }
+
+    public static void Update(AddressEditModel model, AddressEntity entity)
+    {
+        entity.AddressId = model.Id;
+        entity.StreetName = model.StreetName;
+        entity.StreetNumber = model.StreetNumber;
+        entity.PostalCode = model.PostalCode;
+        entity.City = model.City;
     }
 }

@@ -6,6 +6,7 @@ namespace Business.Interfaces;
 public interface IAddressService
 {
     Task<AddressEntity> CreateAddressAsync(AddressCreateModel model);
+    Task<AddressEntity> CreateNewAddressAsync(AddressEditModel model);
     Task<AddressEntity> GetAddressEntityByIdAsync(int id);
     Task<AddressEntity> UpdateAddressAsync(AddressEditModel model);
 }

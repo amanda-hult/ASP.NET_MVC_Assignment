@@ -160,14 +160,24 @@ public class MemberController : Controller
             Phone = model.Phone,
             JobTitle = model.JobTitle,
             DateOfBirth = isValidDate ? dateOfBirth : null,
-            Address = model.Address,
-            Password = model.Password,
+            Address = model.Address != null
+            ? new AddressEditModel
+            {
+                Id = model.Address.Id,
+                StreetName = model.Address.StreetName,
+                StreetNumber = model.Address.StreetNumber,
+                PostalCode = model.Address.PostalCode,
+                City = model.Address.City
+            }
+            : null,
+            
+            //Password = model.Password,
         };
 
         var result = await _userService.UpdateUserAsync(userEditModel);
 
         // if created, send notifications to Admin roles
-        if (result == 201)
+        if (result == 200)
         {
             var member = await _userManager.FindByEmailAsync(model.Email);
 

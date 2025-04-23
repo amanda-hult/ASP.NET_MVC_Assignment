@@ -137,19 +137,12 @@
     function addTag(item) {
         const id = item.id
 
-
-        console.log("Adding preselected: ", item)
-
         // do not add tag if already added
         if (selectedIds.includes(id)) {
             return
         }
 
         selectedIds.push(id)
-
-        console.log(item[config.imageProperty])
-        console.log(item[config.displayProperty])
-
 
         // add tag to list
         const tag = document.createElement('div')

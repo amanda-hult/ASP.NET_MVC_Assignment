@@ -9,7 +9,7 @@
 
         <form method="post" asp-controller="Member" asp-action="EditMember" class="js-form" novalidate>
 
-            <input asp-for="Id" readonly type="hidden" />
+            <input asp-for="Id" id="@Model.Id" readonly type="hidden" />
 
             <div id="image-preview-edit-member-modal-container" class="image-preview-container circle">
                 <img src="#" id="image-preview-edit-member-modal" class="image-preview d-none" />
@@ -99,7 +99,7 @@
 
                 <div class="date-container">
                     <div class="form-group">
-                        <label asp-for="SelectedDay" for="SelectedDay_@Model.Id"></label>
+                        <label asp-for="SelectedDay" for="SelectedDay_@Model.Id" class="d-none"></label>
                         <select asp-for="SelectedDay" id="SelectedDay_@Model.Id" asp-items="@(new SelectList(Model?.Days))" required>
                             <option value="" disabled selected>Day</option>
                         </select>
@@ -114,7 +114,7 @@
                     @* </div> *@
 
                     <div class="form-group">
-                        <label asp-for="SelectedMonth" for="SelectedMonth_@Model.Id"></label>
+                        <label asp-for="SelectedMonth" for="SelectedMonth_@Model.Id" class="d-none"></label>
                         <select asp-for="SelectedMonth" id="SelectedMonth_@Model.Id" required>
                             <option value="" disabled selected>Month</option>
                             @for (int i = 1; i <= 12; i++)
@@ -126,7 +126,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="SelectedYear" for="SelectedYear_@Model.Id"></label>
+                        <label asp-for="SelectedYear" for="SelectedYear_@Model.Id" class="d-none"></label>
                         <select asp-for="SelectedYear" id="SelectedYear_@Model.Id" asp-items="@(new SelectList(Model?.Years))" required>
                             <option value="" class="form-input" disabled selected>Year</option>
                         </select>
@@ -135,20 +135,20 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Password" for="Password_@Model.Id"></label>
-                <div class="field-group">
-                    <input asp-for="Password" id="Password_@Model.Id" />
-                    <span asp-validation-for="Password"></span>
-                </div>
-            </div>
+            @* <div class="form-group"> *@
+            @*     <label asp-for="Password" for="Password_@Model.Id"></label> *@
+            @*     <div class="field-group"> *@
+            @*         <input asp-for="Password" id="Password_@Model.Id" /> *@
+            @*         <span asp-validation-for="Password"></span> *@
+            @*     </div> *@
+            @* </div> *@
+
+            <div id="error-message" class="error-message"></div>
 
             <button type="submit" class="button btn-blue mt-4">Save</button>
         </form>
 
         <button type="button" 
-                asp-controller="Member" 
-                asp-action="DeleteMember" 
                 class="button btn-red mt-4"
                 data-modal="true"
                 data-target="#deleteMemberModal"
@@ -165,17 +165,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
+        handleImagePreview({
+            containerId: 'image-preview-edit-member-modal-container',
+            imagePreview: 'image-preview-edit-member-modal'
+        })
+
+
         const deleteBtns = document.querySelectorAll('[data-target="#deleteMemberModal"]')
         const deleteMemberModal = document.getElementById('deleteMemberModal')
 
         const deleteMemberId = document.getElementById('delete-member-id')
         const deleteMemberName = document.getElementById('delete-member-name')
 
-
-        handleImagePreview({
-            imagePreview: 'image-preview-edit-member-modal',
-            containerId: 'image-preview-edit-member-modal-container'
-        })
 
         deleteBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -187,6 +188,10 @@
 
                 deleteMemberId.value = btn.dataset.id || ''
                 deleteMemberName.textContent = `${btn.dataset.firstname} ${btn.dataset.lastname}` || ''
+
+                console.log("Clicked button: ", btn);
+                console.log("ID: ", btn.dataset.id);
+                console.log("Name: ", btn.dataset.firstname, btn.dataset.lastname);
 
                 const errorMessageContainer = document.getElementById('error-message')
                 if(errorMessageContainer) {

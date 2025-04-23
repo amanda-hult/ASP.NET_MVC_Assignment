@@ -147,22 +147,24 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
             if (existingEntity == null)
                 return 404;
 
-            var updatedEntity = UserFactory.CreateUpdated(model, existingEntity);
+            UserFactory.Update(model, existingEntity);
 
-            var result = await _userManager.UpdateAsync(updatedEntity);
+            var result = await _userManager.UpdateAsync(existingEntity);
             if (!result.Succeeded)
             {
                 return 500;
             }
 
-            var updatedAddress = await _addressService.UpdateAddressAsync(model.Address);
-            if (updatedAddress == null)
+            if (existingEntity.Address == null || existingEntity.AddressId == null)
             {
-                Debug.WriteLine("Address update failed, but user was updated.");
-                return 500;
+                var newAddress = await _addressService.CreateNewAddressAsync(model.Address);
+                existingEntity.Address = newAddress;
             }
-
-            updatedEntity.Address = updatedAddress;
+            else
+            {
+                var updatedAddress = await _addressService.UpdateAddressAsync(model.Address);
+                existingEntity.Address = updatedAddress;
+            }
 
             return 200;
         }

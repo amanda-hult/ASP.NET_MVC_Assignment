@@ -89,26 +89,20 @@ public static class UserFactory
             Email = user.Email,
             PhoneNumber = user.Phone,
             JobTitle = user.JobTitle,
-            DateOfBirth = user.DateOfBirth
+            DateOfBirth = user.DateOfBirth,
+            //password?
         };
     }
 
-    public static UserEntity CreateUpdated(UserEditModel model, UserEntity entity)
+    public static void Update(UserEditModel model, UserEntity entity)
     {
-        return new UserEntity
-        {
-            Id = entity.Id,
-            ProjectUsers = entity.ProjectUsers,
-            DismissedNotifications = entity.DismissedNotifications,
-
-            UserImageUrl = model.ProfileImage,
-            UserName = model.Email,
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            Email = model.Email,
-            PhoneNumber = model.Phone,
-            JobTitle = model.JobTitle,
-            DateOfBirth = model.DateOfBirth,
-        };
+        entity.UserImageUrl = model.ProfileImage;
+        entity.UserName = model.Email;
+        entity.FirstName = model.FirstName;
+        entity.LastName = model.LastName;
+        entity.Email = model.Email;
+        entity.PhoneNumber = model.Phone;
+        entity.JobTitle = model.JobTitle;
+        entity.DateOfBirth = model.DateOfBirth;
     }
 }

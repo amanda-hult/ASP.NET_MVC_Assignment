@@ -16,24 +16,27 @@
         </div>
     </td>
     <td class="client-actions flex">
-        <button class="fa-duotone fa-regular fa-pen-to-square btn-edit"
-                type="button"
-                data-modal="true"
-                data-target="#editClientModal"
-                data-id="@Model.Id"
-                data-name="@Model.ClientName"
-                data-email="@Model.Email"
-                data-location="@Model.Location"
-                data-phone="@Model.Phone"
-                data-image="@Model.ClientImage">
-        </button>
-        <button class="fa-duotone fa-solid fa-trash btn-remove"
-                type="button"
-                data-modal="true"
-                data-target="#deleteClientModal"
-                data-id="@Model.Id"
-                data-name="@Model.ClientName">
-        </button>
+        <div type="button"
+             data-modal="true"
+             data-target="#editClientModal"
+             data-id="@Model.Id"
+             data-image="@Model.ClientImage"
+             data-name="@Model.ClientName"
+             data-email="@Model.Email"
+             data-location="@Model.Location"
+             data-phone="@Model.Phone"
+             data-image="@Model.ClientImage">
+            <i class="fa-duotone fa-regular fa-pen-to-square"></i>
+        </div>
+        <div class="btn-remove"
+             type="button"
+             data-modal="true"
+             data-target="#deleteClientModal"
+             data-id="@Model.Id"
+             data-name="@Model.ClientName">
+
+            <i class="fa-duotone fa-solid fa-trash"></i>
+         </div>
     </td>
 </tr>
 
@@ -44,12 +47,6 @@
         const deleteBtns = document.querySelectorAll('[data-target="#deleteClientModal"]')
 
         const editClientModal = document.getElementById('editClientModal')
-        const editClientId = editClientModal.querySelector('[name="Id"]')
-        const editClientImage = editClientModal.querySelector('[name="ClientImage"]')
-        const editClientName = editClientModal.querySelector('[name="ClientName"]')
-        const editClientEmail = editClientModal.querySelector('[name="Email"]')
-        const editClientLocation = editClientModal.querySelector('[name="Location"]')
-        const editClientPhone = editClientModal.querySelector('[name="Phone"]')
 
         const deleteClientId = document.getElementById('delete-client-id')
         const deleteClientName = document.getElementById('delete-client-name')
@@ -58,12 +55,26 @@
         
         editBtns.forEach(btn => {
             btn.addEventListener('click', () => {
+
+                const editClientImagePreviewContainer = editClientModal.querySelector('.image-preview-container')
+                const editClientImagePreview = editClientModal.querySelector('#image-preview-edit-client-modal')
+                const editClientId = editClientModal.querySelector('[name="Id"]')
+                const editClientName = editClientModal.querySelector('[name="ClientName"]')
+                const editClientEmail = editClientModal.querySelector('[name="Email"]')
+                const editClientLocation = editClientModal.querySelector('[name="Location"]')
+                const editClientPhone = editClientModal.querySelector('[name="Phone"]')
+
+                editClientImagePreview.classList.remove('d-none')
+                editClientImagePreviewContainer.classList.add('selected')
+
                 editClientId.value = btn.dataset.id || ''
-                editClientImage.value = btn.dataset.image || ''
+                editClientImagePreview.src = btn.dataset.image || ''
                 editClientName.value = btn.dataset.name || ''
                 editClientEmail.value = btn.dataset.email || ''
                 editClientLocation.value = btn.dataset.location || ''
                 editClientPhone.value = btn.dataset.phone || ''
+
+
             })
         })
 

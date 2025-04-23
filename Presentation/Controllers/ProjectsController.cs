@@ -10,14 +10,13 @@ using Microsoft.AspNetCore.SignalR;
 using Presentation.Handlers;
 using Presentation.Hubs;
 using Presentation.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Presentation.Controllers;
-
 
 //[Authorize]
 public class ProjectsController : Controller
 {
-    //private readonly IWebHostEnvironment _env;
     private readonly IStatusService _statusService;
     private readonly IClientService _clientService;
     private readonly IUserService _userService;
@@ -28,7 +27,6 @@ public class ProjectsController : Controller
 
     public ProjectsController(IStatusService statusService, IClientService clientService, IUserService userService, IProjectService projectService, INotificationService notificationService, IHubContext<NotificationHub> hubContext, IFileHandler fileHandler)
     {
-        //_env = env;
         _statusService = statusService;
         _clientService = clientService;
         _userService = userService;
@@ -124,7 +122,8 @@ public class ProjectsController : Controller
                 var notificationCreateModel = new NotificationCreateModel
                 {
                     Message = $"{project.ProjectName} was added.",
-                    NotificationTypeId = 2
+                    NotificationTypeId = 2,
+                    Image = imageUri,                    
                 };
 
                 await _notificationService.AddNotificationAsync(notificationCreateModel);
@@ -154,29 +153,48 @@ public class ProjectsController : Controller
 
     #region Edit Project
     [HttpPost]
-    public async Task<IActionResult> EditProject(EditProjectModel model, string SelectedMemberIdsEdit)
+    public async Task<IActionResult> EditProject(EditProjectModel model)
     {
+        var memberIds = string.IsNullOrWhiteSpace(model.SelectedMemberIdsEdit)
+            ? []
+            : JsonSerializer.Deserialize<List<string>>(model.SelectedMemberIdsEdit);
+
+        if (memberIds.Count == 0)
+        {
+            ModelState.AddModelError("SelectedMemberIdsEdit", "Please select at least one member");
+        }
+
         if (!ModelState.IsValid)
         {
             var errors = ModelState
                 .Where(x => x.Value?.Errors.Count > 0)
                 .ToDictionary(
                     kvp => kvp.Key,
-                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToList()
+                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
                 );
-
             return BadRequest(new { success = false, errors });
         }
 
-        var memberIds = JsonSerializer.Deserialize<List<string>>(SelectedMemberIdsEdit) ?? new();
+
         var projectUsers = memberIds.Where(id => !string.IsNullOrWhiteSpace(id)).Select(id => new ProjectUserModel
         {
             UserId = id,
         }).ToList();
 
+        string imageUri;
+        if (model.ProjectImage == null || model.ProjectImage.Length == 0)
+        {
+            imageUri = "/images/project-image-standard.svg";
+        }
+        else
+        {
+            imageUri = await _fileHandler.UploadFileAsync(model.ProjectImage);
+        }
+
         var projectEditModel = new ProjectEditModel
         {
             Id = model.Id,
+            ProjectImage = imageUri,
             ProjectName = model.ProjectName,
             Description = model.Description,
             StartDate = model.StartDate,
@@ -189,8 +207,6 @@ public class ProjectsController : Controller
 
         var result = await _projectService.UpdateProjectAsync(projectEditModel);
 
-        Debug.WriteLine($"{result}");
-
         if (result == 200)
         {
 
@@ -200,7 +216,8 @@ public class ProjectsController : Controller
                 var notificationCreateModel = new NotificationCreateModel
                 {
                     Message = $"Project {project.ProjectName} was updated.",
-                    NotificationTypeId = 2
+                    NotificationTypeId = 2,
+                    Image = project.ProjectImageUrl ?? "/images/project-image-standard.svg"
                 };
 
                 await _notificationService.AddNotificationAsync(notificationCreateModel);
@@ -233,6 +250,64 @@ public class ProjectsController : Controller
     }
 
     #endregion
+
+    #region Add Member to Project
+    public async Task<IActionResult> AddMemberToProject(int Id, string SelectedMemberIdsUpdateMembers)
+    {
+        var memberIds = string.IsNullOrWhiteSpace(SelectedMemberIdsUpdateMembers)
+                    ? []
+                    : JsonSerializer.Deserialize<List<string>>(SelectedMemberIdsUpdateMembers);
+
+        if (memberIds.Count == 0)
+        {
+            ModelState.AddModelError("SelectedMemberIdsEdit", "Please select at least one member");
+            return BadRequest(new { success = false, errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
+                )
+            });
+        }
+
+        var result = await _projectService.AddUserToProjectAsync(Id, memberIds);
+
+        if (result == 200)
+        {
+
+            var project = await _projectService.GetProjectAsync(Id);
+            if (project != null)
+            {
+                var notificationCreateModel = new NotificationCreateModel
+                {
+                    Message = $"Project {project.ProjectName} was updated.",
+                    NotificationTypeId = 2,
+                    Image = project.ProjectImageUrl ?? "/images/project-image-standard.svg"
+                };
+
+                await _notificationService.AddNotificationAsync(notificationCreateModel);
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var notifications = await _notificationService.GetNotificationsAsync(userId);
+                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
+                if (newNotification != null)
+                {
+                    await _hubContext.Clients.All.SendAsync("RecieveNotification", newNotification);
+                }
+            }
+
+            return RedirectToAction("Projects", "Admin");
+        }
+
+
+        if (result == 404)
+            return NotFound(new { message = "Project not found" });
+
+
+        return StatusCode(500, new { message = "unexpected error." });
+    }
+    #endregion
+
 
     #region Delete Project
     public async Task<IActionResult> DeleteProject(int id)

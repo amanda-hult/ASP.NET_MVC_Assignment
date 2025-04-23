@@ -55,7 +55,7 @@
         theme: 'snow',
     });
 
-    addProjectDescriptionQuill.on('text-change', function () {
+    addProjectDescriptionQuill.on('text-change', () => {
         addProjectDescriptionTextArea.value = addProjectDescriptionQuill.root.innerHTML
     })
 
@@ -68,12 +68,11 @@
         theme: 'snow',
     });
 
-    window.editProjectDescriptionQuill.on('text-change', function () {
+    window.editProjectDescriptionQuill.on('text-change', () => {
         editProjectDescriptionTextArea.value = editProjectDescriptionQuill.root.innerHTML
     })
 
 })
-
 
 // handle image preview
 function handleImagePreview(config) {

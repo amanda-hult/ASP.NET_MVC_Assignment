@@ -1,0 +1,34 @@
+﻿@model AddMemberToProjectModel
+
+<div id="addMemberToProjectModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add Member to Project @Model.ProjectName</h3>
+            <button type="button" class="button-close" data-close="true"></button>
+        </div>
+
+ 		<form asp-controller="Projects" asp-action="AddMemberToProject" method="post" class="js-form" novalidate>
+
+            <input type="hidden" readonly asp-for="Id" />
+
+
+
+            <div class="form-group">
+                <input type="hidden" name="SelectedMemberIdsUpdateMembers" id="SelectedMemberIdsUpdateMembers" />
+
+                <label class="form-label" asp-for="SelectedMemberIdsUpdateMembers"></label>
+
+ 				<div id="tagged-users-edit-members" class="form-input form-tag-select"> 
+ 					<input type="text" id="user-search-edit-members" class="form-tag-input" placeholder="Add member" />
+                    <label for="user-search-edit-members" class="fa-regular fa-magnifying-glass-waveform"></label>
+                    <div id="user-search-results-edit-members" class="search-results"></div>
+                    <span asp-validation-for="SelectedMemberIdsUpdateMembers"></span>
+ 				</div> 
+
+ 			</div> 
+
+ 			<button type="submit" class="button btn-submit">Save</button>
+ 		</form> 
+
+ 	</div> 
+</div>

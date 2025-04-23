@@ -1,8 +1,5 @@
 ﻿@model ProjectModel
 
-
-
-
 <div class="project-card" data-status="@Model.Status.StatusName.ToLower()">
     @await Html.PartialAsync("Partials/Components/_EditProjectDropdown", Model)
     <div class="project-card-header">
@@ -22,7 +19,7 @@
     </div>
 
     <div>
-        <p>@Model.Description</p>
+        <p>@Html.Raw(Model.Description)</p>
     </div>
 
     <div class="project-card-footer">
@@ -47,8 +44,12 @@
             }
         </div>
 
-        <img src="~/images/avatar-standard.svg">
+        <div class="members-wrapper">
+
+            @foreach (var projectUser in Model.ProjectUsers.Take(3))
+            {
+                <img src="@projectUser.User.UserImageUrl">
+            }
+        </div>
     </div>
 </div>
-
-

@@ -157,9 +157,9 @@ public class ProjectService : IProjectService
 
             foreach (var id in newMemberIds)
             {
-                bool alredyExists = existingProject.ProjectUsers.Any(pu => pu.UserId == id);
+                bool alreadyExists = existingProject.ProjectUsers.Any(pu => pu.UserId == id);
 
-                if (!alredyExists)
+                if (!alreadyExists)
                 {
                     existingProject.ProjectUsers.Add(new ProjectUserEntity
                     {
@@ -175,15 +175,69 @@ public class ProjectService : IProjectService
 
             var updatedProject = await _projectRepository.UpdateProjectAsync(x => x.ProjectId == model.Id, projectToUpdate);
 
+            await _projectRepository.SaveAsync();
             await _projectRepository.CommitTransactionAsync();
-            //await _projectRepository.SaveAsync();
 
             return 200;
         }
         catch (Exception ex)
         {
             await _projectRepository.RollbackTransactionAsync();
-            Debug.WriteLine("Error in projectService creating project: ", ex);
+            Debug.WriteLine($"Error in projectService creating project: {ex.Message}");
+            return 500;
+        }
+    }
+
+
+
+    public async Task<int> AddUserToProjectAsync(int projectId, List<string> memberIds)
+    {
+        await _projectRepository.BeginTransactionAsync();
+        try
+        {
+            var existingProject = await _projectRepository.GetAsync(
+                x => x.ProjectId == projectId,
+                q => q.Include(p => p.ProjectUsers)
+                        .ThenInclude(pu => pu.User)
+            );
+
+            if (existingProject == null)
+                return 404;
+
+
+            // get and replace members
+            var existingMembers = existingProject.ProjectUsers.ToList();
+
+            var membersToRemove = existingMembers.Where(pu => !memberIds.Contains(pu.UserId)).ToList();
+            foreach (var member in membersToRemove)
+            {
+                existingProject.ProjectUsers.Remove(member);
+            }
+
+            foreach (var id in memberIds)
+            {
+                bool alredyExists = existingProject.ProjectUsers.Any(pu => pu.UserId == id);
+
+                if (!alredyExists)
+                {
+                    existingProject.ProjectUsers.Add(new ProjectUserEntity
+                    {
+                        ProjectId = existingProject.ProjectId,
+                        UserId = id
+                    });
+                }
+            }
+
+            await _projectRepository.UpdateProjectAsync(x => x.ProjectId == projectId, existingProject);
+            await _projectRepository.SaveAsync();
+            await _projectRepository.CommitTransactionAsync();
+
+            return 200;
+        }
+        catch (Exception ex)
+        {
+            await _projectRepository.RollbackTransactionAsync();
+            Debug.WriteLine($"Error in projectService adding members to project: { ex.Message}");
             return 500;
         }
     }
