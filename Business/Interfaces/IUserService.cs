@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using Business.Models.Users;
+﻿using Business.Models.Users;
 using Data.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace Business.Interfaces;
 
@@ -14,5 +12,5 @@ public interface IUserService
     Task<IEnumerable<BasicUserModel>> GetBasicUsersByIdAsync(List<string> ids);
     Task<List<UserEntity>> GetUserEntitiesByIdAsync(List<string> ids);
     Task<int> UpdateUserAsync(UserEditModel model);
-    //Task<int> DeleteUserAsync(string id);
+    Task<int> DeleteUserAsync(string id);
 }

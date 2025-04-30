@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Presentation.Handlers;
 using Presentation.Hubs;
+using Presentation.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +19,15 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.CheckConsentNeeded = context => !context.Request.Cookies.ContainsKey("cookieConsent");
     options.MinimumSameSitePolicy = SameSiteMode.Lax;
 });
+builder.Services.Configure<CookieAuthenticationOptions>(IdentityConstants.ExternalScheme, options =>
+{
+    options.Cookie.IsEssential = true;
+});
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
+builder.Services.AddHttpContextAccessor();
 
 var connectionString = builder.Configuration.GetConnectionString("AzureBlobStorage");
 var containerName = "images";
@@ -45,6 +52,10 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+
+builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<HelperService, HelperService>();
+
 
 builder.Services.AddScoped<INotificationDismissedRepository, NotificationDismissedRepository>();
 
@@ -93,6 +104,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCookiePolicy();
@@ -128,7 +140,7 @@ using (var scope = app.Services.CreateScope())
 app.MapStaticAssets();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Auth}/{action=SignUp}/{id?}")
+    pattern: "{controller=Auth}/{action=SignIn}/{id?}")
     .WithStaticAssets();
 
 app.MapHub<NotificationHub>("/notificationHub");

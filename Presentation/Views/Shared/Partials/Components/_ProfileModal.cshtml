@@ -1,13 +1,16 @@
-﻿
+﻿@{
+    var fullName = User.FindFirst("FullName")?.Value ?? "Guest";
+    var profileImage = User.FindFirst("ProfileImageUrl")?.Value ?? "/images/avatar-standard.svg";
+}
+
 <div id="profile-dropdown" class="profile-dropdown">
     <div class="profile-content">
-
         <div>
-            <img class="profile-avatar" src="~/images/avatar-standard.svg" alt="Profile picture" />
-            <p>Firstname Lastname</p>
+            <img class="profile-avatar" src="@profileImage" alt="Profile picture" />
+            <p>@fullName</p>
         </div>
 
-        <div>
+        <div class="dark-mode-container">
             <a><i class="fa-duotone fa-solid fa-gear" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></i></a>
             <label for="darkModeToggle" class="dark-mode-label">Dark mode</label>
             <label class="switch">
@@ -16,10 +19,11 @@
             </label>
         </div>
 
+        <div class="divider"></div>
+        
         <div>
             <i class="fa-duotone fa-solid fa-arrow-right-from-bracket"></i>
             <a asp-controller="Auth" asp-action="SignOut">Logout</a>
         </div>
-
     </div>
 </div>

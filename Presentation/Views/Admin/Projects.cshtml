@@ -1,16 +1,16 @@
 ﻿@using System.Text.Json
 @model ProjectViewModel
 @{
-	Layout = "_PortalLayout";
-	ViewData["Title"] = Model.Title;
+    Layout = "_PortalLayout";
+    ViewData["Title"] = Model.Title;
 
-	var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-	var preselectedJson = JsonSerializer.Serialize(Model.PreselectedMembers, jsonOptions);
+    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    var preselectedJson = JsonSerializer.Serialize(Model.PreselectedMembers, jsonOptions);
 }
 
 <script> 
-	window.preselectedMembersJson = @Html.Raw(preselectedJson)
- </script>
+    window.preselectedMembersJson = @Html.Raw(preselectedJson)
+</script>
 
 
 @await Html.PartialAsync("Partials/Components/Modals/_AddProjectModal", Model.AddProjectModel)
@@ -20,10 +20,10 @@
 
 
 <section id="projects">
-	<header class="portal-header">
-		<h2>Projects</h2>
-		<button type="button" data-modal="true" data-target="#addProjectModal" class="button btn-blue btn-add">Add Project</button>
-	</header>
+    <header class="portal-header">
+        <h2>Projects</h2>
+        <button type="button" data-modal="true" data-target="#addProjectModal" class="button btn-blue btn-add">Add Project</button>
+    </header>
 
 	<div class="project-statuses">
 		<p data-filter="all" class="project-status">ALL [@Model.Projects.Count()] </p>
@@ -45,18 +45,15 @@
 
 
 
-
-
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        //FOR ADD FORM
+        // ADD FORM
         initTagSelector({
             containerId: 'tagged-users-add',
             inputId: 'user-search-add',
             resultsId: 'user-search-results-add',
-            searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+            searchUrl: (query) => '@Url.Action("SearchMember", "Search")' + '?term=' + encodeURIComponent(query),
             displayProperty: 'fullName',
             imageProperty: 'userImageUrl',
             tagClass: 'user-tag',
@@ -66,11 +63,9 @@
         })
 
 
-
-        //FOR EDIT FORM
+        // EDIT FORM
         const editBtns = document.querySelectorAll('[data-target="#editProjectModal"]')
         const editProjectModal = document.getElementById('editProjectModal')
-
 
         editBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -79,17 +74,14 @@
                 const editProjectIdElement = editProjectModal.querySelector('[name="Id"]')
                 editProjectIdElement.value = target.dataset.id || ''
 
-                // const editProjectId = editProjectIdElement.value
-
                 const projectId = btn.dataset.id
                 var preSelectedMembers = window.preselectedMembersJson?.[projectId]
-
 
                 initTagSelector({
                     containerId: 'tagged-users-edit',
                     inputId: 'user-search-edit',
                     resultsId: 'user-search-results-edit',
-                    searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+                    searchUrl: (query) => '@Url.Action("SearchMember", "Search")' + '?term=' + encodeURIComponent(query),
                     displayProperty: 'fullName',
                     imageProperty: 'userImageUrl',
                     tagClass: 'user-tag',
@@ -98,15 +90,11 @@
                     selectedInputIds: 'SelectedMemberIdsEdit'
                 })
 
-
                 const editProjectImagePreviewContainer = editProjectModal.querySelector('.image-preview-container')
                 const editProjectImagePreview = editProjectModal.querySelector('#image-preview-edit-project-modal')
 
-                // const editProjectImage = editProjectModal.querySelector('[name="ProjectImage"]')
+                const editProjectImage = editProjectModal.querySelector('[name="ExistingImage"]')
                 const editProjectName = editProjectModal.querySelector('[name="ProjectName"]')
-
-                // const editProjectDescription = editProjectModal.querySelector('.wysiwyg-editor')
-                
                 const editProjectStartDate = editProjectModal.querySelector('[name="StartDate"]')
                 const editProjectEndDate = editProjectModal.querySelector('[name="EndDate"]')
                 const editProjectBudget = editProjectModal.querySelector('[name="Budget"]')
@@ -116,19 +104,16 @@
                 editProjectImagePreview.classList.remove('d-none')
                 editProjectImagePreviewContainer.classList.add('selected')
 
+                editProjectImage.value = btn.dataset.image || ''
                 editProjectImagePreview.src = btn.dataset.image || ''
                 editProjectName.value = target.dataset.name || ''
-
                 window.editProjectDescriptionQuill.root.innerHTML = target.dataset.description || ''
-                // editProjectDescription.value = target.dataset.description || ''
-                
                 editProjectStartDate.value = target.dataset.startdate || ''
                 editProjectEndDate.value = target.dataset.enddate || ''
                 editProjectBudget.value = target.dataset.budget || ''
                 editProjectClient.value = target.dataset.clientid || ''
                 editProjectStatus.value = target.dataset.statusid || ''
             })
-
         })
 
 
@@ -151,7 +136,7 @@
                    containerId: 'tagged-users-edit-members',
                    inputId: 'user-search-edit-members',
                    resultsId: 'user-search-results-edit-members',
-                   searchUrl: (query) => '@Url.Action("SearchMember", "Member")' + '?term=' + encodeURIComponent(query),
+                   searchUrl: (query) => '@Url.Action("SearchMember", "Search")' + '?term=' + encodeURIComponent(query),
                    displayProperty: 'fullName',
                    imageProperty: 'userImageUrl',
                    tagClass: 'user-tag',
@@ -159,13 +144,11 @@
                    preselected: preSelectedMembers,
                    selectedInputIds: 'SelectedMemberIdsUpdateMembers'
                 })
-
             })
-
         })
 
 
-
+        // DELETE FORM
         const deleteBtns = document.querySelectorAll('[data-target="#deleteProjectModal"]')
         const deleteProjectId = document.getElementById('delete-project-id')
         const deleteProjectName = document.getElementById('delete-project-name')
@@ -174,16 +157,8 @@
             btn.addEventListener('click', () => {
                 deleteProjectId.value = btn.dataset.id || ''
                 deleteProjectName.textContent = btn.dataset.name
-
-                const errorMessageContainer = document.getElementById('error-message')
-                if (errorMessageContainer) {
-                    errorMessageContainer.textContent = ''
-                    errorMessageContainer.style.display = 'none'
-                }
             })
         })
-
-
 
         const statuses = document.querySelectorAll('[data-filter]')
         const cards = document.querySelectorAll('.project-card')
@@ -211,9 +186,7 @@
                 })
             })
         })
-
     })
-
 </script>
 
 

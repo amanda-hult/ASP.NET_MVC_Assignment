@@ -9,15 +9,13 @@
 
         <form method="post" asp-controller="Client" asp-action="AddClient" class="js-form" novalidate>
 
-			<div class="image-preview-container circle">
-                <img src="#" class="image-preview d-none" />
+            <div id="image-preview-add-client-modal-container" class="image-preview-container circle">
+                <img src="#" id="image-preview-add-client-modal" class="image-preview d-none" />
                 <input asp-for="ClientImage" accept="image/*" class="d-none"/>
-
 			</div>
 
-
             <div class="form-group">
-                <label asp-for="ClientName"></label>
+                <label asp-for="ClientName" class="form-label"></label>
                 <div class="field-group">
                     <input asp-for="ClientName" />
                     <span asp-validation-for="ClientName"></span>
@@ -25,7 +23,7 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Email"></label>
+                <label asp-for="Email" class="form-label"></label>
                 <div class="field-group">
                     <input asp-for="Email" />
                     <span asp-validation-for="Email"></span>
@@ -33,7 +31,7 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Location"></label>
+                <label asp-for="Location" class="form-label"></label>
                 <div class="field-group">
                     <input asp-for="Location" />
                     <span asp-validation-for="Location"></span>
@@ -41,22 +39,26 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Phone"></label>
+                <label asp-for="Phone" class="form-label"></label>
                 <div class="field-group">
                     <input asp-for="Phone" />
                     <span asp-validation-for="Phone"></span>
                 </div>
             </div>
 
-            <div id="error-message" class="error-message"></div>
+            <div class="error-message"></div>
 
             <button type="submit" class="button btn-blue mt-4">Create</button>
 		</form>
-
 	</div>
-
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
 
-@* @await Html.PartialAsync("_ValidationScripts") *@
-
+        handleImagePreview({
+            containerId: 'image-preview-add-client-modal-container',
+            imagePreview: 'image-preview-add-client-modal'
+        })
+    })
+</script>

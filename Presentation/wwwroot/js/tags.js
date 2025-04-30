@@ -116,16 +116,25 @@
                             <img class="user-avatar" src="${item[config.imageProperty]}">
                             <span>${item[config.displayProperty]}</span>
                             `
+
+                        resultItem.addEventListener('click', () => {
+                            addTag(item)
+                        })
+
                     } else {
                         resultItem.innerHTML =
                             `
-                            <span>${item[config.displayProperty]}</span>
+                            <div class="flex">
+                                <img class="tag-image" src="${item[config.imageProperty]}">
+                                <span class="tag-image-span">${item[config.displayProperty]}</span>
+                            </div>
+                            <span class="tag-image-span">${item[config.displayType]}</span>
                             `
+                        resultItem.addEventListener('click', () => {
+                            const url = item.url || "/"
+                            window.location.href = url
+                        })
                     }
-
-                    resultItem.addEventListener('click', () => {
-                        addTag(item)
-                    })
                     result.appendChild(resultItem)
                 }
             })

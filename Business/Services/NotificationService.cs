@@ -7,48 +7,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
-public class NotificationService : INotificationService
+public class NotificationService(INotificationRepository notificationRepository, INotificationDismissedRepository notificationDismissedRepository) : INotificationService
 {
-    private readonly INotificationRepository _notificationRepository;
-    private readonly INotificationDismissedRepository _notificationDismissedRepository;
-
-    public NotificationService(INotificationRepository notificationRepository, INotificationDismissedRepository notificationDismissedRepository)
-    {
-        _notificationRepository = notificationRepository;
-        _notificationDismissedRepository = notificationDismissedRepository;
-    }
+    private readonly INotificationRepository _notificationRepository = notificationRepository;
+    private readonly INotificationDismissedRepository _notificationDismissedRepository = notificationDismissedRepository;
 
     public async Task AddNotificationAsync(NotificationCreateModel notification, string userId = "anonymous")
     {
-        //if (string.IsNullOrEmpty(notification.Image))
-        //{
-        //    switch (notification.NotificationTypeId)
-        //    {
-        //        case 1:
-        //            notification.Image = "";
-        //            break;
-
-        //        case 2:
-        //            notification.Image = ""; 
-        //            break;
-
-        //        case 3:
-        //            notification.Image = "";
-        //            break;
-        //    }
-        //}
-
         var notificationEntity = NotificationFactory.Create(notification);
 
         await _notificationRepository.CreateAsync(notificationEntity);
         await _notificationRepository.SaveAsync();
     }
 
-    public async Task<IEnumerable<NotificationModel>> GetNotificationsAsync(string userId, int take = 5)
+    public async Task<IEnumerable<NotificationModel>> GetNotificationsAsync(bool isAdmin, string userId, int take = 5)
     {
-        var notifications = await _notificationRepository.GetAllAsync(query =>
-            query.Include(x => x.DismissedNotifications)
-        );
+        IEnumerable<NotificationEntity> notifications;
+
+        if (isAdmin)
+        {
+            notifications = await _notificationRepository.GetAllAsync(query =>
+                query.Include(x => x.DismissedNotifications)
+            );
+        }
+        else
+        {
+            notifications = await _notificationRepository.GetNotificationsForUsersAsync();
+        }
 
         var filteredNotifications = notifications.Where(x => !x.DismissedNotifications.Any(x => x.UserId == userId))
             .OrderByDescending(x => x.Created)

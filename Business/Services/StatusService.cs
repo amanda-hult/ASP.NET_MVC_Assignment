@@ -10,6 +10,7 @@ public class StatusService(IStatusRepository statusRepository) : IStatusService
 {
     private readonly IStatusRepository _statusRepository = statusRepository;
 
+    #region Read
     public async Task<IEnumerable<StatusModel>> GetAllStatuses()
     {
         var list = await _statusRepository.GetAllAsync();
@@ -36,4 +37,5 @@ public class StatusService(IStatusRepository statusRepository) : IStatusService
 
         return statusEntity;
     }
+    #endregion
 }

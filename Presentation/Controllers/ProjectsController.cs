@@ -1,40 +1,22 @@
-﻿using System.Diagnostics;
-using System.Security.Claims;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Business.Interfaces;
-using Business.Models.Clients;
-using Business.Models.Notifications;
 using Business.Models.Projects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Presentation.Handlers;
-using Presentation.Hubs;
 using Presentation.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Presentation.Services;
 
 namespace Presentation.Controllers;
 
-//[Authorize]
-public class ProjectsController : Controller
+[Authorize]
+public class ProjectsController(IStatusService statusService, IClientService clientService, IProjectService projectService, IFileHandler fileHandler, HelperService helperService) : Controller
 {
-    private readonly IStatusService _statusService;
-    private readonly IClientService _clientService;
-    private readonly IUserService _userService;
-    private readonly IProjectService _projectService;
-    private readonly INotificationService _notificationService;
-    private readonly IHubContext<NotificationHub> _hubContext;
-    private readonly IFileHandler _fileHandler;
-
-    public ProjectsController(IStatusService statusService, IClientService clientService, IUserService userService, IProjectService projectService, INotificationService notificationService, IHubContext<NotificationHub> hubContext, IFileHandler fileHandler)
-    {
-        _statusService = statusService;
-        _clientService = clientService;
-        _userService = userService;
-        _projectService = projectService;
-        _notificationService = notificationService;
-        _hubContext = hubContext;
-        _fileHandler = fileHandler;
-    }
+    private readonly IStatusService _statusService = statusService;
+    private readonly IClientService _clientService = clientService;
+    private readonly IProjectService _projectService = projectService;
+    private readonly IFileHandler _fileHandler = fileHandler;
+    private readonly HelperService _helperService = helperService;
 
     #region Add Project
     [HttpPost]
@@ -63,36 +45,13 @@ public class ProjectsController : Controller
             imageUri = await _fileHandler.UploadFileAsync(model.ProjectImage);
         }
 
-        //if (imageUri == null || model.ProjectImage == null || model.ProjectImage.Length == 0)
-        //{
-            //string filePath;
-            //imageUri = "/images/project-image-standard.svg";
-
-            //if (model.ProjectImage == null || model.ProjectImage.Length == 0)
-            //{
-            //    filePath = "/images/project-image-standard.svg";
-            //}
-            //else
-            //{
-            //    var uploadFolder = Path.Combine(_env.WebRootPath, "uploads");
-            //    Directory.CreateDirectory(uploadFolder);
-
-            //    filePath = Path.Combine(uploadFolder, $"{Guid.NewGuid()}_{Path.GetFileName(model.ProjectImage.FileName)}");
-
-            //    using (var stream = new FileStream(filePath, FileMode.Create))
-            //    {
-            //        await model.ProjectImage.CopyToAsync(stream);
-            //    }
-            //}
-        //}
-
-
         var status = await _statusService.GetStatusAsync(model.SelectedStatusId);
         var client = await _clientService.GetClientAsync(model.SelectedClientId);
-        //var members = await _userService.GetUsersByIdAsync(model.SelectedMemberIds);
 
+        var memberIds = string.IsNullOrWhiteSpace(SelectedMemberIdsAdd)
+            ? []
+            : JsonSerializer.Deserialize<List<string>>(SelectedMemberIdsAdd);
 
-        var memberIds = JsonSerializer.Deserialize<List<string>>(SelectedMemberIdsAdd) ?? new();
         var projectUsers = memberIds.Where(id => !string.IsNullOrWhiteSpace(id)).Select(id => new ProjectUserModel
         {
             UserId = id,
@@ -114,38 +73,14 @@ public class ProjectsController : Controller
 
         var (succeeded, statuscode, projectId) = await _projectService.CreateProjectAsync(projectCreateModel);
         if (succeeded)
-        {
-            var project = await _projectService.GetProjectAsync(projectId);
+            await _helperService.HandleNotifications(projectId.ToString(), 2, imageUri, "Add", true);
 
-            if (project != null)
-            {
-                var notificationCreateModel = new NotificationCreateModel
-                {
-                    Message = $"{project.ProjectName} was added.",
-                    NotificationTypeId = 2,
-                    Image = imageUri,                    
-                };
 
-                await _notificationService.AddNotificationAsync(notificationCreateModel);
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var notifications = await _notificationService.GetNotificationsAsync(userId);
-                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
-                if (newNotification != null)
-                {
-                    await _hubContext.Clients.All.SendAsync("RecieveNotification", newNotification);
-                }
-            }
-        }
         if (statuscode == 500)
-        {
             return StatusCode(500);
-        }
 
         if (statuscode == 409)
-        {
             return StatusCode(409);
-        }
 
         return RedirectToAction("Projects", "Admin");
     }
@@ -175,7 +110,6 @@ public class ProjectsController : Controller
             return BadRequest(new { success = false, errors });
         }
 
-
         var projectUsers = memberIds.Where(id => !string.IsNullOrWhiteSpace(id)).Select(id => new ProjectUserModel
         {
             UserId = id,
@@ -184,7 +118,14 @@ public class ProjectsController : Controller
         string imageUri;
         if (model.ProjectImage == null || model.ProjectImage.Length == 0)
         {
-            imageUri = "/images/project-image-standard.svg";
+            if (!string.IsNullOrEmpty(model.ExistingImage))
+            {
+                imageUri = model.ExistingImage;
+            }
+            else
+            {
+                imageUri = "/images/project-image-standard.svg";
+            }
         }
         else
         {
@@ -209,28 +150,7 @@ public class ProjectsController : Controller
 
         if (result == 200)
         {
-
-            var project = await _projectService.GetProjectAsync(model.Id);
-            if (project != null)
-            {
-                var notificationCreateModel = new NotificationCreateModel
-                {
-                    Message = $"Project {project.ProjectName} was updated.",
-                    NotificationTypeId = 2,
-                    Image = project.ProjectImageUrl ?? "/images/project-image-standard.svg"
-                };
-
-                await _notificationService.AddNotificationAsync(notificationCreateModel);
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var notifications = await _notificationService.GetNotificationsAsync(userId);
-                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
-                if (newNotification != null)
-                {
-                    await _hubContext.Clients.All.SendAsync("RecieveNotification", newNotification);
-                }
-            }
-
+            await _helperService.HandleNotifications(model.Id.ToString(), 2, imageUri, "Edit", true);
             return RedirectToAction("Projects", "Admin");
         }
 
@@ -242,11 +162,6 @@ public class ProjectsController : Controller
 
 
         return StatusCode(500, new { message = "unexpected error." });
-
-        // fix errormessages
-        //ViewBag.ErrorMessage = "Could not update the project.";
-        //return View(model);
-
     }
 
     #endregion
@@ -274,40 +189,19 @@ public class ProjectsController : Controller
 
         if (result == 200)
         {
-
             var project = await _projectService.GetProjectAsync(Id);
+
             if (project != null)
-            {
-                var notificationCreateModel = new NotificationCreateModel
-                {
-                    Message = $"Project {project.ProjectName} was updated.",
-                    NotificationTypeId = 2,
-                    Image = project.ProjectImageUrl ?? "/images/project-image-standard.svg"
-                };
-
-                await _notificationService.AddNotificationAsync(notificationCreateModel);
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var notifications = await _notificationService.GetNotificationsAsync(userId);
-                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
-                if (newNotification != null)
-                {
-                    await _hubContext.Clients.All.SendAsync("RecieveNotification", newNotification);
-                }
-            }
-
-            return RedirectToAction("Projects", "Admin");
+                return RedirectToAction("Projects", "Admin");
         }
-
 
         if (result == 404)
             return NotFound(new { message = "Project not found" });
 
 
-        return StatusCode(500, new { message = "unexpected error." });
+        return StatusCode(500, new { message = "An unexpected error occured." });
     }
     #endregion
-
 
     #region Delete Project
     public async Task<IActionResult> DeleteProject(int id)
@@ -315,30 +209,7 @@ public class ProjectsController : Controller
         var result = await _projectService.DeleteProjectAsync(id);
 
         if (result == 204)
-        {
-
-            var project = await _projectService.GetProjectAsync(id);
-            if (project != null)
-            {
-                var notificationCreateModel = new NotificationCreateModel
-                {
-                    Message = $"Project {project.ProjectName} was deleted.",
-                    NotificationTypeId = 2
-                };
-
-                await _notificationService.AddNotificationAsync(notificationCreateModel);
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var notifications = await _notificationService.GetNotificationsAsync(userId);
-                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
-                if (newNotification != null)
-                {
-                    await _hubContext.Clients.All.SendAsync("RecieveNotification", newNotification);
-                }
-            }
-
             return RedirectToAction("Projects", "Admin");
-        }
 
         if (result == 404)
             return NotFound(new { message = "Project not found." });

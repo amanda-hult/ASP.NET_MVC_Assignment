@@ -8,21 +8,8 @@
         </div>
 
         <form class="project-form-container js-form" method="post" asp-controller="Projects" asp-action="AddProject" enctype="multipart/form-data" novalidate>
-
-            @* <div class="image-preview-container pt-1"> *@
-            @*     <label asp-for="ProjectImage" id="circle-container" class="square"> *@
-            @*         <i class="fa-duotone fa-solid fa-circle-camera fa-2xl" style="--fa-primary-color: #93a0b4; --fa-primary-opacity: 0.4; --fa-secondary-color: #6a707c; --fa-secondary-opacity: 1;"></i> *@
-            @*     </label> *@
-
-            @*     <img id="image-preview" src="#" alt="Project image" class="d-none" /> *@
-            @* </div> *@
-
-            @* <input asp-for="ProjectImage" accept="image/*" class="d-none" /> *@
-
-
-
-            <div class="image-preview-container square">
-                <img src="#" class="image-preview d-none" />
+            <div id="image-preview-add-project-modal-container" class="image-preview-container square">
+                <img src="#" id="image-preview-add-project-modal" class="image-preview d-none" />
                 <input asp-for="ProjectImage" accept="image/*" class="d-none" />
             </div>
 
@@ -78,7 +65,7 @@
                 <div class="form-group">
                     <label asp-for="StartDate"></label>
                     <div class="field-group">
-                        <input asp-for="StartDate" />
+                        <input asp-for="StartDate" type="date" value="@(Model.StartDate != DateTime.MinValue ? Model.StartDate.ToString("yyyy-MM-dd") : "")" />
                         <span asp-validation-for="StartDate"></span>
                     </div>
                 </div>
@@ -86,29 +73,26 @@
                 <div class="form-group">
                     <label asp-for="EndDate"></label>
                     <div class="field-group">
-                        <input asp-for="EndDate" />
+                        <input asp-for="EndDate" type="date" value="@(Model.EndDate.HasValue && Model.EndDate.Value != DateTime.MinValue ? Model.EndDate.Value.ToString("yyyy-MM-dd") : "")" />
                         <span asp-validation-for="EndDate"></span>
                     </div>
                 </div>
             </div>
 
-
-
-
             <div class="form-group">
 
                 <input type="hidden" name="SelectedMemberIdsAdd" id="SelectedMemberIdsAdd" />
 
-                <label class="form-label" asp-for="SelectedMemberIds"></label>
+                <label class="form-label" asp-for="SelectedMemberIdsAdd"></label>
 
                 <div id="tagged-users-add" class="form-input form-tag-select">
                     <input id="user-search-add" type="text" class="form-tag-input" placeholder="Add member" />
                     <label for="user-search" class="fa-regular fa-magnifying-glass-waveform"></label>
                     <div id="user-search-results-add" class="search-results"></div>
+                    <span asp-validation-for="SelectedMemberIdsAdd"></span>
                 </div>
 
             </div>
-
 
             <div class="form-group">
                 <label asp-for="Budget"></label>
@@ -126,7 +110,7 @@
                 <span asp-validation-for="SelectedStatusId"></span>
             </div>
 
-            <div id="error-message" class="error-message"></div>
+            <div class="error-message"></div>
 
             <button type="submit" class="button btn-blue mt-4">Create</button>
         </form>
@@ -134,3 +118,12 @@
 </div>
 
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        handleImagePreview({
+            containerId: 'image-preview-add-project-modal-container',
+            imagePreview: 'image-preview-add-project-modal'
+        })
+    })
+</script>

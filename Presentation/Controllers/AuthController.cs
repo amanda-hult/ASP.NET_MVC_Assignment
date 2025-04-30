@@ -1,39 +1,29 @@
 ﻿using System.Diagnostics;
 using System.Security.Claims;
 using Business.Interfaces;
-using Business.Models;
 using Business.Models.Notifications;
 using Business.Models.Users;
+using Presentation.Models;
 using Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Presentation.Handlers;
 using Presentation.Hubs;
+using Presentation.Services;
 using Presentation.ViewModels;
 
 namespace Presentation.Controllers;
 
-public class AuthController : Controller
+public class AuthController(IAuthService authService, IFileHandler fileHandler, SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, INotificationService notificationService, IHubContext<NotificationHub> hubContext, HelperService helperService) : Controller
 {
-    public AuthController(IAuthService authService, IFileHandler fileHandler, SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, INotificationService notificationService, IHubContext<NotificationHub> hubContext)
-    {
-        _authService = authService;
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _notificationService = notificationService;
-        _hubContext = hubContext;
-
-        _fileHandler = fileHandler;
-    }
-
-    private readonly IAuthService _authService;
-    private readonly SignInManager<UserEntity> _signInManager;
-    private readonly UserManager<UserEntity> _userManager;
-    private readonly INotificationService _notificationService;
-    private readonly IHubContext<NotificationHub> _hubContext;
-
-    private readonly IFileHandler _fileHandler;
+    private readonly IAuthService _authService = authService;
+    private readonly SignInManager<UserEntity> _signInManager = signInManager;
+    private readonly UserManager<UserEntity> _userManager = userManager;
+    private readonly INotificationService _notificationService = notificationService;
+    private readonly IHubContext<NotificationHub> _hubContext = hubContext;
+    private readonly HelperService _helperService = helperService;
+    private readonly IFileHandler _fileHandler = fileHandler;
 
 
     #region Sign Up
@@ -42,31 +32,48 @@ public class AuthController : Controller
     [HttpGet]
     public IActionResult SignUp()
     {
-        ViewBag.ErrorMessage = null;
         var viewModel = new SignUpViewModel();
         return View(viewModel);
     }
 
     [Route("/signup")]
     [HttpPost]
-    public async Task<IActionResult> SignUp([Bind(Prefix = "")] SignUpModel model)
+    public async Task<IActionResult> SignUp(SignUpViewModel viewModel)
     {
+        var model = viewModel.Form;
+
         if (!ModelState.IsValid)
         {
-            SignUpViewModel viewModel = new()
-            {
-                Form = model
-            };
-            return View(viewModel);
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToList()
+                );
+
+            return BadRequest(new { success = false, errors });
         }
 
-        //_accountService.ExistsAsync(model);
+        var userEntity = await _userManager.FindByEmailAsync(model.Email);
+        if (userEntity != null)
+        {
+            ModelState.AddModelError("Form.Email", "Email address is already registrered.");
+
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToList()
+                );
+
+            return BadRequest(new { success = false, errors });
+        }
+
         var result = await _authService.SignUpAsync(model);
         if (result)
             return LocalRedirect("~/");
 
-        ViewBag.ErrorMessage = "";
-        return View();
+        return StatusCode(500, new { success = false, message = "An unexpected error occured." });
     }
 
     #endregion
@@ -79,7 +86,9 @@ public class AuthController : Controller
         if (string.IsNullOrEmpty(provider))
         {
             ModelState.AddModelError("", "Invalid provider");
-            return View("SignIn");
+            var viewModel = new SignInViewModel();
+            ViewBag.ReturnUrl = returnUrl;
+            return View("SignIn", viewModel);
         }
 
         var redirectUrl = Url.Action("SignInExternalCallback", "Auth", new { ReturnUrl = returnUrl });
@@ -90,9 +99,7 @@ public class AuthController : Controller
     public async Task<IActionResult> SignInExternalCallback(string returnUrl = null!, string remoteError = null!)
     {
         if (string.IsNullOrEmpty(returnUrl))
-        {
             returnUrl = Url.Content("~/");
-        }
 
         if (!string.IsNullOrEmpty(remoteError))
         {
@@ -137,10 +144,9 @@ public class AuthController : Controller
     }
 
 
-
-    [Route("/signin")]
+    //[Route("/signin")]
     [HttpGet]
-    public IActionResult SignIn(string returnUrl = "~/")
+    public IActionResult SignIn(string returnUrl = "/projects")
     {
         ViewBag.ErrorMessage = "";
         ViewBag.ReturnUrl = returnUrl;
@@ -148,18 +154,12 @@ public class AuthController : Controller
         return View(viewModel);
     }
 
-    [Route("/signin")]
+    //[Route("/signin")]
     [HttpPost]
-    public async Task<IActionResult> SignIn(SignInViewModel viewModel, string returnUrl = "~/")
+    public async Task<IActionResult> SignIn(SignInViewModel viewModel, string returnUrl = "/projects")
     {
         ViewBag.ErrorMessage = "";
-
-        var model = viewModel.Form;
-
-        //SignInViewModel signInViewModel = new()
-        //{
-        //    Form = viewModel.Form
-        //};
+        ViewBag.ReturnUrl = returnUrl;
 
         if (!ModelState.IsValid)
         {
@@ -172,62 +172,113 @@ public class AuthController : Controller
                     Debug.WriteLine($"Field: {key}, Error: {error.ErrorMessage}");
                 }
             }
+            return View(viewModel);
         }
 
-        if (ModelState.IsValid)
+        var model = viewModel.Form;
+        var result = await _authService.SignInAsync(model);
+
+        if (!result)
         {
-            var result = await _authService.SignInAsync(model);
-
-            if (result)
-            {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-
-                // handle member profile image
-                string imageUri;
-
-                if (user.UserImageUrl == null || user.UserImageUrl.Length == 0)
-                {
-                    imageUri = "/images/avatar-standard.svg";
-                }
-                else
-                {
-                    imageUri = user.UserImageUrl;
-                }
-
-                if (user != null)
-                {
-                    var notificationCreateModel = new NotificationCreateModel
-                    {
-                        Message = $"{user.FirstName} {user.LastName} signed in.",
-                        NotificationTypeId = 1,
-                        Image = imageUri,
-                    };
-
-                    await _notificationService.AddNotificationAsync(notificationCreateModel, user.Id);
-
-                    var notifications = await _notificationService.GetNotificationsAsync(user.Id);
-                    var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
-                    if (newNotification != null)
-                    {
-                        await _hubContext.Clients.All.SendAsync("RecieveNotification", newNotification);
-                    }
-                }
-                return LocalRedirect(returnUrl);
-            }
-
+            ViewBag.ErrorMessage = "Incorrect email or password.";
+            return View(viewModel);
         }
 
-        //bool exists = await _authService.Exists(model.Email);
-        //if (!exists)
-        //{
-        //    ViewBag.ErrorMessage = "The email is not registered. Plese create an account to sign in.";
-        //    return View(viewModel);
-        //}
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            ViewBag.ErrorMessage = "Incorrect email or password.";
+            return View(viewModel);
+        }
 
-        ViewBag.ErrorMessage = "Incorrect email or password.";
+        // handle member profile image
+        var imageUri = string.IsNullOrWhiteSpace(user.UserImageUrl)
+            ? "/images/avatar-standard.svg"
+            : user.UserImageUrl;
+
+        var claims = new List<Claim>
+        {
+            new("FullName", $"{user.FirstName} {user.LastName}"),
+            new("ProfileImageUrl", imageUri)
+        };
+
+        await _userManager.AddClaimsAsync(user, claims);
+        await _signInManager.RefreshSignInAsync(user);
+        await _helperService.HandleNotifications(user.Id, 1, imageUri, "SignIn", true);
+
+        return LocalRedirect(returnUrl);
+    }
+
+    [HttpGet]
+    public IActionResult SignInAdmin(string returnUrl = "/projects")
+    {
+        ViewBag.ErrorMessage = "";
+        ViewBag.ReturnUrl = returnUrl;
+        var viewModel = new SignInViewModel();
         return View(viewModel);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> SignInAdmin(SignInViewModel viewModel, string returnUrl = "/projects")
+    {
+        ViewBag.ErrorMessage = "";
+        ViewBag.ReturnUrl = returnUrl;
+
+        if (!ModelState.IsValid)
+        {
+            foreach (var kvp in ModelState)
+            {
+                var key = kvp.Key;
+                var errors = kvp.Value?.Errors;
+                foreach (var error in errors!)
+                {
+                    Debug.WriteLine($"Field: {key}, Error: {error.ErrorMessage}");
+                }
+            }
+            return View(viewModel);
+        }
+        var model = viewModel.Form;
+
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            ViewBag.ErrorMessage("Unable to sign in, please try again.");
+            return View(viewModel);
+        }
+
+        var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+        if (!isAdmin)
+        {
+            ViewBag.ErrorMessage("You need to be an administator to sign in.");
+            return View(viewModel);
+        }
+
+        var result = await _authService.SignInAsync(model);
+
+        if (result)
+        {
+            // handle member profile image
+            var imageUri = string.IsNullOrWhiteSpace(user.UserImageUrl)
+                ? "/images/avatar-standard.svg"
+                : user.UserImageUrl;
+
+            if (user != null)
+            {
+                var claims = new List<Claim>
+                {
+                    new("FullName", $"{user.FirstName} {user.LastName}"),
+                    new("ProfileImageUrl", imageUri)
+                };
+
+                await _userManager.AddClaimsAsync(user, claims);
+                await _signInManager.RefreshSignInAsync(user);
+                await _helperService.HandleNotifications(user.Id, 1, imageUri, "SignIn", true);
+            }
+            return LocalRedirect(returnUrl);
+        }
+        ViewBag.ErrorMessage = "Incorrect email or password.";
+        return View(viewModel);
+    }
     #endregion
 
     #region Sign Out

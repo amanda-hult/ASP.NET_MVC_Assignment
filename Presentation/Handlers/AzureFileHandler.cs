@@ -29,5 +29,4 @@ public class AzureFileHandler(string connectionString, string containerName) : I
 
         return blobClient.Uri.ToString();
     }
-
 }

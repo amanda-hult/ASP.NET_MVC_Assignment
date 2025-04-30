@@ -1,13 +1,49 @@
-﻿@await Html.PartialAsync("Partials/Components/_ProfileModal")
+﻿@{
+    var profileImage = User.FindFirst("ProfileImageUrl")?.Value ?? "/images/avatar-standard.svg";
+}
 
-<input class="main-input" placeholder="&#xf002; Search anything..." style="font-family: Nunito, FontAwesome;">
+@await Html.PartialAsync("Partials/Components/_ProfileModal")
+
+<div class="search-container" id="main-search-container">
+    <div class="flex">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="search-container-input" class="main-input" type="search" placeholder="Search anything..." />
+    </div>
+    <div id="main-search-results" class="main-search-results"></div>
+</div>
+
 <div class="flex">
 
     @await Component.InvokeAsync("Notification")
 
-    <button id="profile-dropdown-button" data-type="dropdown" data-target="#profile-dropdown" class="fa-duotone fa-solid fa-gear cursor" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></button>
+    <div id="profile-dropdown-button" 
+         class="cursor"
+         type="button"
+         data-type="dropdown"
+         data-target="#profile-dropdown">
+        <i class="fa-duotone fa-solid fa-gear"></i>
+    </div>
 
 </div>
 <div class="p-1">
-    <img class="profile-avatar" src="~/images/avatar-standard.svg" alt="Profile picture" />
+    <img class="profile-avatar" src="@profileImage" alt="Profile picture" />
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        initTagSelector({
+            containerId: 'main-search-container',
+            inputId: 'search-container-input',
+            resultsId: 'main-search-results',
+            searchUrl: (query) => '@Url.Action("SearchTags", "Search")' + '?term=' + encodeURIComponent(query),
+
+            displayProperty: 'title',
+            displayType: 'type',
+            imageProperty: 'searchResultImage',
+            searchResultUrl: 'url',
+            tagClass: 'main-tag',
+            emptyMessage: 'No results.'
+        })
+
+    })
+</script>

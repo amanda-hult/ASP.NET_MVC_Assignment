@@ -1,7 +1,6 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
     //updateRelativeTimes()
     //setInterval(updateRelativeTimes, 6000)
-    //const previewSize = 144
 
     // open modal
     const modalButtons = document.querySelectorAll('[data-modal="true"]')
@@ -10,8 +9,21 @@
             const modalTarget = button.getAttribute('data-target')
             const modal = document.querySelector(modalTarget)
 
-            if (modal)
+
+
+            if (modal) {
                 modal.style.display = 'flex';
+
+                const errorMessageContainer = modal.querySelectorAll('.error-message')
+                if (errorMessageContainer) {
+                    errorMessageContainer.forEach(container => {
+                        container.textContent = ''
+                        container.style.display = 'none'
+                    })
+
+                }
+            }
+
         })
     })
 

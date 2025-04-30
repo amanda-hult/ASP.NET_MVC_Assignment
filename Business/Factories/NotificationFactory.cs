@@ -10,6 +10,7 @@ public static class NotificationFactory
         return new NotificationEntity
         {
             NotificationTypeId = model.NotificationTypeId,
+            TargetGroupId = model.TargetGroupId,
             Image = model.Image,
             Message = model.Message,
         };

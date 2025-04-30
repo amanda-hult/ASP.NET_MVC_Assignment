@@ -5,17 +5,17 @@
             <button type="button" class="button-close" data-close="true"></button>
         </div>
 
-        <form method="post" asp-controller="Projects" asp-action="DeleteProject" class="js-form" novalidate>
+        <form method="post" asp-controller="Projects" asp-action="DeleteProject" class="js-form delete-modal" novalidate>
 
             <input name="id" id="delete-project-id" readonly type="hidden" />
             <p>Are you sure you want to delete the project <strong id="delete-project-name"></strong>?</p>
-            <p id="delete-project-name"></p>
+            <p class="p-1" id="delete-project-name"></p>
 
-            <div id="error-message" class="error-message"></div>
+            <div class="error-message p-l-r-1"></div>
 
-            <div class="flex">
+            <div class="delete-buttons">
                 <button type="submit" class="button btn-red mt-4">Delete</button>
-                <button type="button" class="button mt-4" data-close="true">Cancel</button>
+                <button type="button" class="button btn-dark-gray mt-4" data-close="true">Cancel</button>
             </div>
 
         </form>

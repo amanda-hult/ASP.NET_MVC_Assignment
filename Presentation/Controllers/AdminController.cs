@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using Business.Interfaces;
+﻿using Business.Interfaces;
 using Business.Models.Users;
-using Business.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,63 +8,37 @@ using Presentation.ViewModels;
 
 namespace Presentation.Controllers;
 
-//[Authorize]
+[Authorize]
 [Route("/admin")]
-public class AdminController : Controller
+public class AdminController(IUserService userService, IClientService clientService, IStatusService statusService, IProjectService projectService) : Controller
 {
-    private readonly IStatusService _statusService;
-    private readonly IUserService _userService;
-    private readonly IClientService _clientService;
-    private readonly IProjectService _projectService;
+    private readonly IStatusService _statusService = statusService;
+    private readonly IUserService _userService = userService;
+    private readonly IClientService _clientService = clientService;
+    private readonly IProjectService _projectService = projectService;
 
-    public AdminController(IUserService userService, IClientService clientService, IStatusService statusService, IProjectService projectService)
-    {
-        _userService = userService;
-        _clientService = clientService;
-        _statusService = statusService;
-        _projectService = projectService;
-    }
-
-    //[AllowAnonymous]
+    [AllowAnonymous]
     [HttpGet]
     public IActionResult AdminLogIn()
     {
         return View();
     }
 
-    //[AllowAnonymous]
-    [Route("denied")]
+    [AllowAnonymous]
+    //[Route("denied")]
     public IActionResult Denied()
     {
         return View();
     }
 
+
     #region Members
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     [Route("/members")]
     public async Task<IActionResult> Members()
     {
         var members = await _userService.GetAllUsersAsync();
-
-        //var editMemberModels = new Dictionary<string, EditMemberModel>();
-        //foreach (var member in members)
-        //{
-        //    editMemberModels[member.Id] = new EditMemberModel
-        //    {
-        //        Id = member.Id,
-        //        SelectedDay = member.DateOfBirth.HasValue ? member.DateOfBirth.Value.Day : 1,
-        //        SelectedMonth = member.DateOfBirth.HasValue ? member.DateOfBirth.Value.Month : 1,
-        //        SelectedYear = member.DateOfBirth.HasValue ? member.DateOfBirth.Value.Year : 1,
-        //        Address = new AddressEditModel
-        //        {
-        //            StreetName = member.Address?.StreetName ?? string.Empty,
-        //            StreetNumber = member.Address?.StreetNumber ?? string.Empty,
-        //            PostalCode = member.Address?.PostalCode ?? string.Empty,
-        //            City = member.Address?.City ?? string.Empty,
-        //        }
-        //    };
-        //}
 
         var viewModel = new MembersViewModel
         {
@@ -79,7 +51,6 @@ public class AdminController : Controller
     #endregion
 
     #region Clients
-    //[Authorize(Roles = "admin")]
     [HttpGet]
     [Route("/clients")]
     public async Task<IActionResult> Clients()
@@ -102,7 +73,6 @@ public class AdminController : Controller
     {
         var statuses = await _statusService.GetAllStatuses();
         var clients = await _clientService.GetAllClientsAsync();
-        //var members = await _userService.GetAllUsersAsync();
         var projects = await _projectService.GetAllProjectsAsync();
 
         var preselectedMembers = new Dictionary<int, List<BasicUserModel>>();
@@ -112,27 +82,6 @@ public class AdminController : Controller
             var members = await _userService.GetBasicUsersByIdAsync(memberIds);
             preselectedMembers[project.ProjectId] = members.ToList();
         }
-
-        //var editProjectModel = new Dictionary<int, EditProjectModel>();
-        //foreach (var project in projects)
-        //{
-        //    editProjectModel[project.ProjectId] = new EditProjectModel
-        //    {
-        //        Id = project.ProjectId,
-
-        //        Statuses = statuses.Select(x => new SelectListItem
-        //        {
-        //            Text = x.StatusName,
-        //            Value = x.StatusId.ToString(),
-        //        }),
-
-        //        Clients = clients.Select(x => new SelectListItem
-        //        {
-        //            Text = x.ClientName,
-        //            Value = x.Id.ToString()
-        //        }),
-        //    };
-        //}
 
         var viewModel = new ProjectViewModel
         {
@@ -149,14 +98,7 @@ public class AdminController : Controller
                     Text = x.ClientName,
                     Value = x.Id.ToString()
                 }),
-
-                //Members = members.Select(x => new SelectListItem
-                //{
-                //    Text = $"{x.FirstName} {x.LastName}",
-                //    Value = x.Id.ToString()
-                //})
             },
-            //EditProjectModel = editProjectModel,
 
             EditProjectModel = new EditProjectModel
             {
@@ -170,13 +112,7 @@ public class AdminController : Controller
                 {
                     Text = x.ClientName,
                     Value = x.Id.ToString()
-                }),
-
-                //Members = members.Select(x => new SelectListItem
-                //{
-                //    Text = $"{x.FirstName} {x.LastName}",
-                //    Value = x.Id.ToString()
-                //})
+                })
             },
             Projects = projects,
             PreselectedMembers = preselectedMembers

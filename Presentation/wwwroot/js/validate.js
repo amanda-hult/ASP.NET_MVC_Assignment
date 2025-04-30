@@ -1,37 +1,4 @@
-﻿//const validateField = (field) => {
-//    let errorSpan = document.querySelector(`span[data-valmsg-for='${field.name}']`)
-//    if (!errorSpan) return;
-
-//    let errorMessage = ""
-//    let value = field.value.trim()
-
-//    if (field.hasAttribute("data-val-required") && value === "") {
-//        errorMessage = field.getAttribute("data-val-required")
-//    }
-
-//    if (field.hasAttribute("data-val-regex") && value !== "") {
-//        let pattern = new RegExp(field.getAttribute("data-val-regex-pattern"))
-//        if (!pattern.test(value)) {
-//            errorMessage = field.getAttribute("data-val-regex")
-//        }
-//    }
-
-//    if (errorMessage) {
-//        field.classList.add("input-validation-error")
-//        errorSpan.classList.add("field-validation-error")
-//        errorSpan.classList.remove("field-validation-valid")
-//        errorSpan.textContent = errorMessage
-
-//    } else {
-//        field.classList.remove("input-validation-error")
-//        errorSpan.classList.remove("field-validation-error")
-//        errorSpan.classList.add("field-validation-valid")
-//        errorSpan.textContent = ""
-
-//    }
-//}
-
-function validateField(field) {
+﻿function validateField(field) {
     let errorSpan = document.querySelector(`span[data-valmsg-for='${field.name}']`)
     if (!errorSpan) return;
 
@@ -76,10 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     })
 
-
-
-
-
     // handle submit forms
     const forms = document.querySelectorAll('form.js-form')
     forms.forEach(form => {
@@ -88,10 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
             clearErrorMessages(form)
 
             const formData = new FormData(form)
-
-            //const selectedIdsInput = document.getElementById('SelectedMemberIds')
-
-            //console.log("SelectedMemberIds value: ", selectedIdsInput?.value)
 
             try {
                 const res = await fetch(form.action, {
@@ -119,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 if (res.status === 404 || res.status === 409 || res.status === 500) {
                     const data = await res.json()
-                    const errorMessageContainer = form.querySelector('#error-message')
+                    const errorMessageContainer = form.querySelector('.error-message')
                     if (errorMessageContainer) {
                         errorMessageContainer.textContent = data.message
                         errorMessageContainer.style.display = 'block'

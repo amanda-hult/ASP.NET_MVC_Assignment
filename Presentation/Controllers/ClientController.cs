@@ -1,29 +1,19 @@
-﻿using System.Security.Claims;
-using Business.Interfaces;
+﻿using Business.Interfaces;
 using Business.Models.Clients;
-using Business.Models.Notifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Presentation.Handlers;
-using Presentation.Hubs;
 using Presentation.Models;
+using Presentation.Services;
 
 namespace Presentation.Controllers;
 
-public class ClientController : Controller
+[Authorize]
+public class ClientController(IClientService clientService, IFileHandler fileHandler, HelperService helperService) : Controller
 {
-    private readonly IClientService _clientService;
-    private readonly INotificationService _notificationService;
-    private readonly IHubContext<NotificationHub> _hubContext;
-    private readonly IFileHandler _fileHandler;
-
-    public ClientController(IClientService clientService, INotificationService notificationService, IHubContext<NotificationHub> hubContext, IFileHandler fileHandler)
-    {
-        _clientService = clientService;
-        _notificationService = notificationService;
-        _hubContext = hubContext;
-        _fileHandler = fileHandler;
-    }
+    private readonly IClientService _clientService = clientService;
+    private readonly IFileHandler _fileHandler = fileHandler;
+    private readonly HelperService _helperService = helperService;
 
     #region Add Client
     [HttpPost]
@@ -61,35 +51,15 @@ public class ClientController : Controller
             Phone = model.Phone,
         };
 
-        var result = await _clientService.CreateClientAsync(clientCreateModel);
-        if (result == 201)
-        {
-            var client = await _clientService.GetClientByNameAsync(model.ClientName);
+        var (succeeded, statuscode, clientId) = await _clientService.CreateClientAsync(clientCreateModel);
+        if (succeeded)
+            await _helperService.HandleNotifications(clientId.ToString(), 3, imageUri, "Add", false);
 
-            if (client != null)
-            {
-                var notificationCreateModel = new NotificationCreateModel
-                {
-                    Message = $"{client.ClientName} was added.",
-                    NotificationTypeId = 3
-                };
-
-                await _notificationService.AddNotificationAsync(notificationCreateModel);
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var notifications = await _notificationService.GetNotificationsAsync(userId);
-                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
-                if (newNotification != null)
-                {
-                    await _hubContext.Clients.All.SendAsync("AdminRecieveNotification", newNotification);
-                }
-            }
-        }
-
-        if (result == 409)
-        {
+        if (statuscode == 409)
             return Conflict(new { message = "Client with the same name already exists." });
-        }
+
+        if (statuscode == 500)
+            return StatusCode(500);
 
         return RedirectToAction("Clients", "Admin");
     }
@@ -115,7 +85,14 @@ public class ClientController : Controller
 
         if (model.ClientImage == null || model.ClientImage.Length == 0)
         {
-            imageUri = "/images/client-avatar-standard.svg";
+            if (!string.IsNullOrEmpty(model.ExistingImage))
+            {
+                imageUri = model.ExistingImage;
+            }
+            else
+            {
+                imageUri = "/images/client-avatar-standard.svg";
+            }
         }
         else
         {
@@ -136,27 +113,7 @@ public class ClientController : Controller
 
         if (result == 200)
         {
-            var client = await _clientService.GetClientAsync(model.Id);
-            if (client != null)
-            {
-                var notificationCreateModel = new NotificationCreateModel
-                {
-                    Message = $"Client {client.ClientName} was updated.",
-                    NotificationTypeId = 3,
-                    Image = client.ClientImage
-                };
-
-                await _notificationService.AddNotificationAsync(notificationCreateModel);
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var notifications = await _notificationService.GetNotificationsAsync(userId);
-                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
-                if (newNotification != null)
-                {
-                    await _hubContext.Clients.All.SendAsync("AdminRecieveNotification", newNotification);
-                }
-            }
-
+            await _helperService.HandleNotifications(model.Id.ToString(), 3, imageUri, "Edit", false);
             return RedirectToAction("Clients", "Admin");
         }
 
@@ -180,30 +137,7 @@ public class ClientController : Controller
         var result = await _clientService.DeleteClientAsync(id);
 
         if (result == 204)
-        {
-
-            var client = await _clientService.GetClientAsync(id);
-            if (client != null)
-            {
-                var notificationCreateModel = new NotificationCreateModel
-                {
-                    Message = $"Client {client.ClientName} was deleted.",
-                    NotificationTypeId = 3
-                };
-
-                await _notificationService.AddNotificationAsync(notificationCreateModel);
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var notifications = await _notificationService.GetNotificationsAsync(userId);
-                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
-                if (newNotification != null)
-                {
-                    await _hubContext.Clients.All.SendAsync("RecieveNotification", newNotification);
-                }
-            }
-
             return RedirectToAction("Clients", "Admin");
-        }
 
         if (result == 409)
             return Conflict(new { message = "Client cannot be deleted, since it exists in a project."});

@@ -14,6 +14,11 @@ public class ProjectRepository(DataContext context) : BaseRepository<ProjectEnti
         return await _dbSet.AnyAsync(x => x.ProjectUsers.Any(x => x.UserId == userId));
     }
 
+    public async Task<IEnumerable<ProjectEntity>> GetProjectsByStringAsync(string term)
+    {
+        return await _dbSet.Where(x => x.ProjectName.Contains(term)).ToListAsync();
+    }
+
     public virtual async Task<ProjectEntity> UpdateProjectAsync(Expression<Func<ProjectEntity, bool>> predicate, ProjectEntity updatedEntity)
     {
         if (updatedEntity == null)

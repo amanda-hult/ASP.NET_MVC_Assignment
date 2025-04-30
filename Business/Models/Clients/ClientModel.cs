@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Business.Models.Clients;
+﻿namespace Business.Models.Clients;
 
 public class ClientModel
 {
@@ -11,5 +9,4 @@ public class ClientModel
     public string? Location { get; set; }
     public string? Phone { get; set; }
     public DateTime Created { get; set; }
-    public string Status { get; set; } = null!;
 }

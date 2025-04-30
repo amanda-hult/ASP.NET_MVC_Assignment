@@ -9,22 +9,11 @@
         </div>
 
         <form class="project-form-container js-form" method="post" asp-controller="Projects" asp-action="EditProject" enctype="multipart/form-data" novalidate>
-
-            @* <div class="image-preview-container pt-1"> *@
-            @*     <label asp-for="ProjectImage" id="circle-container" class="square"> *@
-            @*         <i class="fa-duotone fa-solid fa-circle-camera fa-2xl" style="--fa-primary-color: #93a0b4; --fa-primary-opacity: 0.4; --fa-secondary-color: #6a707c; --fa-secondary-opacity: 1;"></i> *@
-            @*     </label> *@
-
-            @*     <img id="image-preview" src="#" alt="Project image" class="d-none" /> *@
-            @* </div> *@
-
-            @* <input asp-for="ProjectImage" accept="image/*" class="d-none" /> *@
-
-
             <input asp-for="Id" readonly type="hidden" />
 
 
             <div id="image-preview-edit-project-modal-container" class="image-preview-container square">
+                <input type="hidden" asp-for="ExistingImage" />
                 <img src="#" id="image-preview-edit-project-modal" class="image-preview d-none" />
                 <input asp-for="ProjectImage" accept="image/*" class="d-none" />
             </div>
@@ -89,7 +78,7 @@
                 <div class="form-group">
                     <label asp-for="EndDate" class="form-label"></label>
                     <div class="field-group">
-                        <input asp-for="EndDate" type="date" />
+                        <input asp-for="EndDate" type="date" value="@(Model.EndDate.HasValue && Model.EndDate.Value != DateTime.MinValue ? Model.EndDate.Value.ToString("yyyy-MM-dd") : "")" />
                         <span asp-validation-for="EndDate"></span>
                     </div>
                 </div>
@@ -102,15 +91,14 @@
 
                 <label class="form-label" asp-for="SelectedMemberIdsEdit"></label>
 
-                <div id="tagged-users-edit" class="form-input form-tag-select field-group">
-                    <input id="user-search-edit" type="text" class="form-tag-input" placeholder="Add member" />
+                <div id="tagged-users-edit" class="form-input field-group">
+
+                    <input id="user-search-edit" type="text" class="form-tag-input form-tag-select form-input" placeholder="Add member" />
                     <label for="user-search-edit" class="fa-regular fa-magnifying-glass-waveform"></label>
+
                     <div id="user-search-results-edit" class="search-results"></div>
                     <span asp-validation-for="SelectedMemberIdsEdit"></span>
                 </div>
-
-
-
             </div>
 
 
@@ -130,7 +118,7 @@
                 <span asp-validation-for="SelectedStatusId"></span>
             </div>
 
-            <div id="error-message" class="error-message"></div>
+            <div class="error-message"></div>
 
             <button type="submit" class="button btn-blue mt-4">Save</button>
         </form>

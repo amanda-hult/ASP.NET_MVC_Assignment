@@ -13,35 +13,35 @@ public class ClientService(IClientRepository clientRepository, IProjectRepositor
     private readonly IProjectRepository _projectRepository = projectRepository;
 
     #region Create
-    public async Task<int> CreateClientAsync(ClientCreateModel model)
+    public async Task<(bool succeeded, int statuscode, int? clientId)> CreateClientAsync(ClientCreateModel model)
     {
         // check if client already exists
         bool exists = await _clientRepository.ExistsAsync(x => x.ClientName == model.ClientName);
         if (exists)
-            return 409;
+            return (false, 409, null);
 
-        // begin transaction
         await _clientRepository.BeginTransactionAsync();
         try
         {
             // create client
+
             //var clientEntity = ClientFactory.Create(model);
             var createdEntity = await _clientRepository.CreateAsync(ClientFactory.Create(model));
             if (createdEntity == null)
             {
                 await _clientRepository.RollbackTransactionAsync();
-                return 500;
+                return (false, 500, null);
             }
 
             await _clientRepository.SaveAsync();
             await _clientRepository.CommitTransactionAsync();
-            return 201;
+            return (true, 201, createdEntity.ClientId);
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Error creating client: {ex}");
             await _clientRepository.RollbackTransactionAsync();
-            return 500;
+            return (false, 500, null);
         }
     }
     #endregion
@@ -49,10 +49,6 @@ public class ClientService(IClientRepository clientRepository, IProjectRepositor
     #region Read
     public async Task<IEnumerable<ClientModel>> GetAllClientsAsync()
     {
-
-
-        //get client statuses(updateclientstatusesasync();)
-
         var list = await _clientRepository.GetAllAsync();
         if (list == null)
             return null;

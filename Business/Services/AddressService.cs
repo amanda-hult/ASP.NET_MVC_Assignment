@@ -10,7 +10,6 @@ public class AddressService(IAddressRepository addressRepository) : IAddressServ
 {
     private readonly IAddressRepository _addressRepository = addressRepository;
 
-
     #region Create
     public async Task<AddressEntity> CreateAddressAsync(AddressCreateModel model)
     {
@@ -19,7 +18,6 @@ public class AddressService(IAddressRepository addressRepository) : IAddressServ
             return null!;
 
         await _addressRepository.SaveAsync();
-
         return addressEntity;
     }
 
@@ -30,13 +28,11 @@ public class AddressService(IAddressRepository addressRepository) : IAddressServ
             return null!;
 
         await _addressRepository.SaveAsync();
-
         return addressEntity;
     }
-    
     #endregion
 
-    // READ
+    #region Read
     public async Task<AddressEntity> GetAddressEntityByIdAsync(int id)
     {
         var addressEntity = await _addressRepository.GetAsync(x => x.AddressId == id);
@@ -46,7 +42,7 @@ public class AddressService(IAddressRepository addressRepository) : IAddressServ
 
         return addressEntity;
     }
-
+    #endregion
 
     #region Update
     public async Task<AddressEntity> UpdateAddressAsync(AddressEditModel model)
@@ -62,5 +58,18 @@ public class AddressService(IAddressRepository addressRepository) : IAddressServ
     }
     #endregion
 
-    // DELETE
+    #region Delete
+    public async Task<int> DeleteAddressAsync(int? id)
+    {
+        bool exists = await _addressRepository.ExistsAsync(x => x.AddressId == id);
+        if (!exists)
+            return 404;
+
+        bool result = await _addressRepository.DeleteAsync(x => x.AddressId == id);
+        if (!result)
+            return 500;
+
+        return 204;
+    }
+    #endregion
 }

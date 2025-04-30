@@ -1,7 +1,6 @@
 ﻿@model ClientModel
 
 <tr>
-    <td class="client-check"><client type="checkbox" /></td>
     <td class="client-info">
         <img class="client-image" src="@Model.ClientImage" alt="" />
         <div class="client-name">@Model.ClientName</div>
@@ -10,11 +9,7 @@
     <td class="client-location">@Model.Location</td>
     <td class="client-phone">@Model.Phone</td>
     <td class="client-date">@Model.Created</td>
-    <td class="client-status">
-        <div class="badge success">
-            @Model.Status
-        </div>
-    </td>
+
     <td class="client-actions flex">
         <div type="button"
              data-modal="true"
@@ -44,20 +39,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const editBtns = document.querySelectorAll('[data-target="#editClientModal"]')
-        const deleteBtns = document.querySelectorAll('[data-target="#deleteClientModal"]')
-
         const editClientModal = document.getElementById('editClientModal')
 
+        const deleteBtns = document.querySelectorAll('[data-target="#deleteClientModal"]')
         const deleteClientId = document.getElementById('delete-client-id')
         const deleteClientName = document.getElementById('delete-client-name')
 
-
-        
         editBtns.forEach(btn => {
             btn.addEventListener('click', () => {
 
                 const editClientImagePreviewContainer = editClientModal.querySelector('.image-preview-container')
                 const editClientImagePreview = editClientModal.querySelector('#image-preview-edit-client-modal')
+                const editClientImage = editClientModal.querySelector('[name="ExistingImage"]')
                 const editClientId = editClientModal.querySelector('[name="Id"]')
                 const editClientName = editClientModal.querySelector('[name="ClientName"]')
                 const editClientEmail = editClientModal.querySelector('[name="Email"]')
@@ -67,14 +60,13 @@
                 editClientImagePreview.classList.remove('d-none')
                 editClientImagePreviewContainer.classList.add('selected')
 
-                editClientId.value = btn.dataset.id || ''
+                editClientImage.value = btn.dataset.image
                 editClientImagePreview.src = btn.dataset.image || ''
+                editClientId.value = btn.dataset.id || ''
                 editClientName.value = btn.dataset.name || ''
                 editClientEmail.value = btn.dataset.email || ''
                 editClientLocation.value = btn.dataset.location || ''
                 editClientPhone.value = btn.dataset.phone || ''
-
-
             })
         })
 
@@ -82,12 +74,6 @@
             btn.addEventListener('click', () => {
                 deleteClientId.value = btn.dataset.id || ''
                 deleteClientName.textContent = btn.dataset.name
-
-                const errorMessageContainer = document.getElementById('error-message')
-                if (errorMessageContainer) {
-                    errorMessageContainer.textContent = ''
-                    errorMessageContainer.style.display = 'none'
-                }
             })
         })
     })

@@ -1,7 +1,13 @@
 ﻿@model NotificationViewModel
 
 <div class="relative">
-    <button id="notification-dropdown-button" data-type="dropdown" data-target="#notification-dropdown" class="notification-dropdown-button fa-duotone fa-solid fa-bell" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></button>
+    <div id="notification-dropdown-button"
+         data-type="dropdown"
+         data-target="#notification-dropdown"
+         class="notification-dropdown-button">
+        <i class="fa-duotone fa-solid fa-bell"></i>
+    </div>
+
     @if (Model.Notifications.Any())
     {
         <div class="dot dot-red"></div>

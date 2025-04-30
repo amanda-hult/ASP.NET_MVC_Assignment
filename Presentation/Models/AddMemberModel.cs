@@ -37,6 +37,7 @@ public class AddMemberModel
 
 
     [Display(Name = "Job Title", Prompt = "Your job title")]
+    [StringLength(50)]
     public string? JobTitle { get; set; }
 
 

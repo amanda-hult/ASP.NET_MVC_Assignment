@@ -4,7 +4,6 @@ using Business.Interfaces;
 using Business.Models.Users;
 using Data.Entities;
 using Data.Interfaces;
-using Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,8 +14,6 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly IAddressService _addressService = addressService;
-
-
     private readonly UserManager<UserEntity> _userManager = userManager;
 
     #region Create
@@ -179,24 +176,40 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
     #endregion
 
     #region Delete
-    //public async Task<int> DeleteUserAsync(string id)
-    //{
+    public async Task<int> DeleteUserAsync(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
+            return 404;
 
-        // delete address
+        bool existsInProject = await _projectRepository.UserExistsInProject(id);
+        if (existsInProject)
+            return 409;
 
-        //var user = await _userManager.FindByIdAsync(id);
-        //if (user == null)
-        //    return 404;
+        await _userRepository.BeginTransactionAsync();
+        try
+        {
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                return 500;
 
-        //bool existsInProject = await _projectRepository.UserExistsInProject(id);
-        //if (existsInProject)
-        //    return 409;
-
-        //var result = await _userManager.DeleteAsync(user);
-        //if (!result.Succeeded)
-        //    return 500;
-
-        //return 201;
-    //}
+            if (user.Address != null || user.AddressId != null)
+            {
+                var addressUsedByOtherUsers = await _userRepository.ExistsAsync(x => x.AddressId == user.AddressId && x.Id != user.Id);
+                if (!addressUsedByOtherUsers)
+                {
+                    await _addressService.DeleteAddressAsync(user.AddressId);
+                }
+            }
+            await _userRepository.CommitTransactionAsync();
+            return 204;
+        }
+        catch(Exception ex)
+        {
+            Debug.WriteLine($"Error deleting user: {ex.Message}");
+            await _userRepository.RollbackTransactionAsync();
+            return 500;
+        }
+    }
     #endregion
 }

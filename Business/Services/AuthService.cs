@@ -6,16 +6,10 @@ using Data.Entities;
 using Microsoft.AspNetCore.Identity;
 namespace Business.Services;
 
-public class AuthService : IAuthService
+public class AuthService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager) : IAuthService
 {
-    private readonly SignInManager<UserEntity> _signInManager;
-    private readonly UserManager<UserEntity> _userManager;
-
-    public AuthService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager)
-    {
-        _signInManager = signInManager;
-        _userManager = userManager;
-    }
+    private readonly SignInManager<UserEntity> _signInManager = signInManager;
+    private readonly UserManager<UserEntity> _userManager = userManager;
 
     public async Task<bool> SignInAsync(SignInModel model)
     {

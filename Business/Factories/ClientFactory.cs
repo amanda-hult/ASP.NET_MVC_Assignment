@@ -13,8 +13,7 @@ public static class ClientFactory
             ClientName = model.ClientName,
             Email = model.Email,
             Location = model.Location,
-            Phone = model.Phone,
-            //Status = "inactive"
+            Phone = model.Phone
         };
     }
 
@@ -28,8 +27,7 @@ public static class ClientFactory
             Email = entity.Email,
             Location = entity.Location,
             Phone = entity.Phone,
-            Created = entity.Created,
-            //Status = entity.Status,
+            Created = entity.Created
         };
     }
 
@@ -40,8 +38,6 @@ public static class ClientFactory
             ClientId = model.Id,
             //Created = existingEntity.Created,
             //Projects = existingEntity.Projects,
-
-            //Status = existingEntity.Status,
 
             ClientImageUrl = model.ClientImage,
             ClientName = model.ClientName,

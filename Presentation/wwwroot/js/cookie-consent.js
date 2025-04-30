@@ -62,7 +62,7 @@ async function acceptAllCookies() {
         marketing: true
     }
 
-    setCookie("cookieConsent", JSON.stringify(consent), 365)
+    setCookie("cookieConsent", JSON.stringify(consent), 120)
     await setConsent(consent)
     hideCookieModal()
 }
@@ -78,7 +78,7 @@ async function acceptSelectedCookies() {
         marketing: formData.get("marketing") === "on"
     }
 
-    setCookie("cookieConsent", JSON.stringify(consent), 365)
+    setCookie("cookieConsent", JSON.stringify(consent), 120)
     await setConsent(consent)
     hideCookieModal()
 }

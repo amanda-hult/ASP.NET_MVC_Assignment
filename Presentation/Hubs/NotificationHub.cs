@@ -17,6 +17,7 @@ public class NotificationHub : Hub
     public override async Task OnConnectedAsync()
     {
         var admin = Context.User.IsInRole("Admin");
+
         if (admin)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, "Admins");

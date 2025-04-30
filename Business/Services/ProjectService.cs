@@ -8,20 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
-public class ProjectService : IProjectService
+public class ProjectService(IProjectRepository projectRepository, IClientService clientService, IStatusService statusService) : IProjectService
 {
-    private readonly IProjectRepository _projectRepository;
-    private readonly IClientService _clientService;
-    private readonly IUserService _userService;
-    private readonly IStatusService _statusService;
-
-    public ProjectService(IProjectRepository projectRepository, IClientService clientService, IUserService userService, IStatusService statusService)
-    {
-        _projectRepository = projectRepository;
-        _clientService = clientService;
-        _userService = userService;
-        _statusService = statusService;
-    }
+    private readonly IProjectRepository _projectRepository = projectRepository;
+    private readonly IClientService _clientService = clientService;
+    private readonly IStatusService _statusService = statusService;
 
     #region Create
     public async Task<(bool succeded, int statuscode, int? projectId)> CreateProjectAsync(ProjectCreateModel model)
@@ -65,7 +56,6 @@ public class ProjectService : IProjectService
                     });
                 }
             }
-
 
             await _projectRepository.SaveAsync();
             await _projectRepository.CommitTransactionAsync();
@@ -169,7 +159,6 @@ public class ProjectService : IProjectService
                 }
             }
 
-
             // update project
             var projectToUpdate = ProjectFactory.Update(model, existingProject, clientEntity, statusEntity);
 
@@ -188,8 +177,6 @@ public class ProjectService : IProjectService
         }
     }
 
-
-
     public async Task<int> AddUserToProjectAsync(int projectId, List<string> memberIds)
     {
         await _projectRepository.BeginTransactionAsync();
@@ -203,7 +190,6 @@ public class ProjectService : IProjectService
 
             if (existingProject == null)
                 return 404;
-
 
             // get and replace members
             var existingMembers = existingProject.ProjectUsers.ToList();

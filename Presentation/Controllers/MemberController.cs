@@ -1,33 +1,20 @@
-﻿using System.Security.Claims;
-using Business.Interfaces;
-using Business.Models.Notifications;
+﻿using Business.Interfaces;
 using Business.Models.Users;
 using Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Presentation.Handlers;
-using Presentation.Hubs;
 using Presentation.Models;
+using Presentation.Services;
 
 namespace Presentation.Controllers;
 
-public class MemberController : Controller
+public class MemberController(IUserService userService, UserManager<UserEntity> userManager, IFileHandler fileHandler, HelperService helperService) : Controller
 {
-    private readonly IUserService _userService;
-    private readonly UserManager<UserEntity> _userManager;
-    private readonly INotificationService _notificationService;
-    private readonly IHubContext<NotificationHub> _hubContext;
-    private readonly IFileHandler _fileHandler;
-
-    public MemberController(IUserService userService, UserManager<UserEntity> userManager, INotificationService notificationService, IHubContext<NotificationHub> hubContext, IFileHandler fileHandler)
-    {
-        _userService = userService;
-        _userManager = userManager;
-        _notificationService = notificationService;
-        _hubContext = hubContext;
-        _fileHandler = fileHandler;
-    }
+    private readonly IUserService _userService = userService;
+    private readonly UserManager<UserEntity> _userManager = userManager;
+    private readonly IFileHandler _fileHandler = fileHandler;
+    private readonly HelperService _helperService = helperService;
 
     #region Add Member
     [HttpPost]
@@ -85,24 +72,7 @@ public class MemberController : Controller
             var member = await _userManager.FindByEmailAsync(model.Email);
 
             if (member != null)
-            {
-                var notificationCreateModel = new NotificationCreateModel
-                {
-                    Message = $"New member: {member.FirstName} {member.LastName} was added.",
-                    NotificationTypeId = 1,
-                    Image = member.UserImageUrl
-                };
-
-                await _notificationService.AddNotificationAsync(notificationCreateModel);
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var notifications = await _notificationService.GetNotificationsAsync(userId);
-                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
-                if (newNotification != null)
-                {
-                    await _hubContext.Clients.All.SendAsync("AdminRecieveNotification", newNotification);
-                }
-            }
+                await _helperService.HandleNotifications(member.Id, 1, imageUri, "Add", false);
         }
         if (result == 409)
             return Conflict( new { message = "Member with the same email address already exists." });
@@ -142,7 +112,14 @@ public class MemberController : Controller
 
         if (model.ProfileImage == null || model.ProfileImage.Length == 0)
         {
-            imageUri = "/images/avatar-standard.svg";
+            if (!string.IsNullOrEmpty(model.ExistingImage))
+            {
+                imageUri = model.ExistingImage;
+            }
+            else
+            {
+                imageUri = "/images/avatar-standard.svg";
+            }
         }
         else
         {
@@ -178,29 +155,7 @@ public class MemberController : Controller
 
         // if created, send notifications to Admin roles
         if (result == 200)
-        {
-            var member = await _userManager.FindByEmailAsync(model.Email);
-
-            if (member != null)
-            {
-                var notificationCreateModel = new NotificationCreateModel
-                {
-                    Message = $"Member {member.FirstName} {member.LastName} was updated.",
-                    NotificationTypeId = 1,
-                    Image = member.UserImageUrl
-                };
-
-                await _notificationService.AddNotificationAsync(notificationCreateModel);
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var notifications = await _notificationService.GetNotificationsAsync(userId);
-                var newNotification = notifications.OrderByDescending(x => x.Created).FirstOrDefault();
-                if (newNotification != null)
-                {
-                    await _hubContext.Clients.All.SendAsync("AdminRecieveNotification", newNotification);
-                }
-            }
-        }
+            await _helperService.HandleNotifications(model.Id, 1, imageUri, "Edit", false);
 
         if (result == 409)
             return Conflict(new { message = "Member with the same email address already exists." });
@@ -214,35 +169,22 @@ public class MemberController : Controller
     #endregion
 
     #region Delete Member
-    //[HttpPost]
-    //public async Task<IActionResult> DeleteMember(string id)
-    //{
-    //    var result = await _userService.DeleteUserAsync(id);
-
-    //    if (result == 201)
-    //        return RedirectToAction("Members", "Admin");
-
-    //    if (result == 404)
-    //        return NotFound(new { message = "Member not found." });
-
-    //    if (result == 409)
-    //        return Conflict(new { message = "Member cannot be deleted, since it exists in a project." });
-
-    //    return StatusCode(500, new { message = "Unexpected error." });
-
-    //}
-    #endregion
-
-    #region Search Members
-    [HttpGet]
-    public async Task<JsonResult> SearchMember(string term)
+    [HttpPost]
+    public async Task<IActionResult> DeleteMember(string id)
     {
-        if (string.IsNullOrWhiteSpace(term))
-            return Json(new List<object>());
+        var result = await _userService.DeleteUserAsync(id);
 
-        var members = await _userService.GetBasicUsersByStringAsync(term);
+        if (result == 204)
+            return RedirectToAction("Members", "Admin");
 
-        return Json(members);
+        if (result == 404)
+            return NotFound(new { message = "Member not found." });
+
+        if (result == 409)
+            return Conflict(new { message = "Member cannot be deleted, since it exists in a project." });
+
+        return StatusCode(500, new { message = "Unexpected error." });
+
     }
     #endregion
 }

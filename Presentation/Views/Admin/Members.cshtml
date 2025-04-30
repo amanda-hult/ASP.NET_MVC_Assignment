@@ -24,3 +24,59 @@
 
 </section>
 
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+
+        const editBtns = document.querySelectorAll('[data-target="#editMemberModal"]')
+        const editMemberModal = document.getElementById('editMemberModal')
+        const deleteMemberId = document.getElementById('delete-member-id')
+        const deleteMemberName = document.getElementById('delete-member-name')
+
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+
+                const editMemberId = editMemberModal.querySelector('[name="Id"]')
+
+                const editMemberImagePreviewContainer = editMemberModal.querySelector('.image-preview-container')
+                const editMemberImagePreview = editMemberModal.querySelector('#image-preview-edit-member-modal')
+
+                const editMemberImage = editMemberModal.querySelector('[name="ExistingImage"]')
+                const editMemberFirstName = editMemberModal.querySelector('[name="FirstName"]')
+                const editMemberLastName = editMemberModal.querySelector('[name="LastName"]')
+                const editMemberEmail = editMemberModal.querySelector('[name="Email"]')
+                const editMemberPhone = editMemberModal.querySelector('[name="Phone"]')
+                const editMemberJobTitle = editMemberModal.querySelector('[name="JobTitle"]')
+                const editMemberStreetName = editMemberModal.querySelector('[name="Address.StreetName"]')
+                const editMemberStreetNumber = editMemberModal.querySelector('[name="Address.StreetNumber"]')
+                const editMemberPostalCode = editMemberModal.querySelector('[name="Address.PostalCode"]')
+                const editMemberCity = editMemberModal.querySelector('[name="Address.City"]')
+                const editMemberSelectedDay = editMemberModal.querySelector('[name="SelectedDay"]')
+                const editMemberSelectedMonth = editMemberModal.querySelector('[name="SelectedMonth"]')
+                const editMemberSelectedYear = editMemberModal.querySelector('[name="SelectedYear"]')
+
+                editMemberImagePreview.classList.remove('d-none')
+                editMemberImagePreviewContainer.classList.add('selected')
+
+                editMemberId.value = btn.dataset.id || ''
+                editMemberImagePreview.src = btn.dataset.image || ''
+                editMemberImage.value = btn.dataset.image || ''
+                editMemberFirstName.value = btn.dataset.firstname || ''
+                editMemberLastName.value = btn.dataset.lastname || ''
+                editMemberEmail.value = btn.dataset.email || ''
+                editMemberPhone.value = btn.dataset.phone || ''
+                editMemberJobTitle.value = btn.dataset.jobtitle || ''
+                editMemberStreetName.value = btn.dataset.streetname || ''
+                editMemberStreetNumber.value = btn.dataset.streetnumber || ''
+                editMemberPostalCode.value = btn.dataset.postalcode || ''
+                editMemberCity.value = btn.dataset.city || ''
+                editMemberSelectedDay.value = btn.dataset.day || ''
+                editMemberSelectedMonth.value = btn.dataset.month || ''
+                editMemberSelectedYear.value = btn.dataset.year || ''
+
+                deleteMemberId.value = btn.dataset.id || ''
+                deleteMemberName.textContent = `${btn.dataset.firstname} ${btn.dataset.lastname}` || ''
+
+            })
+        })
+	})
+</script>

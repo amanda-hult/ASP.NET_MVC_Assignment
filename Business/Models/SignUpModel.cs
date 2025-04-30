@@ -7,11 +7,13 @@ public class SignUpModel
     [Display(Name = "First name", Prompt = "Your first name")]
     [DataType(DataType.Text)]
     [Required(ErrorMessage = "First name is required")]
+    [StringLength(50)]
     public string FirstName { get; set; } = null!;
 
     [Display(Name = "Last name", Prompt = "Your last name")]
     [DataType(DataType.Text)]
     [Required(ErrorMessage = "Last name is required")]
+    [StringLength(50)]
     public string LastName { get; set; } = null!;
 
 
@@ -38,5 +40,5 @@ public class SignUpModel
 
     [Display(Name = "Terms & Conditions", Prompt = "I accept the terms & conditions")]
     [Required(ErrorMessage = "You need to accept the terms & conditions.")]
-    public bool TermsAndConditions { get; set; }
+    public bool? TermsAndConditions { get; set; }
 }
