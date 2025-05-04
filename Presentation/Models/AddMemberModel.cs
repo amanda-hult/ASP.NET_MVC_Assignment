@@ -45,11 +45,10 @@ public class AddMemberModel
     public AddressCreateModel? Address { get; set; }
 
 
-    // change how to handle passwords?
-
     [Display(Name = "Password", Prompt = "Temporary password")]
     [Required(ErrorMessage = "Required")]
     [DataType(DataType.Password)]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])[\s\S]{8,}$", ErrorMessage = "Your password is not strong enough")]
     public string Password { get; set; } = null!;
 
 

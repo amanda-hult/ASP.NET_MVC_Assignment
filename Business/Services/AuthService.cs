@@ -19,7 +19,6 @@ public class AuthService(SignInManager<UserEntity> signInManager, UserManager<Us
 
     public async Task<IdentityResult> SignInExternalAsync(ExternalUserModel model, ExternalLoginInfo info)
     {
-        // factory
         var userEntity = new UserEntity
         {
             FirstName = model.FirstName,
@@ -49,5 +48,4 @@ public class AuthService(SignInManager<UserEntity> signInManager, UserManager<Us
     {
         await _signInManager.SignOutAsync();
     }
-
 }

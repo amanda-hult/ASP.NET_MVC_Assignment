@@ -25,7 +25,7 @@ public class AdminController(IUserService userService, IClientService clientServ
     }
 
     [AllowAnonymous]
-    //[Route("denied")]
+    [Route("/denied")]
     public IActionResult Denied()
     {
         return View();
@@ -42,8 +42,7 @@ public class AdminController(IUserService userService, IClientService clientServ
 
         var viewModel = new MembersViewModel
         {
-            Members = members,
-
+            Members = members
         };
 
         return View(viewModel);

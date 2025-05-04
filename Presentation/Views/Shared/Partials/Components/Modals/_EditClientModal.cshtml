@@ -12,7 +12,7 @@
             <input asp-for="Id" readonly type="hidden" />
 
             <div id="image-preview-edit-client-modal-container" class="image-preview-container circle">
-                <input type="hidden" asp-for="ExistingImage" />
+                <input type="hidden" asp-for="ExistingImage" class="form-input" />
                 <img src="#" id="image-preview-edit-client-modal" class="image-preview d-none " />
                 <input asp-for="ClientImage" accept="image/*" class="d-none" />
             </div>
@@ -20,7 +20,7 @@
             <div class="form-group">
                 <label asp-for="ClientName" class="form-label"></label>
                 <div class="field-group">
-                    <input asp-for="ClientName" />
+                    <input asp-for="ClientName" class="form-input" />
                     <span asp-validation-for="ClientName"></span>
                 </div>
             </div>
@@ -28,7 +28,7 @@
             <div class="form-group">
                 <label asp-for="Email" class="form-label"></label>
                 <div class="field-group">
-                    <input asp-for="Email" />
+                    <input asp-for="Email" class="form-input" />
                     <span asp-validation-for="Email"></span>
                 </div>
             </div>
@@ -36,7 +36,7 @@
             <div class="form-group">
                 <label asp-for="Location" class="form-label"></label>
                 <div class="field-group">
-                    <input asp-for="Location" />
+                    <input asp-for="Location" class="form-input" />
                     <span asp-validation-for="Location"></span>
                 </div>
             </div>
@@ -44,7 +44,7 @@
             <div class="form-group">
                 <label asp-for="Phone" class="form-label"></label>
                 <div class="field-group">
-                    <input asp-for="Phone" />
+                    <input asp-for="Phone" class="form-input" />
                     <span asp-validation-for="Phone"></span>
                 </div>
             </div>

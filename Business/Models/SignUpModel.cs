@@ -27,7 +27,7 @@ public class SignUpModel
     [Display(Name = "Password", Prompt = "Enter your password")]
     [Required(ErrorMessage = "You need to enter a password")]
     [DataType(DataType.Password)]
-    [RegularExpression(@"^(?=.*\d)(?=.*[a-zA-ZåäöÅÄÖ])[\w\W]{8,}$", ErrorMessage = "Your password is not strong enough")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])[\s\S]{8,}$", ErrorMessage = "Your password is not strong enough")]
     public string Password { get; set; } = null!;
 
 

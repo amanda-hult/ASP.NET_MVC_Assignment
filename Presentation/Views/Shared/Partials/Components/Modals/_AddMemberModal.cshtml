@@ -18,7 +18,7 @@
                 <div class="form-group">
                     <label asp-for="FirstName" class="form-label"></label>
                     <div class="field-group">
-                        <input asp-for="FirstName" />
+                        <input asp-for="FirstName" class="form-input" />
                         <span asp-validation-for="FirstName"></span>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
                 <div class="form-group">
                     <label asp-for="LastName" class="form-label"></label>
                     <div class="field-group">
-                        <input asp-for="LastName" />
+                        <input asp-for="LastName" class="form-input" />
                         <span asp-validation-for="LastName"></span>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
             <div class="form-group">
                 <label asp-for="Email" class="form-label"></label>
                 <div class="field-group">
-                    <input asp-for="Email"/>
+                    <input asp-for="Email" class="form-input" />
                     <span asp-validation-for="Email"></span>
                 </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="form-group">
                 <label asp-for="Phone" class="form-label"></label>
                 <div class="field-group">
-                    <input asp-for="Phone" />
+                    <input asp-for="Phone" class="form-input" />
                     <span asp-validation-for="Phone"></span>
                 </div>
             </div>
@@ -51,7 +51,7 @@
             <div class="form-group">
                 <label asp-for="JobTitle" class="form-label"></label>
                 <div class="field-group">
-                    <input asp-for="JobTitle" />
+                    <input asp-for="JobTitle" class="form-input" />
                     <span asp-validation-for="JobTitle"></span>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                 <div class="form-group">
                     <label asp-for="Address.StreetName" class="form-label"></label>
                     <div class="field-group">
-                        <input asp-for="Address.StreetName" />
+                        <input asp-for="Address.StreetName" class="form-input" />
                         <span asp-validation-for="Address.StreetName"></span>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                 <div class="form-group">
                     <label asp-for="Address.StreetNumber" class="form-label"></label>
                     <div class="field-group">
-                        <input asp-for="Address.StreetNumber" />
+                        <input asp-for="Address.StreetNumber" class="form-input" />
                         <span asp-validation-for="Address.StreetNumber"></span>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                 <div class="form-group">
                     <label asp-for="Address.PostalCode" class="form-label"></label>
                     <div class="field-group">
-                        <input asp-for="Address.PostalCode" />
+                        <input asp-for="Address.PostalCode" class="form-input" />
                         <span asp-validation-for="Address.PostalCode"></span>
                     </div>
                 </div>
@@ -84,26 +84,26 @@
                 <div class="form-group">
                     <label asp-for="Address.City" class="form-label"></label>
                     <div class="field-group">
-                        <input asp-for="Address.City" />
+                        <input asp-for="Address.City" class="form-input" />
                         <span asp-validation-for="Address.City"></span>
                     </div>
                 </div>
             </div>
 
-            <div class="form-group" class="form-label">
+            <div class="form-group">
 
                 <label>Date of Birth</label>
 
                 <div class="date-container">
                     <div class="form-group">
-                        <select asp-for="SelectedDay" asp-items="@(new SelectList(Model?.Days))" required>
+                        <select class="form-select" asp-for="SelectedDay" asp-items="@(new SelectList(Model?.Days))" required>
                             <option value="" disabled selected>Day</option>
                         </select>
                         <span asp-validation-for="SelectedDay"></span>
                     </div>
 
                     <div class="form-group">
-                        <select asp-for="SelectedMonth" required>
+                        <select class="form-select" asp-for="SelectedMonth" required>
                             <option value="" disabled selected>Month</option>
                             @for (int i = 1; i <= 12; i++)
                             {
@@ -114,7 +114,7 @@
                     </div>
 
                     <div class="form-group">
-                        <select asp-for="SelectedYear" asp-items="@(new SelectList(Model?.Years))" required>
+                        <select class="form-select" asp-for="SelectedYear" asp-items="@(new SelectList(Model?.Years))" required>
                             <option value="" class="form-input" disabled selected>Year</option>
                         </select>
                         <span asp-validation-for="SelectedYear"></span>
@@ -125,7 +125,7 @@
             <div class="form-group">
                 <label asp-for="Password" class="form-label"></label>
                 <div class="field-group">
-                    <input asp-for="Password" />
+                    <input asp-for="Password" class="form-input" />
                     <span asp-validation-for="Password"></span>
                 </div>
             </div>

@@ -41,9 +41,6 @@ public class EditMemberModel
     [Display(Name = "Address", Prompt = "Your address")]
     public AddressEditModel? Address { get; set; }
 
-    //[Display(Name = "Password", Prompt = "Change password")]
-    //[DataType(DataType.Password)]
-    //public string Password { get; set; } = null!;
 
     [Required(ErrorMessage = "Required")]
     public int? SelectedDay { get; set; }

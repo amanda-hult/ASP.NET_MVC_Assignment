@@ -71,6 +71,8 @@
     --navlink-bg-color: transparent;
     --navlink-bg-hover-color: var(--clr-accent-10);
     --navlink-bg-active-color: var(--clr-accent-10);
+    /*    tags*/
+    --tag-bg: var(--gray-200);
     --font-standard: "Nunito", sans-serif;
     --font-logo: "Comfortaa", sans-serif;
     --font-fa-pro: "Font Awesome 6 Pro";
@@ -86,6 +88,7 @@
 }
 
 .dark-theme {
+    /*    backgrounds*/
     --clr-bg: #1A1926;
     --clr-bg-card: #21202e;
     --clr-surface: #21202e;
@@ -112,6 +115,8 @@
     --clr-text-medium-light: var(--gray-300);
     /*    navlinks*/
     --navlink-text-color: var(--text-color);
+    /*    tags*/
+    --tag-bg: var(--clr-accent-10);
 }
 
 
@@ -578,6 +583,11 @@ label {
         color: var(--clr-text-medium-light);
     }
 
+.project-image-preview {
+    height: 3.5rem;
+    width: 3.5rem;
+}
+
 .project-card-footer {
     display: flex;
     justify-content: space-between;
@@ -753,7 +763,7 @@ label {
 }
 
 #addMemberToProjectModal .modal-content {
-    width: 400px;
+    width: 500px;
 }
 
 #addMemberModal .modal-content {
@@ -1177,13 +1187,14 @@ form label {
         margin-bottom: 1.2rem;
         position: relative;
         width: 100%;
+        text-align: left;
     }
 
     form .field-group {
         position: relative;
     }
 
-    form input, form select, form textarea {
+    .form-input, .form-select, .form-textarea {
         width: 100%;
         font-size: 1em;
         padding: .8rem 1rem;
@@ -1193,6 +1204,10 @@ form label {
         transition: border-color .1s ease-in-out;
         background-color: var(--clr-bg-card);
         color: var(--clr-text-color) !important;
+        display: flex;
+        position: relative;
+        flex-wrap: wrap;
+        gap: .5rem;
     }
 
         form input:focus, form select:focus, form textarea:focus {
@@ -1204,7 +1219,7 @@ form label {
         }
 
             form select option:not(:disabled), form select:focus, form select:valid {
-                color: black;
+                color: var(--clr-text-color);
             }
 
 
@@ -1231,6 +1246,7 @@ form label {
 
 .wysiwyg {
     padding-bottom: 2.5rem;
+    position: relative;
 }
 .wysiwyg-editor {
     min-height: 8rem;
@@ -1289,11 +1305,13 @@ form label {
         color: var(--clr-text-color);
         position: absolute;
         left: 1em;
-        top: .7em;
+        top: 1em;
+        z-index: 10;
     }
 
 .budget-input {
     padding: .5rem 2rem;
+    height: 3rem;
 }
 
 .date-container {
@@ -1312,6 +1330,26 @@ form label {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
+}
+
+.start-date-container,
+.end-date-container {
+    position: relative;
+}
+    .start-date-container i,
+    .end-date-container i {
+        position: absolute;
+        top: 15px;
+        right: 50px;
+        color: var(--clr-text-color);
+        pointer-events: none;
+    }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: pointer;
+    width: 3rem;
+    height: 100%;
 }
 
 /*VALIDATION*/
@@ -1568,11 +1606,16 @@ form label {
 .form-tag-input {
     font-size: 1em;
     outline: none;
-    border: 1px solid var(--clr-badge-standard);
+    border: none;
     flex-grow: 1;
     font-weight: 400;
     font-family: var(--font-standard);
     background-color: var(--clr-bg-card);
+    color: var(--clr-text-color);
+}
+
+.form-tag-input:focus {
+    border: none;
 }
 
 .form-tag-select.focused,
@@ -1607,9 +1650,10 @@ form label {
     position: absolute;
     top: 85%;
     left: 0;
-    z-index: 10;
-    display: block;
+    z-index: 15;
     color: black;
+
+    display: none;
 }
 
 .search-results {
@@ -1626,6 +1670,7 @@ form label {
     align-items: center;
     gap: 1rem;
     font-size: .8em;
+    color: var(--clr-text-color);
     justify-content: space-between;
 }
 
@@ -1666,7 +1711,8 @@ form label {
 
 .user-tag {
     display: flex;
-    background-color: var(--gray-200);
+    background-color: var(--tag-bg);
+    color: var(--clr-text-color);
     align-items: center;
     border-radius: .5rem;
     padding: .3rem;

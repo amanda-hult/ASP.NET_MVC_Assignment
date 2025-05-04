@@ -16,8 +16,7 @@ public static class UserFactory
         };
     }
 
-    // ändra namn alternativt byt ut
-    public static UserModel CreateBasic(UserEntity entity)
+    public static UserModel Create(UserEntity entity)
     {
         return new UserModel
         {
@@ -37,31 +36,6 @@ public static class UserFactory
                 StreetNumber = entity.Address.StreetNumber,
                 PostalCode = entity.Address.PostalCode,
                 City = entity.Address.City
-            }
-            : null
-        };
-    }
-
-    public static UserModel CreateWithAddress(UserEntity entity)
-    {
-        return new UserModel
-        {
-            Id = entity.Id,
-            FirstName = entity.FirstName,
-            LastName = entity.LastName,
-            Email = entity.Email,
-            Phone = entity.PhoneNumber,
-            JobTitle = entity.JobTitle,
-            DateOfBirth = entity.DateOfBirth,
-
-            Address = entity.Address != null
-            ? new AddressModel
-            {
-                AddressId = entity.Address.AddressId,
-                StreetName = entity.Address.StreetName,
-                StreetNumber = entity.Address.StreetNumber,
-                PostalCode = entity.Address.PostalCode,
-                City = entity.Address.City,
             }
             : null
         };
@@ -90,7 +64,6 @@ public static class UserFactory
             PhoneNumber = user.Phone,
             JobTitle = user.JobTitle,
             DateOfBirth = user.DateOfBirth,
-            //password?
         };
     }
 

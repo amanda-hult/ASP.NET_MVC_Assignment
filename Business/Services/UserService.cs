@@ -62,25 +62,7 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
                     .Include(u => u.Address)
                     .ToListAsync();
 
-        var users = list.Select(UserFactory.CreateBasic).ToList();
-        return users;
-        //var users = (await _userRepository.GetAllAsync()).Select(UserFactory.Create).ToList();
-
-        //if (users.Count == 0)
-        //    throw new ArgumentNullException(nameof(users));
-
-        //return users;
-    }
-
-    // byt eventuellt ut denna metod mot nedan
-    public async Task<IEnumerable<UserModel>> GetUsersByIdAsync(List<string> ids)
-    {
-        var list = await _userRepository.GetUsersByIdAsync(ids);
-        if (list == null)
-            return null;
-
-        var users = list.Select(UserFactory.CreateBasic).ToList();
-
+        var users = list.Select(UserFactory.Create).ToList();
         return users;
     }
 
@@ -105,28 +87,6 @@ public class UserService(UserManager<UserEntity> userManager, IUserRepository us
 
         return users;
     }
-
-    public async Task<List<UserEntity>> GetUserEntitiesByIdAsync(List<string> ids)
-    {
-        var users = await _userRepository.GetUsersByIdAsync(ids);
-        if (users == null)
-            return null;
-
-        return users.ToList();
-    }
-
-    //public async Task<UserModel> GetUserAsync(string id)
-    //{
-    //    var userEntity = await _userManager.FindByIdAsync(id);
-    //    if (userEntity == null)
-    //        return null;
-
-    //    var userModel = UserFactory.CreateBasic(userEntity);
-    //    return userModel;
-    //}
-    // UPDATE
-
-
 
     #endregion
 

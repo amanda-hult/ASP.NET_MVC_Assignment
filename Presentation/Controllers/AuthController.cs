@@ -1,9 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Security.Claims;
 using Business.Interfaces;
-using Business.Models.Notifications;
 using Business.Models.Users;
-using Presentation.Models;
 using Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -144,7 +142,6 @@ public class AuthController(IAuthService authService, IFileHandler fileHandler, 
     }
 
 
-    //[Route("/signin")]
     [HttpGet]
     public IActionResult SignIn(string returnUrl = "/projects")
     {
@@ -154,7 +151,6 @@ public class AuthController(IAuthService authService, IFileHandler fileHandler, 
         return View(viewModel);
     }
 
-    //[Route("/signin")]
     [HttpPost]
     public async Task<IActionResult> SignIn(SignInViewModel viewModel, string returnUrl = "/projects")
     {
@@ -242,14 +238,14 @@ public class AuthController(IAuthService authService, IFileHandler fileHandler, 
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user == null)
         {
-            ViewBag.ErrorMessage("Unable to sign in, please try again.");
+            ViewBag.ErrorMessage = "Unable to sign in, please try again.";
             return View(viewModel);
         }
 
         var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
         if (!isAdmin)
         {
-            ViewBag.ErrorMessage("You need to be an administator to sign in.");
+            ViewBag.ErrorMessage = "You need to be an administator to sign in.";
             return View(viewModel);
         }
 

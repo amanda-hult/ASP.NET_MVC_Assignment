@@ -18,9 +18,6 @@ public class NotificationViewComponent : ViewComponent
     {
         var userId = Request.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
         var isAdmin = Request.HttpContext.User.IsInRole("Admin");
-        //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
-        //if (string.IsNullOrEmpty(userId))
-        //    return Unauthorized();
 
         var notifications = await _notificationService.GetNotificationsAsync(isAdmin, userId);
 

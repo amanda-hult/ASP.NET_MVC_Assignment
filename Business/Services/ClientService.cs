@@ -23,9 +23,6 @@ public class ClientService(IClientRepository clientRepository, IProjectRepositor
         await _clientRepository.BeginTransactionAsync();
         try
         {
-            // create client
-
-            //var clientEntity = ClientFactory.Create(model);
             var createdEntity = await _clientRepository.CreateAsync(ClientFactory.Create(model));
             if (createdEntity == null)
             {
@@ -60,16 +57,6 @@ public class ClientService(IClientRepository clientRepository, IProjectRepositor
     public async Task<ClientModel> GetClientAsync(int? id)
     {
         var clientEntity = await _clientRepository.GetAsync(x => x.ClientId == id);
-        if (clientEntity == null)
-            return null;
-
-        var clientModel = ClientFactory.Create(clientEntity);
-        return clientModel;
-    }
-
-    public async Task<ClientModel> GetClientByNameAsync(string name)
-    {
-        var clientEntity = await _clientRepository.GetAsync(x => x.ClientName == name);
         if (clientEntity == null)
             return null;
 

@@ -1,5 +1,4 @@
-﻿using Business.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.Models;
@@ -38,7 +37,6 @@ public class EditProjectModel
     public IEnumerable<SelectListItem> Clients { get; set; } = new List<SelectListItem>();
 
     [Display(Name = "Members")]
-    //[Required(ErrorMessage = "Please select at least one member")]
     public string? SelectedMemberIdsEdit { get; set; } = null!;
 
 

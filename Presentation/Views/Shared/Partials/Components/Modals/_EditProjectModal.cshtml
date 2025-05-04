@@ -21,15 +21,15 @@
             <div class="form-group">
                 <label asp-for="ProjectName" class="form-label"></label>
                 <div class="field-group">
-                    <input asp-for="ProjectName" />
+                    <input asp-for="ProjectName" class="form-input"/>
                     <span asp-validation-for="ProjectName"></span>
                 </div>
             </div>
 
             <div class="form-group">
                 <label asp-for="SelectedClientId" class="form-label"></label>
-                <select asp-for="SelectedClientId" asp-items="@Model.Clients" required>
-                    <option value="" class="form-input" disabled selected></option>
+                <select class="form-select" asp-for="SelectedClientId" asp-items="@Model.Clients" required>
+                    <option value=""  disabled selected></option>
                 </select>
                 <span asp-validation-for="SelectedClientId"></span>
             </div>
@@ -69,33 +69,30 @@
             <div class="flex mt-4">
                 <div class="form-group">
                     <label asp-for="StartDate" class="form-label"></label>
-                    <div class="field-group">
-                        <input asp-for="StartDate" type="date"/>
+                    <div class="field-group start-date-container">
+                        <input class="form-input" asp-for="StartDate" type="date"/>
                         <span asp-validation-for="StartDate"></span>
+                        <i class="fa-solid fa-calendar-days"></i>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="EndDate" class="form-label"></label>
-                    <div class="field-group">
-                        <input asp-for="EndDate" type="date" value="@(Model.EndDate.HasValue && Model.EndDate.Value != DateTime.MinValue ? Model.EndDate.Value.ToString("yyyy-MM-dd") : "")" />
+                    <div class="field-group end-date-container">
+                        <input class="form-input" asp-for="EndDate" type="date" value="@(Model.EndDate.HasValue && Model.EndDate.Value != DateTime.MinValue ? Model.EndDate.Value.ToString("yyyy-MM-dd") : "")" />
                         <span asp-validation-for="EndDate"></span>
+                        <i class="fa-solid fa-calendar-days"></i>
                     </div>
                 </div>
             </div>
 
 
             <div class="form-group">
-
                 <input type="hidden" name="SelectedMemberIdsEdit" id="SelectedMemberIdsEdit" />
-
                 <label class="form-label" asp-for="SelectedMemberIdsEdit"></label>
-
-                <div id="tagged-users-edit" class="form-input field-group">
-
-                    <input id="user-search-edit" type="text" class="form-tag-input form-tag-select form-input" placeholder="Add member" />
+                <div id="tagged-users-edit" class="form-input form-tag-select">
+                    <input id="user-search-edit" type="text" class="form-tag-input" placeholder="Add member" />
                     <label for="user-search-edit" class="fa-regular fa-magnifying-glass-waveform"></label>
-
                     <div id="user-search-results-edit" class="search-results"></div>
                     <span asp-validation-for="SelectedMemberIdsEdit"></span>
                 </div>
@@ -105,15 +102,15 @@
             <div class="form-group">
                 <label asp-for="Budget" class="form-label"></label>
                 <div class="field-group budget-input-wrapper">
-                    <input asp-for="Budget" class="budget-input" type="number" />
+                    <input asp-for="Budget" class="budget-input form-input" type="number" />
                     <span asp-validation-for="Budget"></span>
                 </div>
             </div>
 
             <div class="form-group">
                 <label asp-for="SelectedStatusId" class="form-label"></label>
-                <select asp-for="SelectedStatusId" asp-items="@Model.Statuses" required>
-                    <option value="" class="form-input" disabled selected></option>
+                <select class="form-select" asp-for="SelectedStatusId" asp-items="@Model.Statuses" required>
+                    <option value="" disabled selected></option>
                 </select>
                 <span asp-validation-for="SelectedStatusId"></span>
             </div>

@@ -10,7 +10,7 @@ public class SearchService(IProjectRepository projectRepository, IUserRepository
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IClientRepository _clientRepository = clientRepository;
 
-    public async Task<IEnumerable<SearchResultModel>> GetSearchResultsAsync(string term)
+    public async Task<IEnumerable<SearchResultModel>> GetSearchResultsAsync(string term, bool isAdmin)
     {
         var projects = await _projectRepository.GetProjectsByStringAsync(term);
         var users = await _userRepository.GetUsersByStringAsync(term);
@@ -30,17 +30,6 @@ public class SearchService(IProjectRepository projectRepository, IUserRepository
             });
         }
 
-        foreach (var user in users)
-        {
-            searchResult.Add(new SearchResultModel
-            {
-                SearchResultImage = user.UserImageUrl,
-                Title = user.FirstName + " " + user.LastName,
-                Type = "Members",
-                Url = "/members",
-            });
-        }
-
         foreach (var client in clients)
         {
             searchResult.Add(new SearchResultModel
@@ -51,6 +40,20 @@ public class SearchService(IProjectRepository projectRepository, IUserRepository
                 Url = "/clients",
                 Id = client.ClientId,
             });
+        }
+
+        if (isAdmin)
+        {
+            foreach (var user in users)
+            {
+                searchResult.Add(new SearchResultModel
+                {
+                    SearchResultImage = user.UserImageUrl,
+                    Title = user.FirstName + " " + user.LastName,
+                    Type = "Members",
+                    Url = "/members",
+                });
+            }
         }
         return searchResult;
     }

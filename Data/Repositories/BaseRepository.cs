@@ -12,7 +12,7 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
     protected readonly DataContext _context = context;
     protected readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
 
-    // TRANSACTION MANAGEMENT
+    #region Transaction Management
     private IDbContextTransaction _transaction = null!;
 
     public virtual async Task BeginTransactionAsync()
@@ -44,7 +44,9 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         }
     }
 
-    // CREATE
+    #endregion
+
+    #region Create
     public virtual async Task<TEntity> CreateAsync(TEntity entity)
     {
         if (entity == null)
@@ -61,7 +63,9 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
             return null!;
         }
     }
-    // READ
+    #endregion
+
+    #region Read
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> includeExpression = null)
     {
         IQueryable<TEntity> query = _dbSet;
@@ -87,8 +91,9 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
 
         return await query.FirstOrDefaultAsync(predicate);
     }
+    #endregion
 
-    // UPDATE
+    #region Update
     public virtual async Task<TEntity> UpdateAsync(Expression<Func<TEntity, bool>> predicate, TEntity updatedEntity)
     {
         if (updatedEntity == null)
@@ -109,8 +114,9 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
             return null!;
         }
     }
+    #endregion
 
-    // DELETE
+    #region Delete
     public virtual async Task<bool> DeleteAsync(Expression<Func<TEntity, bool>> predicate)
     {
         try
@@ -129,6 +135,7 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
             throw;
         }
     }
+    #endregion
 
     #region Exists
     public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
@@ -145,7 +152,7 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
     }
     #endregion
 
-    // SAVE
+    #region Save
     public virtual async Task<int> SaveAsync()
     {
         try
@@ -159,4 +166,5 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         }
 
     }
+    #endregion
 }

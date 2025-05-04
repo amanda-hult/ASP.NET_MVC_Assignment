@@ -22,7 +22,6 @@ public class AddProjectModel
 
     [Display(Name = "Start Date")]
     [Required(ErrorMessage = "Required")]
-
     public DateTime StartDate { get; set; }
 
     [Display(Name = "End Date")]
@@ -40,7 +39,6 @@ public class AddProjectModel
 
 
     [Display(Name = "Members")]
-    [Required(ErrorMessage = "Please choose at least one member")]
     public List<string?> SelectedMemberIdsAdd { get; set; } = new();
 
 

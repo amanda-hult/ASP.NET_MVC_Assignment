@@ -7,7 +7,6 @@ using Data.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Azure;
 using Presentation.Handlers;
 using Presentation.Hubs;
 using Presentation.Services;
@@ -55,8 +54,6 @@ builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<HelperService, HelperService>();
-
-
 builder.Services.AddScoped<INotificationDismissedRepository, NotificationDismissedRepository>();
 
 

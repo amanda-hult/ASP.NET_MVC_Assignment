@@ -10,6 +10,5 @@ public class UserEditModel
     public string? Phone { get; set; }
     public string? JobTitle { get; set; }
     public AddressEditModel? Address { get; set; }
-    //public string? Password { get; set; }
     public DateTime? DateOfBirth { get; set; }
 }

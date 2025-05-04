@@ -147,8 +147,6 @@ public class MemberController(IUserService userService, UserManager<UserEntity> 
                 City = model.Address.City
             }
             : null,
-            
-            //Password = model.Password,
         };
 
         var result = await _userService.UpdateUserAsync(userEditModel);

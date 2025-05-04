@@ -15,7 +15,9 @@ public class SearchController(ISearchService searchService, IUserService userSer
         if (string.IsNullOrWhiteSpace(term))
             return Json(new List<object>());
 
-        var result = await _searchService.GetSearchResultsAsync(term);
+        var isAdmin = User.IsInRole("Admin");
+
+        var result = await _searchService.GetSearchResultsAsync(term, isAdmin);
 
         return Json(result);
     }

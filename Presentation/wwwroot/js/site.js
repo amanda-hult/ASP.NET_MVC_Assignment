@@ -1,6 +1,4 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
-    //updateRelativeTimes()
-    //setInterval(updateRelativeTimes, 6000)
 
     // open modal
     const modalButtons = document.querySelectorAll('[data-modal="true"]')

@@ -36,9 +36,6 @@ public static class ClientFactory
         return new ClientEntity
         {
             ClientId = model.Id,
-            //Created = existingEntity.Created,
-            //Projects = existingEntity.Projects,
-
             ClientImageUrl = model.ClientImage,
             ClientName = model.ClientName,
             Email = model.Email,
